@@ -1,0 +1,7 @@
+@(userTimeMapping: Map[String, List[models.TimeEntry]])
+
+@main("User Time Mapping"){
+    @userTimeMapping.map{ case (userName, timeEntry) =>
+        @userName: @timeEntry
+    }
+}
