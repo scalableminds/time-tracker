@@ -11,6 +11,19 @@
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
     </head>
     <body>
+        <div class="navbar navbar-fixed-top navbar-inverse">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="#">Time-Tracker</a>
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="main-container" class="container">
         @content
+        </div>
     </body>
 </html>

@@ -1,0 +1,53 @@
+@(availableRepositories: List[String], usedRepositories: List[models.Repository])
+
+@main("Repository Administration") {
+    <h3>Add a new repository</h3>
+    @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal") {
+        <div class="control-group">
+            <label class="control-label" for="inputRepo">Repository</label>
+            <div class="controls">
+                <select name="repository">
+                @availableRepositories.map { repository =>
+                    <option value="@repository"> @repository </option>
+                }
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputAccess">Access-Token</label>
+            <div class="controls">
+                <input type="text" id="inputAccess" name="accessToken" required>
+            </div>
+        </div>
+        <div class="form-actions">
+            <input type="submit" value="Add" class="btn btn-primary">
+        </div>
+
+
+    }
+
+    <h3>Used repositories</h3>
+    <table class="table table-striped">
+        <thead>
+            <th>#</th>
+            <th>Name</th>
+            <th>Access-Token</th>
+        </thead>
+        <tbody>
+        @usedRepositories.zipWithIndex.map { case (repository, idx) =>
+            <tr>
+                <td>
+                @idx
+                </td>
+                <td>
+                @repository.fullName
+                </td>
+                <td>
+                @repository.accessToken
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+}

@@ -1,7 +1,12 @@
 package models.services
 
-import models.{GithubUserInfo, UserDAO, User}
+import models.{UserDAO, User}
 import braingames.reactivemongo.GlobalDBAccess
+import play.api.{Logger, Application}
+import securesocial.core.{UserId, Identity, UserServicePlugin}
+import securesocial.core.providers.Token
+import scala.concurrent.duration._
+import scala.concurrent.Await
 
 /**
  * Company: scalableminds
@@ -9,13 +14,37 @@ import braingames.reactivemongo.GlobalDBAccess
  * Date: 19.07.13
  * Time: 23:12
  */
-object UserService extends GlobalDBAccess{
+class UserService(application: Application) extends UserServicePlugin(application) with GlobalDBAccess{
+  val timeout = 5 seconds
 
-  val mockUserName = "scmboy@scalableminds.com"
+  def find(id: UserId): Option[User] = {
+    Await.result(UserCache.findUser(id), timeout)
+  }
 
-  def mockUser = User(GithubUserInfo(""), mockUserName, true, List("admin"))
+  def findByEmailAndProvider(email: String, providerId: String): Option[User] = {
+    Await.result(UserCache.findUser(email, providerId), timeout)
+  }
 
-  def findOneByEmail(email: String) = {
-    UserDAO.findOneByEmail(email)
+  def save(identity: Identity): User = {
+    UserCache.removeUserFromCache(identity.id)
+    UserDAO.update(identity)
+    UserDAO.fromIdentity(identity)
+  }
+
+
+  def save(token: Token) = {
+
+  }
+
+  def findToken(token: String): Option[Token] = {
+    None
+  }
+
+  def deleteToken(uuid: String) = {
+
+  }
+
+  def deleteExpiredTokens() {
+    // implement me
   }
 }

@@ -1,7 +1,7 @@
-@(project: String, issueNumber: Int)
+@(owner: String, repo: String, issueNumber: Int)
 
 @main("Create a new time entry") {
-    @helper.form(action = routes.TimeEntryController.create(project, issueNumber)) {
+    @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber)) {
         <div class="control-group">
             <label class="control-label" for="duration">Duration</label>
             <div class="controls">

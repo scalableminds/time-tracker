@@ -12,12 +12,18 @@ object ApplicationBuild extends Build {
     "org.reactivemongo" %% "play2-reactivemongo" % "0.9",
     "org.reactivemongo" %% "reactivemongo-bson-macros" % "0.9",
     "commons-io" % "commons-io" % "1.3.2",
+    //"com.typesafe.play" %% "play-json" % "2.2.0-M1",
     "org.apache.commons" % "commons-email" % "1.2",
     "com.typesafe.akka" %% "akka-agent" % "2.1.0",
+
+    "com.scalableminds" %% "securesocial" % "master-SNAPSHOT",
+    //"com.micronautics" %% "securesocial" % "2.1.1-SNAPSHOT",
     "com.scalableminds" %% "braingames-util" % "0.1-SNAPSHOT"
     )
 
   val dependencyResolvers = Seq(
+    Resolver.url("Scala SBT PLUGIN REL Repo", url("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases"))(Resolver.ivyStylePatterns),
+    Resolver.url("Scala SBT REL Repo", url("http://repo.scala-sbt.org/scalasbt/repo/"))(Resolver.ivyStylePatterns),
     Resolver.url("Scalableminds SNAPS Repo", url("http://scalableminds.github.com/snapshots/"))(Resolver.ivyStylePatterns),
     Resolver.url("Scalableminds REL Repo", url("http://scalableminds.github.com/releases/"))(Resolver.ivyStylePatterns))
 
