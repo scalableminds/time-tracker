@@ -9,6 +9,7 @@ import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.util.ExtendedTypes._
 import scala.concurrent.Future
+import braingames.reactivemongo.DBAccessContext
 
 /**
  * Company: scalableminds
@@ -58,5 +59,14 @@ object TimeEntryController extends Controller with GlobalDBAccess with securesoc
             Ok(html.timesPerIssue(timeByUser))
         }
       }
+  }
+
+  def showUser = SecuredAction{
+    implicit request =>
+      Ok(html.home())
+  }
+
+  def loggedTimeForIssue(user: String)(implicit ctx: DBAccessContext) = {
+    TimeEntryDAO.loggedTimeForUser(user)
   }
 }

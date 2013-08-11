@@ -41,4 +41,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     find(Json.obj("issue" -> issue)).toList
   }
 
+  def loggedTimeForUser(user: String)(implicit ctx: DBAccessContext) = {
+    find(Json.obj("user" -> user)).toList
+  }
 }
