@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET         /                                                     controllers.Application.index
+GET         /                                                     controllers.TimeEntryController.showUser
 
 GET         /home                                                 controllers.TimeEntryController.showUser
 

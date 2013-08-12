@@ -1,3 +1,10 @@
-#main-container{
-    padding: 50px;
+#user {
+  display: inline-block;
+  margin: 5px;
+}
+.sumByIssue {
+  text-align: right!important;
+}
+#main-container {
+  padding: 50px;
 }
