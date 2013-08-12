@@ -114,8 +114,20 @@ require ["moment"], ->
   $("#timetable").append($issues)
 
   #make time entries editable
-  $(".edit-time").on "click", (e) ->
-    console.log e
+  $popup = $("#popup")
+  $popup.on "click", (evt) -> $popup.hide()
+  $("body").on "click", (evt) -> $popup.hide()
+
+  $(".edit-time").on "click", (evt) ->
+    
+    evt.stopPropagation()
+
+    $el = $(evt.target)
+    width= $el.width()
+    value = $el.text()
+    issueNumber = $el.data("issueNumber")
+
+    $popup.toggle()
 
 
 

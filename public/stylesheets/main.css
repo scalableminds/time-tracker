@@ -5,6 +5,25 @@
 .sumByIssue {
   text-align: right!important;
 }
+.edit-time:hover {
+  background-image: url(/assets/images/icon-edit.png);
+  background-repeat: no-repeat;
+  background-position: right top;
+}
+#popup {
+  z-index: 10;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 600px;
+  height: 400px;
+  margin-left: -300px;
+  margin-top: -200px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  background: white;
+  display: none;
+}
 #main-container {
   padding: 50px;
 }
