@@ -1,11 +1,17 @@
-require [], ->
+define ["jquery"], ($) ->
 
-  routes =  
-    "/": require ["home"], ->
-    "/home": require ["home"], ->
+  $ ->
+
+    routes =  
+      "/": ->
+        require ["user_time_report"], (UserTimeReport) ->
+          new UserTimeReport()
+      "/home": ->
+        require ["user_time_report"], (UserTimeReport) ->
+          new UserTimeReport()
 
 
-  URL = window.location.pathname
+    url = window.location.pathname
 
-  if routes.hasOwnProperty(URL)
-    routes[URL]()
+    if routes.hasOwnProperty(url)
+      routes[url]()

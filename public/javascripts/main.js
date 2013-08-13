@@ -3,8 +3,7 @@ require.config({
   baseUrl: "/assets/javascripts",
   paths: {
     "jquery": "bower_components/jquery/jquery.min",
-    "moment": "bower_components/momentjs/min/moment.min",
-    "rounting": "routing"
+    "moment": "bower_components/momentjs/min/moment.min"
   },
   shim: {
     "moment": {
@@ -13,4 +12,4 @@ require.config({
   }
 });
 
-require(["jquery", "routing"], function() {});
+require(["routing"], function() {});
