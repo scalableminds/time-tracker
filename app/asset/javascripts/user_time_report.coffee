@@ -40,22 +40,42 @@ define ["moment"], ->
 
     constructor : ->
 
-      #make sure we use the width
+      #make sure we use the full width
       $("#main-container").removeClass("container")
 
-      @lastDay = moment().endOf("month").date()
+      @currentDate = moment()
       
-      @calcSums()
-      @printInfo()
-      @printHeader()
-      @printTimeTable()
+      @setupUI()
+      @loadData()
 
 
-    printInfo : ->
+    setupUI : ->
 
       #general info
       $("#user").text("#{data.user}")
-      $("#timespan").text("| #{moment().startOf("month").format("D MMM YYYY")} - #{moment().endOf("month").format("D MMM YYYY")}")
+
+      #timespan switching
+      $("#date_back").on "click", => 
+        @currentDate.subtract("months", 1)
+        @loadData()
+      $("#date_forward").on "click", =>
+        @currentDate.add("months", 1)
+        @loadData()
+
+
+    loadData :  ->
+
+      $("#date").text("#{@currentDate.format('MMMM YYYY')}")
+      @lastDay = @currentDate.endOf("month").date()
+
+      #DO AJAX CALL
+
+      @calcSums()
+
+      $("#timetable thead").empty()
+      $("#timetable tbody").empty()
+      @printHeader()
+      @printTimeTable()
 
 
     printHeader : ->
@@ -119,7 +139,7 @@ define ["moment"], ->
       $issue = $("<tr>", {class: "warning"})
       $issue.append("<td></td>")
       $issue.append("<td>&sum;</td>")
-      $issue.append("<td>#{@sumOverall}</td>")
+      $issue.append($("<td>", {class: "sumByIssue", text: "#{@sumOverall}"}))
       for day in [1..@lastDay]
         sum = @sumByDay[day] || String("")
         $issue.append("<td>#{sum}</td>")

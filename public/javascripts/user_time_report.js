@@ -36,16 +36,33 @@ define(["moment"], function() {
   return UserTimeReport = (function() {
     function UserTimeReport() {
       $("#main-container").removeClass("container");
-      this.lastDay = moment().endOf("month").date();
-      this.calcSums();
-      this.printInfo();
-      this.printHeader();
-      this.printTimeTable();
+      this.currentDate = moment();
+      this.setupUI();
+      this.loadData();
     }
 
-    UserTimeReport.prototype.printInfo = function() {
+    UserTimeReport.prototype.setupUI = function() {
+      var _this = this;
+
       $("#user").text("" + data.user);
-      return $("#timespan").text("| " + (moment().startOf("month").format("D MMM YYYY")) + " - " + (moment().endOf("month").format("D MMM YYYY")));
+      $("#date_back").on("click", function() {
+        _this.currentDate.subtract("months", 1);
+        return _this.loadData();
+      });
+      return $("#date_forward").on("click", function() {
+        _this.currentDate.add("months", 1);
+        return _this.loadData();
+      });
+    };
+
+    UserTimeReport.prototype.loadData = function() {
+      $("#date").text("" + (this.currentDate.format('MMMM YYYY')));
+      this.lastDay = this.currentDate.endOf("month").date();
+      this.calcSums();
+      $("#timetable thead").empty();
+      $("#timetable tbody").empty();
+      this.printHeader();
+      return this.printTimeTable();
     };
 
     UserTimeReport.prototype.printHeader = function() {
@@ -126,7 +143,10 @@ define(["moment"], function() {
       });
       $issue.append("<td></td>");
       $issue.append("<td>&sum;</td>");
-      $issue.append("<td>" + this.sumOverall + "</td>");
+      $issue.append($("<td>", {
+        "class": "sumByIssue",
+        text: "" + this.sumOverall
+      }));
       for (day = _i = 1, _ref = this.lastDay; 1 <= _ref ? _i <= _ref : _i >= _ref; day = 1 <= _ref ? ++_i : --_i) {
         sum = this.sumByDay[day] ||  String("");
         $issue.append("<td>" + sum + "</td>");
