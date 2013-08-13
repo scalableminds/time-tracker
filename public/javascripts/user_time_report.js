@@ -114,7 +114,7 @@ define(["moment"], function() {
         $issue.append("<td>" + issue.title + "</td>");
         $issue.append($("<td>", {
           "class": "sumByIssue",
-          text: "" + this.sumByIssue[issue.issueNumber]
+          text: "" + this.sumByIssue[issue.title]
         }));
         for (day = _j = 1, _ref = this.lastDay; 1 <= _ref ? _j <= _ref : _j >= _ref; day = 1 <= _ref ? ++_j : --_j) {
           if (day === moment(issue.date).date()) {
@@ -168,7 +168,7 @@ define(["moment"], function() {
         issue.forEach(function(issue) {
           var day;
 
-          sumByIssue[issue.issueNumber] = sumByIssue[issue.issueNumber] + issue.time || issue.time;
+          sumByIssue[issue.title] = sumByIssue[issue.title] + issue.time || issue.time;
           sumByProject[project] = sumByProject[project] + issue.time || issue.time;
           day = moment(issue.date).date();
           sumByDay[day] = sumByDay[day] + issue.time || issue.time;

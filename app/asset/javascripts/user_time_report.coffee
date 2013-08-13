@@ -120,7 +120,7 @@ define ["moment"], ->
         $issue = $("<tr>")
         $issue.append("<td>#{issue.issueNumber}</td>")
         $issue.append("<td>#{issue.title}</td>")
-        $issue.append($("<td>", {class: "sumByIssue", text: "#{@sumByIssue[issue.issueNumber]}"}))
+        $issue.append($("<td>", {class: "sumByIssue", text: "#{@sumByIssue[issue.title]}"}))
         
         for day in [1..@lastDay]
           if day == moment(issue.date).date()
@@ -159,7 +159,9 @@ define ["moment"], ->
 
       for project, issue of data.projects
         issue.forEach (issue)->
-          sumByIssue[issue.issueNumber] = sumByIssue[issue.issueNumber] + issue.time || issue.time
+
+          sumByIssue[issue.title] = sumByIssue[issue.title] + issue.time || issue.time #use issue.title because issueNumer is not unique
+          
           sumByProject[project] = sumByProject[project] + issue.time || issue.time
 
           day = moment(issue.date).date() #day of the month
