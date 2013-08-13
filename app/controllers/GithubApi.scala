@@ -12,6 +12,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.Identity
 import play.api.libs.ws.WS.WSRequestHolder
 import scala.concurrent.Future
+import play.api.http.Status
 
 /**
  * Company: scalableminds
@@ -87,6 +88,9 @@ class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) ex
         response =>
           val result = response.json.validate(deserializer).asOpt.toList
 
+          if(response.status != Status.OK){
+            Logger.warn("Result in result set failed: " + response.json)
+          }
           response.header("Link").flatMap(raw =>
             parseLinkHeader(raw).find(link => link.params.get("rel").map(_ == "next").getOrElse(false))) match {
             case Some(link) =>

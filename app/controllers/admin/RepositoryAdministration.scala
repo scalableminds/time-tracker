@@ -52,4 +52,17 @@ object RepositoryAdministration extends Controller with SecureSocial with Global
         Redirect(controllers.admin.routes.RepositoryAdministration.list)
       }).getOrElse(BadRequest("No repository supplied."))
   }
+
+  def scan(owner: String, name: String) = SecuredAction {
+    implicit request =>
+      Async {
+        val respositoryName = RepositoryDAO.createFullName(owner, name)
+        for {
+          repository <- RepositoryDAO.findByName(respositoryName) ?~> "Repository not found"
+        } yield {
+          issueActor ! FullScan(repository)
+          Ok("Scan is in progress")
+        }
+      }
+  }
 }

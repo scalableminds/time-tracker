@@ -3,18 +3,22 @@
 # ~~~~
 
 # Home page
-GET         /                                                     controllers.TimeEntryController.showUser
-
-GET         /home                                                 controllers.TimeEntryController.showUser
+GET         /                                                     controllers.Application.index
+GET         /home                                                 controllers.Application.home
 
 # Admin
 GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
 POST        /admin/repositories                                   controllers.admin.RepositoryAdministration.add
+GET         /admin/repositories/:owner/:name/scan                 controllers.admin.RepositoryAdministration.scan(owner: String, name: String)
 
-# Authentication
+# Add Issue time entry
 GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int)
 POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int)
-GET         /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.loggedTimeForIssue(owner, repo, issueNumber: Int)
+
+# Request times
+GET         /times/:year/:month                                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
+GET         /user/times/:year/:month                              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
+GET         /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                         controllers.Assets.at(path="/public", file)

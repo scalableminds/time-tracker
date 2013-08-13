@@ -3,6 +3,8 @@ package models
 import play.api.libs.json.Json
 import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
+import java.util.{Calendar, Date}
+import org.joda.time.{Interval, YearMonth}
 
 /**
  * Company: scalableminds
@@ -41,7 +43,27 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     find(Json.obj("issue" -> issue)).toList
   }
 
-  def loggedTimeForUser(user: String)(implicit ctx: DBAccessContext) = {
-    find(Json.obj("user" -> user)).toList
+  def toInterval(year: Int, month: Int) = {
+    new YearMonth(year, month).toInterval
+  }
+
+  def timeStampQuery(interval: Interval) = {
+    Json.obj(
+      "timestamp" -> Json.obj(
+        "$gte" -> interval.getStart.getMillis,
+        "$lte" -> interval.getEnd.getMillis
+      )
+    )
+  }
+
+  def loggedTimeForUser(user: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
+    val interval = toInterval(year, month)
+    find(
+      Json.obj("user" -> user) ++ timeStampQuery(interval)).toList
+  }
+
+  def loggedTimeForInterval(year: Int, month: Int)(implicit ctx: DBAccessContext) = {
+    val interval = toInterval(year, month)
+    find(timeStampQuery(interval)).toList
   }
 }

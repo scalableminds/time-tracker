@@ -7,6 +7,12 @@ object ApplicationBuild extends Build {
   val appName         = "time-tracker"
   val appVersion      = "1.0-SNAPSHOT"
 
+  val coffeeCmd =
+    if(System.getProperty("os.name").startsWith("Windows"))
+      "cmd /C coffee -p"
+    else
+      "coffee -p"
+
   val appDependencies = Seq(
     // Add your project dependencies here,
     "org.reactivemongo" %% "play2-reactivemongo" % "0.9",
@@ -15,10 +21,10 @@ object ApplicationBuild extends Build {
     //"com.typesafe.play" %% "play-json" % "2.2.0-M1",
     "org.apache.commons" % "commons-email" % "1.2",
     "com.typesafe.akka" %% "akka-agent" % "2.1.0",
-
+    "joda-time" % "joda-time" % "2.2",
     "com.scalableminds" %% "securesocial" % "master-SNAPSHOT",
     //"com.micronautics" %% "securesocial" % "2.1.1-SNAPSHOT",
-    "com.scalableminds" %% "braingames-util" % "0.1-SNAPSHOT"
+    "com.scalableminds" %% "braingames-util" % "0.2"
     )
 
   val dependencyResolvers = Seq(
@@ -30,7 +36,8 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here      
-    resolvers ++= dependencyResolvers
+    resolvers ++= dependencyResolvers,
+    coffeescriptOptions := Seq(/*"minify",*/ "native", coffeeCmd)
   )
 
 }

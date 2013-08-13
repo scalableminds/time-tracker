@@ -1,6 +1,7 @@
 @(availableRepositories: List[String], usedRepositories: List[models.Repository])
 
 @main("Repository Administration") {
+    <div class="container">
     <h3>Add a new repository</h3>
     @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal") {
         <div class="control-group">
@@ -45,9 +46,13 @@
                 <td>
                 @repository.accessToken
                 </td>
+                <td>
+                    <a href="@controllers.admin.routes.RepositoryAdministration.scan(repository.owner, repository.name)"><i class="icon-glass"></i> scan</a>
+                </td>
             </tr>
         }
         </tbody>
     </table>
+    </div>
 
 }

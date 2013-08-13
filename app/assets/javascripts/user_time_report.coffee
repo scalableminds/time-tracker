@@ -16,6 +16,12 @@ define ["moment"], ->
               "time": 60
               "title": "BF-12 Work some more!"
               "date": "2013-08-12T00:08:59.181Z"
+          },
+          {
+            "issueNumber": 2,
+            "time": 60
+            "title": "BF-12 Work some more!"
+            "date": "2013-08-12T00:18:59.181Z"
           }
         ]
       ,"oxalis": 
@@ -39,9 +45,6 @@ define ["moment"], ->
   class UserTimeReport
 
     constructor : ->
-
-      #make sure we use the full width
-      $("#main-container").removeClass("container")
 
       @currentDate = moment()
       
