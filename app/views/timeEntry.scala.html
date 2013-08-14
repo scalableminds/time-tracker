@@ -6,13 +6,17 @@
       <button type="button" class="close" data-dismiss="alert">×</button>
     </div>
 
-    @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber)) {
-        <div class="control-group">
-            <label class="control-label" for="duration">Duration</label>
-            <div class="controls">
-                <input type="text" name="duration">
+    @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber), 'class -> "form-horizontal", 'role -> "form") {
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="duration">Duration</label>
+            <div class="col-lg-10">
+                <input class="form-control" type="text" name="duration" autofocus required pattern="\s*((\d+\s*[hms])\s*)*">
             </div>
         </div>
-        <input type="submit" value="Ok">
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <input type="submit" value="Log" class="btn btn-default">
+            </div>
+        </div>
     }
 }

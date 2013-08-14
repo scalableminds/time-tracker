@@ -1,4 +1,4 @@
-define ["alert"], ->
+define ["alert"], -> ->
 
   $alert = $(".alert")
   $alert.alert()

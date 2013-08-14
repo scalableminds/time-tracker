@@ -1,20 +1,35 @@
-define ["jquery"], ($) ->
+define ["jquery", "user_time_report", "team_time_report", "time_entry"], ($, UserTimeReport, TeamTimeReport, TimeEntryCode) ->
 
   $ ->
 
-    routes =  
-      "^/home": ->
-        require ["user_time_report"], (UserTimeReport) ->
-          new UserTimeReport() 
-      "^/team": ->
-        require ["team_time_report"], (TeamTimeReport) ->
-          new TeamTimeReport()
-      "^/repos/[a-zA-Z]*/[a-zA-Z]*/issues/[0-9]*/create": ->
-        require ["time_entry"], ->
+    route = (routes) ->
 
-    url = window.location.pathname
+      optionalParam = /\((.*?)\)/g
+      namedParam    = /(\(\?)?:\w+/g
+      splatParam    = /\*\w+/g
+      escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g
 
-    for route, script of routes
-      if RegExp(route).test(url)
-        script()
-        break;
+      routeToRegExp = (route) ->
+        route = route
+          .replace(escapeRegExp, '\\$&')
+          .replace(optionalParam, '(?:$1)?')
+          .replace(namedParam, (match, optional) ->
+            if optional then match else '([^\/]+)'
+          )
+          .replace(splatParam, '(.*?)')
+        new RegExp('^' + route + '$')
+
+      url = window.location.pathname
+      for route, script of routes
+        if routeToRegExp(route).test(url)
+          script()
+          return
+
+    route
+
+      "/home" : ->
+        new UserTimeReport() 
+      "/team" : ->
+        new TeamTimeReport()
+      "/repos/:owner/:repo/issues/:issueId/create" : ->
+        TimeEntryCode()
