@@ -15,15 +15,15 @@
         <div class="navbar navbar-fixed-top navbar-inverse">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="brand" href="#">Time-Tracker</a>
+                    <a class="brand" href="@controllers.routes.Application.home">Time-Tracker</a>
                     <ul class="nav">
-                        <li class="active"><a href="@controllers.routes.TimeEntryController.showUser">Home</a></li>
+                        <li class="active"><a href="@controllers.routes.Application.home">Home</a></li>
                         <li><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div id="main-container" class="container">
+        <div id="main-container">
         @content
         </div>
     </body>

@@ -1,6 +1,8 @@
 package models
 
 import play.api.libs.json.Json
+import braingames.reactivemongo.DBAccessContext
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * Company: scalableminds
@@ -16,6 +18,12 @@ case class Repository(fullName: String, accessToken: String){
 object RepositoryDAO extends BasicReactiveDAO[Repository]{
   val collectionName = "repositories"
 
-  val formatter = Json.format[Repository]
+  def createFullName(owner: String, repo: String) =
+    owner + "/" + repo
 
+  implicit val formatter = Json.format[Repository]
+
+  def findByName(fullName: String)(implicit ctx: DBAccessContext) = {
+    collectionFind(Json.obj("fullName" -> fullName)).one[Repository]
+  }
 }

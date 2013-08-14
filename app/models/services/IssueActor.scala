@@ -31,7 +31,7 @@ class IssueActor extends Actor {
   }
 
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
-    s"""<a href="http://localhost:9000${controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number).url})" target="_blank">Log Time</a>"""
+    s"""<a href="http://localhost:9000${controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number).url}" target="_blank">Log Time</a>"""
   }
 
   def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue) = {
