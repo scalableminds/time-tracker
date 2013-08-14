@@ -5,15 +5,17 @@
       <button type="button" class="close" data-dismiss="alert">×</button>
     </div>
     <div class="container">
-    <h3>@models.RepositoryDAO.createFullName(owner, repo), Issue @issueNumber</h3>
-    @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber)) {
-        <div class="control-group">
-            <label class="control-label" for="duration">Duration</label>
-            <div class="controls">
-                <input type="text" name="duration" autofocus="autofocus">
+        <h3>/@owner/@repo/@issueNumber</h3>
+        @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber), 'role -> "form") {
+            <div class="form-group">
+                <label class="control-label" for="duration">Duration</label>
+                <div class="">
+                    <input class="form-control" type="text" name="duration" autofocus required pattern="\s*((\d+\s*[hms])\s*)*">
+                </div>
             </div>
-        </div>
-        <input type="submit" value="Ok">
-    }
+            <div class="form-group">
+                <input type="submit" value="Log" class="btn btn-default">
+            </div>
+        }
     </div>
 }

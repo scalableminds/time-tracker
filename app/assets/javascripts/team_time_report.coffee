@@ -1,111 +1,113 @@
-define ["report"], (Report) ->
+### define 
+report : Report
+###
 
-  class TeamTimeReport extends Report
+class TeamTimeReport extends Report
 
-    constructor : ->
+  constructor : ->
 
-      super()
+    super()
 
-      @setupUI()
-      @loadData()
-
-
-    loadData : ->
-
-      $(".month_picker .month_title").text(@currentDate.format('MMMM YYYY'))
-      @lastDay = @currentDate.endOf("month").date()
-
-      year = @currentDate.format("YYYY")
-      month = @currentDate.format("MM")
-
-      $.ajax(
-        methode: "GET"
-        url: "http://localhost:9000/times/#{year}/#{month}"
-      ).done( (data) =>
-        @data = data
-
-        @calcSums()
-
-        $("#timetable thead").empty()
-        $("#timetable tbody").empty()
-        @printHeader()
-        @printTimetable()
+    @setupUI()
+    @loadData()
 
 
-      ).fail( (jqXHR, textStatus, error) ->
-        console.error("An error occured: #{error}")
-      )
+  loadData : ->
+
+    $(".month_picker .month_title").text(@currentDate.format('MMMM YYYY'))
+    @lastDay = @currentDate.endOf("month").date()
+
+    year = @currentDate.format("YYYY")
+    month = @currentDate.format("MM")
+
+    $.ajax(
+      methode: "GET"
+      url: "http://localhost:9000/times/#{year}/#{month}"
+    ).done( (data) =>
+      @data = data
+
+      @calcSums()
+
+      $("#timetable thead").empty()
+      $("#timetable tbody").empty()
+      @printHeader()
+      @printTimetable()
 
 
-    printHeader : ->
+    ).fail( (jqXHR, textStatus, error) ->
+      console.error("An error occured: #{error}")
+    )
 
-      header = []
-      header.push("User")
-      header.push("&sum;")
+
+  printHeader : ->
+
+    header = []
+    header.push("User")
+    header.push("&sum;")
+
+    for project of @sumByProject
+      header.push project
+
+    $header = $("<tr>")
+    header.forEach (h) ->
+      $header.append("<th>#{h}</th>")
+
+    $("#timetable thead").append($header)
+
+
+  printTimetable : ->
+
+    for user, timeEntries of @data
+
+      $entry = $("<tr>")
+      $entry.append("<td>#{user}</td>")
+      $entry.append($("<td>", {class: "sumRight", text: "#{@sumByUser[user]}"}))
 
       for project of @sumByProject
-        header.push project
+        $entry.append("<td>#{@sumByUserProject[user+project]}</td>")
 
-      $header = $("<tr>")
-      header.forEach (h) ->
-        $header.append("<th>#{h}</th>")
+    $("#timetable tbody").append($entry)
 
-      $("#timetable thead").append($header)
+    @printSumByProject()
 
 
-    printTimetable : ->
+  printSumByProject : ->
 
-      for user, timeEntries of @data
+    $project = $("<tr>", {class: "warning"})
+    $project.append("<td>&sum;</td>")
+    $project.append($("<td>", {class: "sumRight", text: "#{@sumOverall}"}))
 
-        $entry = $("<tr>")
-        $entry.append("<td>#{user}</td>")
-        $entry.append($("<td>", {class: "sumRight", text: "#{@sumByUser[user]}"}))
+    for project, sum of @sumByProject
+      $project.append("<td>#{sum}</td>")
 
-        for project of @sumByProject
-          $entry.append("<td>#{@sumByUserProject[user+project]}</td>")
-
-      $("#timetable tbody").append($entry)
-
-      @printSumByProject()
+    $("#timetable tbody").append($project)
 
 
-    printSumByProject : ->
+  calcSums : ->
 
-      $project = $("<tr>", {class: "warning"})
-      $project.append("<td>&sum;</td>")
-      $project.append($("<td>", {class: "sumRight", text: "#{@sumOverall}"}))
+    sumByProject = {}
+    sumByUser = {}
+    sumByUserProject = {}
+    sumOverall = 0
 
-      for project, sum of @sumByProject
-        $project.append("<td>#{sum}</td>")
+    for user, timeEntries of @data
+      for entry in timeEntries
 
-      $("#timetable tbody").append($project)
+        issue = entry.issue 
 
+        sumByProject[issue.project] = sumByProject[issue.project] + entry.duration || entry.duration
+        
+        uniqueID = user + issue.project
+        sumByUserProject[uniqueID] = sumByUserProject[uniqueID] + entry.duration || entry.duration
 
-    calcSums : ->
+        sumByUser[user] = sumByUser[user] + entry.duration || entry.duration
 
-      sumByProject = {}
-      sumByUser = {}
-      sumByUserProject = {}
-      sumOverall = 0
-
-      for user, timeEntries of @data
-        for entry in timeEntries
-
-          issue = entry.issue 
-
-          sumByProject[issue.project] = sumByProject[issue.project] + entry.duration || entry.duration
-          
-          uniqueID = user + issue.project
-          sumByUserProject[uniqueID] = sumByUserProject[uniqueID] + entry.duration || entry.duration
-
-          sumByUser[user] = sumByUser[user] + entry.duration || entry.duration
-
-          sumOverall += entry.duration
+        sumOverall += entry.duration
 
 
-      @sumByProject = sumByProject
-      @sumByUserProject = sumByUserProject
-      @sumByUser = sumByUser
-      @sumOverall = sumOverall
+    @sumByProject = sumByProject
+    @sumByUserProject = sumByUserProject
+    @sumByUser = sumByUser
+    @sumOverall = sumOverall
 
 
