@@ -1,6 +1,11 @@
 @(owner: String, repo: String, issueNumber: Int)
 
 @main("Create a new time entry") {
+  
+    <div class="alert fade in hide">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+    </div>
+
     @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber)) {
         <div class="control-group">
             <label class="control-label" for="duration">Duration</label>

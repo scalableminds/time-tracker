@@ -3,11 +3,15 @@ define ["jquery"], ($) ->
   $ ->
 
     routes =  
-      "/home": ->
+      "^/home": ->
         require ["user_time_report"], (UserTimeReport) ->
           new UserTimeReport()
+      "^/repos/[a-z]*/[a-z]*/issues/[0-9]*/create": ->
+          require ["time_entry"], ->
 
     url = window.location.pathname
 
-    if routes.hasOwnProperty(url)
-      routes[url]()
+    for route, script of routes
+      if RegExp(route).test(url)
+        script()
+        break;
