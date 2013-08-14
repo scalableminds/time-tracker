@@ -1,24 +1,26 @@
-define ["moment"], ->
+### define
+moment : moment
+###
 
-  class Report
+class Report
 
-    constructor : ->
-  
-      @currentDate = moment()
+  constructor : ->
 
-
-    setupUI : ->
-
-      #timespan switching
-        $(".month_picker .month_back").on "click", => 
-          @currentDate.subtract("months", 1)
-          @loadData()
-        $(".month_picker .month_forward").on "click", =>
-          @currentDate.add("months", 1)
-          @loadData()
+    @currentDate = moment()
 
 
-    #utilities
-    padNumber : (number) ->
+  setupUI : ->
 
-      String("0#{number}").slice(-2)
+    #timespan switching
+      $(".month_picker .month_back").on "click", => 
+        @currentDate.subtract("months", 1)
+        @loadData()
+      $(".month_picker .month_forward").on "click", =>
+        @currentDate.add("months", 1)
+        @loadData()
+
+
+  #utilities
+  padNumber : (number) ->
+
+    String("0#{number}").slice(-2)

@@ -1,4 +1,9 @@
-define ["alert"], -> ->
+### define 
+jquery : $
+bootstrap : bootstrap
+###
+
+->
 
   $alert = $(".alert")
   $alert.alert()
