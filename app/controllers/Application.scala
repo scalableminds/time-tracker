@@ -17,4 +17,9 @@ object Application extends Controller with SecureSocial {
       Ok(html.home())
   }
 
+  def team = SecuredAction {
+    implicit request =>
+      Ok(html.team())
+  }
+
 }

@@ -1,4 +1,4 @@
-define ["moment"], ->
+define ["report"], (Report) ->
 
   data = {
     "user" : "tmbo",
@@ -42,28 +42,22 @@ define ["moment"], ->
       }
   }
 
-  class UserTimeReport
+  class UserTimeReport extends Report
 
     constructor : ->
 
-      @currentDate = moment()
-      
+      super()
+
       @setupUI()
       @loadData()
 
 
     setupUI : ->
 
+      super()
+
       #general info
       $("#user").text("#{data.user}")
-
-      #timespan switching
-      $("#date_back").on "click", => 
-        @currentDate.subtract("months", 1)
-        @loadData()
-      $("#date_forward").on "click", =>
-        @currentDate.add("months", 1)
-        @loadData()
 
 
     loadData :  ->
@@ -97,7 +91,6 @@ define ["moment"], ->
 
       $("#timetable thead").append($header)
 
-
     printTimeTable : ->
 
       for project, issues of data.projects
@@ -123,7 +116,7 @@ define ["moment"], ->
         $issue = $("<tr>")
         $issue.append("<td>#{issue.issueNumber}</td>")
         $issue.append("<td>#{issue.title}</td>")
-        $issue.append($("<td>", {class: "sumByIssue", text: "#{@sumByIssue[issue.title]}"}))
+        $issue.append($("<td>", {class: "sumRight", text: "#{@sumByIssue[issue.title]}"}))
         
         for day in [1..@lastDay]
           if day == moment(issue.date).date()
@@ -142,7 +135,7 @@ define ["moment"], ->
       $issue = $("<tr>", {class: "warning"})
       $issue.append("<td></td>")
       $issue.append("<td>&sum;</td>")
-      $issue.append($("<td>", {class: "sumByIssue", text: "#{@sumOverall}"}))
+      $issue.append($("<td>", {class: "sumRight", text: "#{@sumOverall}"}))
       for day in [1..@lastDay]
         sum = @sumByDay[day] || String("")
         $issue.append("<td>#{sum}</td>")
@@ -197,7 +190,4 @@ define ["moment"], ->
         $popup.toggle()
 
 
-    #utilities
-    padNumber : (number) ->
 
-      String("0#{number}").slice(-2)

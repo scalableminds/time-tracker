@@ -36,5 +36,5 @@ define ["alert"], ->
     window.setTimeout (->
       $alert.removeClass("alert-error")
       $alert.removeClass("alert-success")
-      $alert.alert("close")
+      $alert.hide()
     ), 2000

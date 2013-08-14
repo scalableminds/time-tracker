@@ -5,6 +5,7 @@
 # Home page
 GET         /                                                     controllers.Application.index
 GET         /home                                                 controllers.Application.home
+GET         /team                                                 controllers.Application.team
 
 # Admin
 GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
