@@ -10,9 +10,7 @@ define ["jquery"], ($) ->
         require ["team_time_report"], (TeamTimeReport) ->
           new TeamTimeReport()
       "^/repos/[a-zA-Z]*/[a-zA-Z]*/issues/[0-9]*/create": ->
-          require ["time_entry"], ->
-
-
+        require ["time_entry"], ->
 
     url = window.location.pathname
 

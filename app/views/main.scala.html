@@ -7,23 +7,32 @@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/font-awesome.min.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/bower_components/requirejs/require.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/bower_components/requirejs/require.js")" data-main="main" type="text/javascript"></script>
     </head>
     <body>
-        <div class="navbar navbar-fixed-top navbar-inverse">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href="@controllers.routes.Application.home">Time-Tracker</a>
-                    <ul class="nav">
+        <header class="navbar" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="@controllers.routes.Application.home">Time-Tracker</a>
+                </div>
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav">
                         <li class="active"><a href="@controllers.routes.Application.home">Home</a></li>
                         <li><a href="@controllers.routes.Application.team">Team</a></li>
                         <li><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
                     </ul>
                 </div>
             </div>
-        </div>
+        </header>
         <div id="main-container">
         @content
         </div>

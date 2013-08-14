@@ -1,0 +1,1 @@
+sbt -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M "run 9000"

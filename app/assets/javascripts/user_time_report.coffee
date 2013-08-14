@@ -62,7 +62,7 @@ define ["report"], (Report) ->
 
     loadData :  ->
 
-      $("#date").text("#{@currentDate.format('MMMM YYYY')}")
+      $(".month_picker .month_title").text(@currentDate.format('MMMM YYYY'))
       @lastDay = @currentDate.endOf("month").date()
 
       #DO AJAX CALL

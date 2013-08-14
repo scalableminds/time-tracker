@@ -10,10 +10,10 @@ define ["moment"], ->
     setupUI : ->
 
       #timespan switching
-        $("#date_back").on "click", => 
+        $(".month_picker .month_back").on "click", => 
           @currentDate.subtract("months", 1)
           @loadData()
-        $("#date_forward").on "click", =>
+        $(".month_picker .month_forward").on "click", =>
           @currentDate.add("months", 1)
           @loadData()
 

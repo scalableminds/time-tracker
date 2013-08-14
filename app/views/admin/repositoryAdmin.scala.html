@@ -3,25 +3,27 @@
 @main("Repository Administration") {
     <div class="container">
     <h3>Add a new repository</h3>
-    @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal") {
-        <div class="control-group">
-            <label class="control-label" for="inputRepo">Repository</label>
-            <div class="controls">
-                <select name="repository">
+    @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal", 'role -> "form") {
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="inputRepo">Repository</label>
+            <div class="col-lg-10">
+                <select name="repository" class="form-control">
                 @availableRepositories.map { repository =>
                     <option value="@repository"> @repository </option>
                 }
                 </select>
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label" for="inputAccess">Access-Token</label>
-            <div class="controls">
-                <input type="text" id="inputAccess" name="accessToken" required>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="inputAccess">Access-Token</label>
+            <div class="col-lg-10">
+                <input class="form-control" type="text" id="inputAccess" name="accessToken" required>
             </div>
         </div>
-        <div class="form-actions">
-            <input type="submit" value="Add" class="btn btn-primary">
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <input type="submit" value="Add" class="btn btn-primary">
+            </div>
         </div>
 
 
