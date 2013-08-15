@@ -25,10 +25,15 @@ class GithubIssueActor extends Actor {
         issues =>
           issues.map {
             issue =>
-              ensureTimeTrackingLink(repo, issue)
+              GithubIssueActor.ensureTimeTrackingLink(repo, issue)
           }
       }
   }
+
+}
+
+object GithubIssueActor extends StartableActor[GithubIssueActor] {
+  val name = "githubIssueActor"
 
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
     s"""<a href="http://localhost:9000${controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number).url}" target="_blank">Log Time</a>"""
@@ -41,9 +46,4 @@ class GithubIssueActor extends Actor {
       GithubApi.updateIssueBody(repo.accessToken, issue, body)
     }
   }
-
-}
-
-object GithubIssueActor extends StartableActor[GithubIssueActor] {
-  val name = "githubIssueActor"
 }
