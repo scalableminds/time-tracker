@@ -22,6 +22,10 @@ bootstrap : bootstrap
     )
     .done( -> 
 
+      setTimeout(
+        -> window.history.back()
+        1
+      )
       $alert.addClass("alert-success")
       $alert.text("Yeah! Your time got logged.")
       $alert.show()
