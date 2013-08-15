@@ -8,7 +8,7 @@
             <label class="col-lg-2 control-label" for="inputRepo">Repository</label>
             <div class="col-lg-10">
                 <select name="repository" class="form-control">
-                @availableRepositories.map { repository =>
+                @availableRepositories.sortBy(_.toLowerCase).map { repository =>
                     <option value="@repository"> @repository </option>
                 }
                 </select>
@@ -25,8 +25,6 @@
                 <input type="submit" value="Add" class="btn btn-primary">
             </div>
         </div>
-
-
     }
 
     <h3>Used repositories</h3>
@@ -35,6 +33,7 @@
             <th>#</th>
             <th>Name</th>
             <th>Access-Token</th>
+            <th>Admin Ids</th>
         </thead>
         <tbody>
         @usedRepositories.zipWithIndex.map { case (repository, idx) =>
@@ -49,7 +48,11 @@
                 @repository.accessToken
                 </td>
                 <td>
+                    @repository.admins.mkString(", ")
+                </td>
+                <td>
                     <a href="@controllers.admin.routes.RepositoryAdministration.scan(repository.owner, repository.name)"><i class="icon-glass"></i> scan</a>
+                    <a href="@controllers.admin.routes.RepositoryAdministration.delete(repository.owner, repository.name)"><i class="icon-trash"></i> delete</a>
                 </td>
             </tr>
         }

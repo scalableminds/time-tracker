@@ -5,6 +5,7 @@ import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
 import java.util.{Calendar, Date}
 import org.joda.time.{Interval, YearMonth}
+import play.api.Logger
 
 /**
  * Company: scalableminds
@@ -18,14 +19,14 @@ object Issue extends Function2[String, Int, Issue] {
   implicit val issueFormatter = Json.format[Issue]
 }
 
-case class TimeEntry(issue: Issue, duration: Int, user: String, timestamp: Long = System.currentTimeMillis)
+case class TimeEntry(issue: Issue, duration: Int, userGID: String, timestamp: Long = System.currentTimeMillis)
 
 object TimeEntry extends Function4[Issue, Int, String, Long, TimeEntry]{
-  def fromForm(issue: Issue, duration: Int, user: String) =
-    TimeEntry(issue, duration, user)
+  def fromForm(issue: Issue, duration: Int, userGID: String) =
+    TimeEntry(issue, duration, userGID)
 
   def toForm(t: TimeEntry) =
-    Some((t.issue, t.duration, t.user))
+    Some((t.issue, t.duration, t.userGID))
 }
 
 object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
@@ -56,10 +57,10 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     )
   }
 
-  def loggedTimeForUser(user: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
+  def loggedTimeForUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
     val interval = toInterval(year, month)
     find(
-      Json.obj("user" -> user) ++ timeStampQuery(interval)).toList
+      Json.obj("userGID" -> userGID) ++ timeStampQuery(interval)).toList
   }
 
   def loggedTimeForInterval(year: Int, month: Int)(implicit ctx: DBAccessContext) = {

@@ -15,16 +15,17 @@ import securesocial.core._
  */
 
 case class User( id: UserId,
-                 firstName: String,
-                 lastName: String,
+                 fullName: String,
                  email: Option[String],
                  authMethod: AuthenticationMethod,
                  oAuth1Info: Option[OAuth1Info],
                  oAuth2Info: Option[OAuth2Info],
                  passwordInfo: Option[PasswordInfo]) extends Identity {
-
-  val fullName: String = s"$firstName $lastName"
+  val firstName = ""
+  val lastName = ""
   val avatarUrl = None
+
+  val githubId = id.id
 
   def githubAccessToken = oAuth2Info.get.accessToken
 }
@@ -50,7 +51,11 @@ object UserDAO extends BasicReactiveDAO[User]{
   }
 
   def fromIdentity(i: Identity): User = {
-    User(i.id, i.firstName, i.lastName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
+    User(i.id, i.fullName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
+  }
+
+  def findOneByGID(gid: String)(implicit ctx: DBAccessContext) = {
+    collectionFind(Json.obj("id.id" -> gid)).one[User]
   }
 
   implicit val AuthenticationMethodFormat: Format[AuthenticationMethod] =

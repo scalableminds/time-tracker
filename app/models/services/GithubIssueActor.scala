@@ -15,7 +15,7 @@ import play.api.Logger
  */
 case class FullScan(repo: Repository)
 
-class IssueActor extends Actor {
+class GithubIssueActor extends Actor {
   implicit val ec = context.system.dispatcher
 
   def receive = {
@@ -44,6 +44,6 @@ class IssueActor extends Actor {
 
 }
 
-object IssueActor extends StartableActor[IssueActor] {
-  val name = "issueActor"
+object GithubIssueActor extends StartableActor[GithubIssueActor] {
+  val name = "githubIssueActor"
 }

@@ -1,4 +1,4 @@
-import models.services.IssueActor
+import models.services.{GithubCollaboratorActor, GithubIssueActor}
 import play.api.GlobalSettings
 
 import play.api.Application
@@ -13,7 +13,8 @@ import play.api.libs.concurrent.Akka
 object Global extends GlobalSettings{
   override def onStart(app: Application) = {
     implicit val sys = Akka.system(app)
-    IssueActor.start
+    GithubIssueActor.start
+    GithubCollaboratorActor.start
   }
 
 }

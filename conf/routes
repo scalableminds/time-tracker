@@ -11,6 +11,7 @@ GET         /team                                                 controllers.Ap
 GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
 POST        /admin/repositories                                   controllers.admin.RepositoryAdministration.add
 GET         /admin/repositories/:owner/:name/scan                 controllers.admin.RepositoryAdministration.scan(owner: String, name: String)
+DELETE      /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
 
 # Add Issue time entry
 GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int)

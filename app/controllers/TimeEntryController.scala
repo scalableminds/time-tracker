@@ -15,6 +15,8 @@ import models.TimeEntry._
 import play.api.libs.json.JsArray
 import models.User
 import play.api.libs.json.JsObject
+import braingames.mvc.Fox
+import play.api.Logger
 
 /**
  * Company: scalableminds
@@ -23,15 +25,15 @@ import play.api.libs.json.JsObject
  * Time: 13:21
  */
 
-object DurationParser{
-  val durationRx = """^\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$"""r
+object DurationParser {
+  val durationRx = """^\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$""" r
 
   def parse(s: String) = {
-    durationRx.findFirstMatchIn(s).map{
+    durationRx.findFirstMatchIn(s).map {
       case durationRx(_d, _h, _m) =>
-        val d = if(_d == null) 0 else _d.toInt
-        val h = if(_h == null) 0 else _h.toInt
-        val m = if(_m == null) 0 else _m.toInt
+        val d = if (_d == null) 0 else _d.toInt
+        val h = if (_h == null) 0 else _h.toInt
+        val m = if (_m == null) 0 else _m.toInt
 
         (d * 8 + h) * 60 + m
     }
@@ -53,10 +55,10 @@ object TimeEntryController extends Controller with GlobalDBAccess with securesoc
         GithubApi.isCollaborator(user, user.githubAccessToken, fullName).map {
           case true =>
             for {
-              duration <- postParameter("duration").flatMap(parseAsDuration)  ?~ "Invalid duration."
+              duration <- postParameter("duration").flatMap(parseAsDuration) ?~ "Invalid duration."
             } yield {
               val issue = Issue(fullName, issueNumber)
-              val timeEntry = TimeEntry(issue, duration, "testUser")
+              val timeEntry = TimeEntry(issue, duration, user.githubId)
               TimeEntryDAO.createTimeEntry(timeEntry)
               Ok
             }
@@ -75,54 +77,67 @@ object TimeEntryController extends Controller with GlobalDBAccess with securesoc
     implicit request =>
       Async {
         val fullName = RepositoryDAO.createFullName(owner, repo)
-        TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber)).map {
-          entries =>
-            val jsonUserTimesList = createUserTimesList(entries)
-
-            Ok(JsObject(jsonUserTimesList))
+        for {
+          entries <- TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber))
+          jsonUserTimesList <- createUserTimesList(entries)
+        } yield {
+          Ok(JsArray(jsonUserTimesList))
         }
       }
   }
 
-  def showTimeForAUser(user: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Future[JsObject] = {
-    TimeEntryDAO.loggedTimeForUser(user, year, month).map {
-      entries =>
-        val jsonProjectsTimesList =
-          entries.groupBy(_.issue.project).map {
-            case (project, entries) =>
-              val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
-              project -> JsArray(jsonTimeEntries)
-          }.toList
+  def userInfo(user: User) =
+    Json.obj("userGID" -> user.githubId, "name" -> user.fullName, "email" -> user.email)
 
-        Json.obj("user" -> user, "projects" -> JsObject(jsonProjectsTimesList))
+  def showTimeForAUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsObject] = {
+    for {
+      user <- UserDAO.findOneByGID(userGID) ?~> "User not found"
+      entries <- TimeEntryDAO.loggedTimeForUser(userGID, year, month)
+    } yield {
+      val jsonProjectsTimesList =
+        entries.groupBy(_.issue.project).map {
+          case (project, entries) =>
+            val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
+            project -> JsArray(jsonTimeEntries)
+        }.toList
+
+      userInfo(user) ++ Json.obj("projects" -> JsObject(jsonProjectsTimesList))
     }
   }
 
   def showTimeForUser(year: Int, month: Int) = SecuredAction {
     implicit request =>
       Async {
-        showTimeForAUser(request.user.id.id, year, month).map{ result =>
-          Ok(result)
+        for {
+          times <- showTimeForAUser(request.user.id.id, year, month)
+        } yield {
+          Ok(times)
         }
       }
   }
 
   def createUserTimesList(entries: List[TimeEntry]) = {
-    entries.groupBy(_.user).map {
-      case (user, entries) =>
-        val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
-        user -> JsArray(jsonTimeEntries)
-    }.toList
+    Future.traverse(entries.groupBy(_.userGID)) {
+      case (userGID, entries) =>
+        UserDAO.findOneByGID(userGID).map {
+          case Some(user) =>
+            val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
+            userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
+          case _ =>
+            Logger.warn("No user found for gid: " + userGID)
+            Json.obj()
+        }
+    }.map(_.filterNot(_.fields.isEmpty).toSeq)
   }
 
   def showTimesForInterval(year: Int, month: Int) = SecuredAction {
     implicit request =>
       Async {
-        TimeEntryDAO.loggedTimeForInterval(year, month).map {
-          entries =>
-            val jsonUserTimesList = createUserTimesList(entries)
-
-            Ok(JsObject(jsonUserTimesList))
+        for {
+          entries <- TimeEntryDAO.loggedTimeForInterval(year, month)
+          jsonUserTimesList <- createUserTimesList(entries)
+        } yield {
+          Ok(JsArray(jsonUserTimesList))
         }
       }
   }
