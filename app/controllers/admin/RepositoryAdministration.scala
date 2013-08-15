@@ -7,7 +7,7 @@ import models.{Repository, RepositoryDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import views.html
 import scala.concurrent.Future
-import braingames.reactivemongo.GlobalDBAccess
+import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess}
 import play.api.libs.concurrent.Akka
 import models.services.{FullScan, GithubIssueActor}
 import play.api.Play.current
@@ -45,12 +45,12 @@ object RepositoryAdministration extends Controller with SecureSocial {
         for {
           repositoryName <- postParameter("repository")(request.request) ?~> "No repository name supplied"
           accessToken <- postParameter("accessToken")(request.request) ?~> "No access token supplied"
-          r <- RepositoryDAO.findByName(repositoryName)
+          r <- RepositoryDAO.findByName(repositoryName)(GlobalAccessContext)
         } yield {
           if (r.isEmpty) {
             val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
             RepositoryDAO.insert(repo)
-            GithubApi.createWebHook(user.githubAccessToken, repositoryName, "http://localhost:9000/repositories")
+            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"http://localhost:9000/$repositoryName")
             issueActor ! FullScan(repo)
             Redirect(controllers.admin.routes.RepositoryAdministration.list)
           } else

@@ -24,7 +24,15 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
   val collectionName = "repositories"
 
   override def findQueryFilter(implicit ctx: DBAccessContext) = {
-    AllowIf(Json.obj("collaborators" -> "1337"))
+    ctx.data match{
+      case Some(user: User) =>
+        AllowIf(Json.obj("collaborators" -> user.githubId))
+      case _ if ctx.globalAccess =>
+        AllowEveryone
+      case _ =>
+        DenyEveryone()
+
+    }
   }
 
   def createFullName(owner: String, repo: String) =
