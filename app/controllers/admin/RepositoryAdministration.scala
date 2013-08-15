@@ -19,7 +19,7 @@ import play.api.libs.concurrent.Execution.Implicits._
  * Date: 21.07.13
  * Time: 16:14
  */
-object RepositoryAdministration extends Controller with SecureSocial with GlobalDBAccess {
+object RepositoryAdministration extends Controller with SecureSocial {
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
 
   def list = SecuredAction {

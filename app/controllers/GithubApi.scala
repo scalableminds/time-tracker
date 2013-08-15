@@ -44,7 +44,7 @@ trait GithubRequestor {
   val GH = "https://api.github.com"
 
   def githubRequest(sub: String, prependHost: Boolean = true)(implicit token: String) = {
-    Logger.warn("Token: " + token)
+    Logger.debug("Using Github Token: " + token)
     val url =
       if (prependHost)
         GH + sub
@@ -60,7 +60,7 @@ class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) ex
   case class LinkHeader(value: String, params: Map[String, String])
 
   def parseParams(rawParams: List[String]): Map[String, String] = {
-    val ParamRx = """^\s*([^=]*)\s*=\s*(.*?)\s*$""".r
+    val ParamRx = """^\s*([^=]*)\s*=\s*"(.*?)"\s*$""".r
     rawParams.map {
       case ParamRx(typ, value) =>
         Some(typ -> value)
@@ -82,26 +82,29 @@ class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) ex
     }
   }
 
+  def isNextHeader(header: LinkHeader) = {
+    header.params.get("rel").map(_ == "next").getOrElse(false)
+  }
+
   def results: Future[List[T]] = {
-    def requestNext(nextRequest: String): Future[List[T]] = {
-      githubRequest(nextRequest)(token).get().flatMap {
+    def requestNext(nextRequest: WSRequestHolder): Future[List[T]] = {
+      nextRequest.get().flatMap {
         response =>
           val result = response.json.validate(deserializer).asOpt.toList
 
           if(response.status != Status.OK){
             Logger.warn("Result in result set failed: " + response.json)
           }
-          response.header("Link").flatMap(raw =>
-            parseLinkHeader(raw).find(link => link.params.get("rel").map(_ == "next").getOrElse(false))) match {
+          response.header("Link").flatMap(h => parseLinkHeader(h).find(isNextHeader)) match {
             case Some(link) =>
-              requestNext(link.value).map(result ::: _)
+              requestNext(githubRequest(link.value, prependHost = false)(token)).map(result ::: _)
             case _ =>
               Future.successful(result)
           }
       }
 
     }
-    requestNext(requestUrl)
+    requestNext(githubRequest(requestUrl)(token))
   }
 }
 
@@ -137,11 +140,12 @@ trait GithubRepositoryRequestor extends GithubRequestor {
         results.flatten.map(_.full_name)
     }
 
-  def listOrgaRepositories(token: String, orga: String) =
+  def listOrgaRepositories(token: String, orga: String) = {
     new ResultSet(orgaReposUrl(orga), extractRepos, token).results.map {
       results =>
         results.flatten.map(_.full_name)
     }
+  }
 
   val extractRepos = (__).read(list[GithubRepo])
 }
