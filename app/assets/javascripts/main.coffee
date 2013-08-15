@@ -1,7 +1,7 @@
 ### define
 jquery : $
 bootstrap : bootstrap
-user_time_report : UserTimeReport
+report_table : ReportTable
 team_time_report : TeamTimeReport
 time_entry : TimeEntryCode
 ###
@@ -34,7 +34,9 @@ $ ->
   route
 
     "/home" : ->
-      new UserTimeReport() 
+      view = new ReportTable()
+      view.render()
+      $("#main-container .container").empty().append(view.el)
     "/team" : ->
       new TeamTimeReport()
     "/repos/:owner/:repo/issues/:issueId/create" : ->

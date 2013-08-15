@@ -18,9 +18,3 @@ class Report
       $(".month_picker .month_forward").on "click", =>
         @currentDate.add("months", 1)
         @loadData()
-
-
-  #utilities
-  padNumber : (number) ->
-
-    String("0#{number}").slice(-2)
