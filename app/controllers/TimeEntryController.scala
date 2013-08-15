@@ -40,7 +40,7 @@ object DurationParser {
   }
 }
 
-object TimeEntryController extends Controller with GlobalDBAccess with securesocial.core.SecureSocial {
+object TimeEntryController extends Controller with securesocial.core.SecureSocial {
   val DefaultAccessRole = None
 
   def parseAsDuration(s: String) = {
@@ -116,7 +116,7 @@ object TimeEntryController extends Controller with GlobalDBAccess with securesoc
       }
   }
 
-  def createUserTimesList(entries: List[TimeEntry]) = {
+  def createUserTimesList(entries: List[TimeEntry])(implicit ctx: DBAccessContext) = {
     Future.traverse(entries.groupBy(_.userGID)) {
       case (userGID, entries) =>
         UserDAO.findOneByGID(userGID).map {

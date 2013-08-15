@@ -3,7 +3,7 @@ package models
 import reactivemongo.bson.BSONObjectID
 import play.api.libs.json._
 import play.modules.reactivemongo.json.BSONFormats._
-import braingames.reactivemongo.{ DBAccessContext}
+import braingames.reactivemongo.{DBAccessContextPayload, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core._
 
@@ -20,7 +20,7 @@ case class User( id: UserId,
                  authMethod: AuthenticationMethod,
                  oAuth1Info: Option[OAuth1Info],
                  oAuth2Info: Option[OAuth2Info],
-                 passwordInfo: Option[PasswordInfo]) extends Identity {
+                 passwordInfo: Option[PasswordInfo]) extends Identity with DBAccessContextPayload{
   val firstName = ""
   val lastName = ""
   val avatarUrl = None
