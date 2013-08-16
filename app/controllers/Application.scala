@@ -7,6 +7,7 @@ import securesocial.core.SecureSocial
 import views.html
 
 object Application extends Controller with SecureSocial {
+  val hostUrl = Play.current.configuration.getString("host.url").get
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))

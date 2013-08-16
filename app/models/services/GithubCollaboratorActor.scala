@@ -39,17 +39,22 @@ class GithubCollaboratorActor extends Actor with GlobalDBAccess with BoxImplicit
       })
     case CollectCollaborators(repositoryName) =>
       Logger.debug(s"Collecting collaborators of $repositoryName...")
-      RepositoryDAO.findByName(repositoryName).map {
-        case Some(repository) =>
-          GithubApi.listCollaborators(repository.accessToken, repository.fullName).map {
-            collaborators =>
-              Logger.debug(s"Found Collaborators ${collaborators.mkString(", ")} for $repositoryName")
-              RepositoryDAO.updateCollaborators(repository.fullName, collaborators.map(_.toString))
-              context.system.scheduler.scheduleOnce(collaboratorQueryInterval, self, CollectCollaborators(repositoryName))
-          }
-        case _ =>
-          Logger.debug(s"CollaboratorActor couldn't find repository $repositoryName")
-      }
+      collectCollaborators(repositoryName)
+
+  }
+
+  def collectCollaborators(repositoryName: String) = {
+    RepositoryDAO.findByName(repositoryName).map {
+      case Some(repository) =>
+        GithubApi.listCollaborators(repository.accessToken, repository.fullName).map {
+          collaborators =>
+            Logger.debug(s"Found Collaborators ${collaborators.mkString(", ")} for $repositoryName")
+            RepositoryDAO.updateCollaborators(repository.fullName, collaborators.map(_.toString))
+            context.system.scheduler.scheduleOnce(collaboratorQueryInterval, self, CollectCollaborators(repositoryName))
+        }
+      case _ =>
+        Logger.debug(s"CollaboratorActor couldn't find repository $repositoryName")
+    }
   }
 }
 

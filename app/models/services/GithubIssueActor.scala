@@ -2,9 +2,8 @@ package models.services
 
 import akka.actor.Actor
 import models.Repository
-import controllers.GithubApi
+import controllers.{Application, GithubApi, GithubIssue}
 import braingames.util.StartableActor
-import controllers.GithubIssue
 import play.api.Logger
 
 /**
@@ -36,7 +35,9 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
   val name = "githubIssueActor"
 
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
-    s"""<a href="http://localhost:9000${controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number).url}" target="_blank">Log Time</a>"""
+    val link =
+      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number).url
+    s"""<a href="$link" target="_blank">Log Time</a>"""
   }
 
   def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue) = {

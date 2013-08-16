@@ -1,8 +1,7 @@
 package controllers.admin
 
-import controllers.Controller
+import controllers.{Application, Controller, GithubApi}
 import securesocial.core.SecureSocial
-import controllers.GithubApi
 import models.{Repository, RepositoryDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import views.html
@@ -50,7 +49,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
           if (r.isEmpty) {
             val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
             RepositoryDAO.insert(repo)
-            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"http://localhost:9000/$repositoryName")
+            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/$repositoryName")
             issueActor ! FullScan(repo)
             Redirect(controllers.admin.routes.RepositoryAdministration.list)
           } else
