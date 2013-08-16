@@ -49,7 +49,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
           if (r.isEmpty) {
             val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
             RepositoryDAO.insert(repo)
-            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/$repositoryName")
+            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
             issueActor ! FullScan(repo)
             Redirect(controllers.admin.routes.RepositoryAdministration.list)
           } else

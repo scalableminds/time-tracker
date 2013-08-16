@@ -32,7 +32,6 @@ object RepositoryController extends Controller {
             Logger.warn(s"Issue hook triggered, but couldn't find repository $owner/$repository")
         }
       }
-      Logger.debug("Got payload: " + request.body)
       Ok("Thanks octocat :)")
   }
 }
