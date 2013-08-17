@@ -1,4 +1,4 @@
-@(availableRepositories: List[String], usedRepositories: List[models.Repository])
+@(availableRepositories: List[String], usedRepositories: List[models.Repository])(implicit session: controllers.SessionData)
 
 @main("Repository Administration") {
     <div class="container">

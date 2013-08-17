@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit session: controllers.SessionData)
 
 <!DOCTYPE html>
 
@@ -15,23 +15,41 @@
         <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
     </head>
     <body>
-        <header class="navbar" role="banner">
+        <header class="navbar" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
                     <a class="navbar-brand" href="@controllers.routes.Application.home">Time-Tracker</a>
                 </div>
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
+                @session.userOpt.map { user =>
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="@controllers.routes.Application.home">Home</a></li>
                         <li><a href="@controllers.routes.Application.team">Team</a></li>
                         <li><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
                     </ul>
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="divider-vertical"></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="icon-user icon-white"></i> <strong>@user.fullName</strong> <span>(@user.email)</span>
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@securesocial.controllers.routes.LoginPage.logout()"><i class="icon-off"></i>
+                                        Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                }.getOrElse {
+                    <ul class="nav navbar-nav pull-right">
+                        <li>
+                            <a href="@securesocial.controllers.routes.ProviderController.authenticate("github")">Login with Github</a>
+                        </li>
+                    </ul>
+
+                }
                 </div>
             </div>
         </header>

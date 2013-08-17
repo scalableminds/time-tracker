@@ -25,7 +25,7 @@ GET         /repos/:owner/:repo/issues/:issueNumber               controllers.Ti
 
 
 # Login page
-GET         /login                                                securesocial.controllers.LoginPage.login
+GET         /login                                                securesocial.controllers.ProviderController.authenticate(provider = "github")
 GET         /logout                                               securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling

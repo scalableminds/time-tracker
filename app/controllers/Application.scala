@@ -9,8 +9,11 @@ import views.html
 object Application extends Controller with SecureSocial {
   val hostUrl = Play.current.configuration.getString("host.url").get
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def index = UserAwareAction{ implicit request =>
+    if(request.user.isDefined)
+      Redirect(controllers.routes.Application.home)
+    else
+      Ok(views.html.index("Your new application is ready."))
   }
 
   def home = SecuredAction {
