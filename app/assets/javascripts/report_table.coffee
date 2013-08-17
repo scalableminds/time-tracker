@@ -7,47 +7,47 @@ report : Report
 ./utils : Utils
 ###
 
-data = {
-  "user" : "tmbo",
-  "projects": {
-    "brainflight": 
-      [
-        { 
-            "issueNumber": 0,
-            "time": 10
-            "title": "BF-101 Build time tracker"
-            "date": "2013-08-01T00:08:59.181Z"
-        },
-        {
-            "issueNumber": 2,
-            "time": 60
-            "title": "BF-12 Work some more!"
-            "date": "2013-08-12T00:08:59.181Z"
-        },
-        {
-          "issueNumber": 2,
-          "time": 60
-          "title": "BF-12 Work some more!"
-          "date": "2013-08-12T00:18:59.181Z"
-        }
-      ]
-    ,"oxalis": 
-      [
-        { 
-            "issueNumber": 4,
-            "time": 10
-            "title": "OX-1 satisfy Moritz"
-            "date": "2013-08-30T00:08:59.181Z"
-        },
-        {
-            "issueNumber": 12,
-            "time": 60
-            "title": "OX-1000 sell Oxalis"
-            "date": "2013-08-10T00:08:59.181Z"
-        }
-      ]
-    }
-}
+# data = {
+#   "user" : "tmbo",
+#   "projects": {
+#     "brainflight": 
+#       [
+#         { 
+#             "issueNumber": 0,
+#             "duration": 10
+#             "title": "BF-101 Build time tracker"
+#             "date": "2013-08-01T00:08:59.181Z"
+#         },
+#         {
+#             "issueNumber": 2,
+#             "duration": 60
+#             "title": "BF-12 Work some more!"
+#             "date": "2013-08-12T00:08:59.181Z"
+#         },
+#         {
+#           "issueNumber": 2,
+#           "duration": 60
+#           "title": "BF-12 Work some more!"
+#           "date": "2013-08-12T00:18:59.181Z"
+#         }
+#       ]
+#     ,"oxalis": 
+#       [
+#         { 
+#             "issueNumber": 4,
+#             "duration": 10
+#             "title": "OX-1 satisfy Moritz"
+#             "date": "2013-08-30T00:08:59.181Z"
+#         },
+#         {
+#             "issueNumber": 12,
+#             "duration": 60
+#             "title": "OX-1000 sell Oxalis"
+#             "date": "2013-08-10T00:08:59.181Z"
+#         }
+#       ]
+#     }
+# }
 
 class ReportTable extends Backbone.View
 
@@ -100,11 +100,13 @@ class ReportTable extends Backbone.View
 
   initialize : ->
 
-    @model = data
+    console.log "report-table is initializing"
+    
     @currentDate = moment()
+    console.log "@currentDate: ", @currentDate
+    
 
     @monthPicker = new MonthPicker()
-
 
   editTime : (event) ->
 
@@ -119,9 +121,12 @@ class ReportTable extends Backbone.View
 
 
   render : ->
-
+    @monthPicker.model = @currentDate
+    
+    console.log "rendering is triggered"
+  
     @$el.append(@template(
-      userName : @model.user
+      userName : @model.name or @model.email
       table : @prepareTable()
     ))
 
@@ -147,10 +152,10 @@ class ReportTable extends Backbone.View
     for project, projectEntries of @model.projects
       
       projectDaysGroups = _.groupBy(projectEntries, (a) -> moment(a.date).date())
-      
+
       table.push(
-        [Cell(project, 2), Cell(Utils.sum(_.map(projectEntries, "time")))].concat(
-          _.map(daysRange, (day) -> Cell(Utils.sum(_.map(projectDaysGroups[day] ? [], (a) -> a.time)) || ""))
+        [Cell(project, 2), Cell(Utils.sum(_.map(projectEntries, "duration")))].concat(
+          _.map(daysRange, (day) -> Cell(Utils.sum(_.map(projectDaysGroups[day] ? [], (a) -> a.duration)) || ""))
         )
       )
 
@@ -160,10 +165,10 @@ class ReportTable extends Backbone.View
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
 
           table.push([
-            Cell(entries[0].issueNumber)
-            Cell(entries[0].title)
-            Cell(Utils.sum(_.map(entries, "time")))
-          ].concat(_.map(daysRange, (day) -> Cell(Utils.sum(_.map(entriesDaysGroups[day] ? [], (a) -> a.time)) || "", 0, "edit-time"))))
+            Cell(entries[0].issueNumber) # issue
+            Cell(entries[0].title)       # summary
+            Cell(Utils.sum(_.map(entries, "duration")))
+          ].concat(_.map(daysRange, (day) -> Cell(Utils.sum(_.map(entriesDaysGroups[day] ? [], (a) -> a.duration)) || "", 0, "edit-time"))))
       )
 
     #tfoot
@@ -171,8 +176,8 @@ class ReportTable extends Backbone.View
     allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
 
     table.push([
-      Cell(""), Cell(""), Cell(Utils.sum(_.map(allEntries, "time")))
-    ].concat(_.map(daysRange, (day) -> Cell(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.time)) || ""))))
+      Cell(""), Cell(""), Cell(Utils.sum(_.map(allEntries, "duration")))
+    ].concat(_.map(daysRange, (day) -> Cell(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration)) || ""))))
 
     table
 
