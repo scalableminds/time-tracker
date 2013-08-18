@@ -3,6 +3,7 @@ package controllers
 import scala.None
 import models.{UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
+import models.services.UserCache
 
 /**
  * Company: scalableminds
@@ -22,10 +23,12 @@ object UserController extends Controller with securesocial.core.SecureSocial {
     implicit request =>
       Async {
         val a = User.generateAccessKey
+        val user = request.user.asInstanceOf[User]
         for {
-          _ <- UserDAO.setAccessKey(request.user.asInstanceOf[User], a)
+          _ <- UserDAO.setAccessKey(user, a)
         } yield {
-          Ok(views.html.user.settings(request.user.asInstanceOf[User]))
+          UserCache.removeUserFromCache(user.id)
+          JsonOk("A new access key was created.")
         }
       }
   }
