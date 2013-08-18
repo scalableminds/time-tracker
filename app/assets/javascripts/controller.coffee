@@ -11,7 +11,7 @@ class Controller
   constructor : ->
 
     @loadAndDisplay 2013, 8
-  
+    @users = {}
 
   loadAndDisplay : (@year, @month) ->
     
@@ -33,14 +33,17 @@ class Controller
 
     @view = new ReportTable()
     @view.model = @model
+    @view.users = @users
     @view.currentDate = moment([@year, @month - 1, 1])
 
     @view.groupByIterator = @groupByIterator
+    @view.groupByIteratorToString = @groupByIteratorToString
     @view.cellClass = @cellClass
 
   requestData : ->
 
     # subclass responsibility
+
 
 
 

@@ -6,6 +6,7 @@
 GET         /                                                     controllers.Application.index
 GET         /home                                                 controllers.Application.home
 GET         /team                                                 controllers.Application.team
+GET					/project																							controllers.Application.project
 
 # Admin
 GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list

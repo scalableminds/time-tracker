@@ -8,9 +8,9 @@ controller : Controller
 class UserReportController extends Controller
 
   cellClass : "edit-time"
-  
-  groupByIterator : (time) -> return time.issue.number
 
+  groupByIterator : (time) -> return time.issue.number
+  groupByIteratorToString : (time) -> @groupByIterator(time)
 
   requestData : ->
 

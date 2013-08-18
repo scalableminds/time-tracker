@@ -25,6 +25,7 @@
                 @session.userOpt.map { user =>
                     <ul class="nav navbar-nav">
                         <li @if(title=="Home"){class="active"}><a href="@controllers.routes.Application.home">Home</a></li>
+                        <li @if(title=="Project"){class="active"}><a href="@controllers.routes.Application.project">Project</a></li>
                         <li @if(title=="Team"){class="active"}><a href="@controllers.routes.Application.team">Team</a></li>
                         <li @if(title=="Repository Administration"){class="active"}><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
                     </ul>

@@ -3,6 +3,8 @@ jquery : $
 bootstrap : bootstrap
 time_entry : TimeEntryCode
 user_report_controller : UserReportController
+project_report_controller : ProjectReportController
+team_report_table : TeamReportTable
 team_report_controller : TeamReportController
 datepicker : datepicker
 ###
@@ -35,11 +37,15 @@ $ ->
   route
 
     "/home" : ->
-      controller = new UserReportController("home")
+      controller = new UserReportController()
 
+
+    "/project" : ->
+      controller = new ProjectReportController()
 
     "/team" : ->
-      controller = new TeamReportController("team")
+      # controller = new TeamP
+      controller = new TeamReportController()
 
 
     "/repos/:owner/:repo/issues/:issueId/create" : ->

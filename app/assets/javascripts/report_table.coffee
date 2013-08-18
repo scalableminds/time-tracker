@@ -136,7 +136,7 @@ class ReportTable extends Backbone.View
           table.push(
             Row(
               [
-                Cell(@groupByIterator entries[0])
+                Cell(@groupByIteratorToString entries[0])
                 # Cell(entries[0].title)       # summary
                 Cell(Utils.minutesToHours(Utils.sum(_.map(entries, "duration"))))
               ].concat(

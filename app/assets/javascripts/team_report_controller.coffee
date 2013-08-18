@@ -2,60 +2,65 @@
 jquery : $
 bootstrap : bootstrap
 controller : Controller
+team_report_table : TeamReportTable
 ###
 
 class TeamReportController extends Controller
 
   cellClass : ""
   
-  groupByIterator : (time) -> return time.userGID
-
-
+  groupByIterator : (time) -> return time.issue.project
+  groupByIteratorToString : (time) -> @groupByIterator time
+  
   requestData : ->
 
     return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@year, @month).ajax().then (data) =>
-           
-      @model = @groupByProjects data
+      
+      dic = {}
+
+      for user in data
+        dic[user.name] = user.times
+
+
+
+      @model = {projects : dic}
+      console.log "data", data
+
+
+
 
       for currentProjectName, currentProject of @model.projects
         for currentLog in currentProject
           currentLog.date = new Date(currentLog.timestamp)
 
-  groupByProjects : (data) ->
-
-    ### will generate something like:
-        {
-          projects : {
-            philippotto/ttest : [
-              # each element represents a time logged for an user
-              {
-                duration : 5,
-                issue : Object,
-                timestamp: 1372347821934,
-                userGID : "2134213"
-              },
-              {...}
-            ],
-          }
-          tmbo/test : {}
-          }
-        }
-    ###
-
-    console.log data
-    projects = {}
-
-    for user in data
-      userID = user.userGID
-      for time in user.times
-        projectName = time.issue.project
-        
-        if not projects[projectName]
-          projects[projectName] = []
-
-        p = projects[projectName]
-        p.push time
+      return @model
 
 
-    console.log "projects", projects
-    return {"projects" : projects}
+
+# class TeamReportController extends Controller
+
+#   requestData : ->
+
+#     return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@year, @month).ajax().then (data) =>
+           
+#       @model =  data
+
+#       for currentProjectName, currentProject of @model.projects
+#         for currentLog in currentProject
+#           currentLog.date = new Date(currentLog.timestamp)
+
+#   instantiateView : ->
+
+#     @view = new TeamReportTable()
+
+#     @view.model = @model
+#     @view.users = @users
+#     @view.currentDate = moment([@year, @month - 1, 1])
+
+
+#     # view.render()
+
+#     # $("#main-container .container").empty().append(view.el)
+
+#     # view.monthPicker.on "change", (event) =>
+#     #   @loadAndDisplay(event.year(), event.month() + 1)

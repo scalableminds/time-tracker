@@ -1,0 +1,20 @@
+@()(implicit session: controllers.SessionData)
+
+@main("Project"){
+   <div class="container wide">
+        <div>
+            <h2 id="user">Project Overview</h2>
+            <div class="btn-group month_picker">
+                <button class="btn btn-default month_back"><i class=" icon-chevron-left"></i></button>
+                <button class="btn btn-default month_title"></button>
+                <button class="btn btn-default month_forward"><i class=" icon-chevron-right"></i></button>
+            </div>
+        </div>
+        <div>
+            <table id="timetable" class="table table-hover table-striped table-bordered">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+}
