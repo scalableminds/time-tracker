@@ -1,0 +1,8 @@
+@(user: models.User)(implicit session: controllers.SessionData)
+
+@main("User Settings") {
+    <div class="container">
+        <h3>@user.fullName</h3>
+        <div>Access-Key: @user.accessKey</div>
+
+}

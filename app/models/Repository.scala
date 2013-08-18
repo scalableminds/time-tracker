@@ -18,6 +18,10 @@ case class Repository(fullName: String, accessToken: String, admins: List[String
   def isAdmin(user: User) = {
     admins.contains(user.githubId)
   }
+
+  def isCollaborator(user: User) = {
+    collaborators.contains(user.githubId)
+  }
 }
 
 object RepositoryDAO extends BasicReactiveDAO[Repository] {

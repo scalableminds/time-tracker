@@ -15,17 +15,18 @@ DELETE      /admin/repositories/:owner/:name                      controllers.ad
 
 # Add Issue time entry
 GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int)
-POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int)
+POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
 POST        /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
 
 # Request times
 GET         /times/:year/:month                                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
 GET         /user/times/:year/:month                              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
+GET         /user/settings                                        controllers.UserController.showSettings()
 GET         /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
 
 
 # Login page
-GET         /login                                                securesocial.controllers.ProviderController.authenticate(provider = "github")
+GET         /login                                                securesocial.controllers.LoginPage.login
 GET         /logout                                               securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling

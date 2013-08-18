@@ -2,14 +2,13 @@ package controllers
 
 import play.api.mvc.{Action}
 import models._
-import braingames.reactivemongo.GlobalDBAccess
+import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
 import play.api.data.Form
 import play.api.data.Forms._
 import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.util.ExtendedTypes._
 import scala.concurrent.Future
-import braingames.reactivemongo.DBAccessContext
 import play.api.libs.json.{JsObject, JsString, JsArray, Json}
 import models.TimeEntry._
 import play.api.libs.json.JsArray
@@ -17,6 +16,7 @@ import models.User
 import play.api.libs.json.JsObject
 import braingames.mvc.Fox
 import play.api.Logger
+import securesocial.core.RequestWithUser
 
 /**
  * Company: scalableminds
@@ -43,35 +43,56 @@ object DurationParser {
 object TimeEntryController extends Controller with securesocial.core.SecureSocial {
   val DefaultAccessRole = None
 
+  case class TimeEntryPost(duration: String, timestamp: Long = System.currentTimeMillis())
+
+  implicit val timeEntryPostFormat = Json.format[TimeEntryPost]
+
   def parseAsDuration(s: String) = {
     DurationParser.parse(s)
   }
 
-  def create(owner: String, repo: String, issueNumber: Int) = SecuredAction(ajaxCall = false, authorize = None, p = parse.urlFormEncoded) {
+  def userFromRequestOrKey(accessKey: String)(implicit request: RequestWithUser[_]) = {
+    for{
+      u1 <- Future.successful(request.user.map(u => (u.asInstanceOf[User])))
+      u2 <-  UserDAO.findByAccessKey(accessKey)(GlobalAccessContext)
+    } yield {
+      u1 orElse u2
+    }
+  }
+
+  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction(p = parse.json) {
     implicit request =>
       Async {
         val fullName = RepositoryDAO.createFullName(owner, repo)
-        val user = request.user.asInstanceOf[User]
-        GithubApi.isCollaborator(user, user.githubAccessToken, fullName).map {
-          case true =>
-            for {
-              duration <- postParameter("duration").flatMap(parseAsDuration) ?~ "Invalid duration."
-            } yield {
-              val issue = Issue(fullName, issueNumber)
-              val timeEntry = TimeEntry(issue, duration, user.githubId)
-              TimeEntryDAO.createTimeEntry(timeEntry)
-              Ok
-            }
-          case false =>
-            BadRequest("Not allowed.")
-        }
+        (for {
+          user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
+          repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
+          if (repository.isCollaborator(user))
+          timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
+          duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
+        } yield {
+
+          val issue = Issue(fullName, issueNumber)
+          val timeEntry = TimeEntry(issue, duration, user.githubId, timeEntryPost.timestamp)
+          TimeEntryDAO.createTimeEntry(timeEntry)(user)
+          Ok
+        }) ?~> "Not allowed."
       }
   }
 
   def createForm(owner: String, repo: String, issueNumber: Int) = SecuredAction {
     implicit request =>
-      Ok(html.timeEntry(owner, repo, issueNumber))
+      Async {
+        val user = request.user.asInstanceOf[User]
+        (for {
+          repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo)) ?~> "Repository couldn't be found"
+          if (repository.isCollaborator(user))
+        } yield {
+          Ok(html.timeEntry(owner, repo, issueNumber))
+        }) ?~> "Not allowed."
+      }
   }
+
 
   def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = SecuredAction {
     implicit request =>
