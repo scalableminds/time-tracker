@@ -15,7 +15,7 @@
         <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
     </head>
     <body>
-        <header class="navbar" role="navigation">
+        <header class="navbar navbar-inverse" role="navigation">
             <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="@controllers.routes.Application.home">Time-Tracker</a>
@@ -23,9 +23,9 @@
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
                 @session.userOpt.map { user =>
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="@controllers.routes.Application.home">Home</a></li>
-                        <li><a href="@controllers.routes.Application.team">Team</a></li>
-                        <li><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
+                        <li @if(title=="Home"){class="active"}><a href="@controllers.routes.Application.home">Home</a></li>
+                        <li @if(title=="Team"){class="active"}><a href="@controllers.routes.Application.team">Team</a></li>
+                        <li @if(title=="Repository Administration"){class="active"}><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         <li class="divider-vertical"></li>

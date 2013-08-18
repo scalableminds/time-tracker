@@ -30,6 +30,7 @@ object Application extends Controller with SecureSocial {
     Ok(
       Routes.javascriptRouter("jsRoutes")(
         // fill in stuff which should be able to be called from js
+        controllers.routes.javascript.TimeEntryController.showTimesForInterval,
         controllers.routes.javascript.TimeEntryController.showTimeForUser
       )).as("text/javascript")
   }

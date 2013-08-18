@@ -2,52 +2,9 @@
 jquery : $
 underscore : _
 backbone : Backbone
-report : Report
 ./month_picker : MonthPicker
 ./utils : Utils
 ###
-
-# data = {
-#   "user" : "tmbo",
-#   "projects": {
-#     "brainflight": 
-#       [
-#         { 
-#             "issueNumber": 0,
-#             "duration": 10
-#             "title": "BF-101 Build time tracker"
-#             "date": "2013-08-01T00:08:59.181Z"
-#         },
-#         {
-#             "issueNumber": 2,
-#             "duration": 60
-#             "title": "BF-12 Work some more!"
-#             "date": "2013-08-12T00:08:59.181Z"
-#         },
-#         {
-#           "issueNumber": 2,
-#           "duration": 60
-#           "title": "BF-12 Work some more!"
-#           "date": "2013-08-12T00:18:59.181Z"
-#         }
-#       ]
-#     ,"oxalis": 
-#       [
-#         { 
-#             "issueNumber": 4,
-#             "duration": 10
-#             "title": "OX-1 satisfy Moritz"
-#             "date": "2013-08-30T00:08:59.181Z"
-#         },
-#         {
-#             "issueNumber": 12,
-#             "duration": 60
-#             "title": "OX-1000 sell Oxalis"
-#             "date": "2013-08-10T00:08:59.181Z"
-#         }
-#       ]
-#     }
-# }
 
 class ReportTable extends Backbone.View
 
@@ -62,15 +19,15 @@ class ReportTable extends Backbone.View
       <table id="timetable" class="table table-hover table-bordered table-striped">
         <thead>
           <tr>
-            <% _.first(table).forEach(function (cell) { %>
+            <% _.first(table).cells.forEach(function (cell) { %>
               <th><%= cell.value %></th>
             <% }) %>
           </tr>
         </thead>
         <tbody>
           <% table.slice(1, -1).forEach(function (row) { %>
-            <tr>
-              <% row.forEach(function (cell) { %>
+            <tr class="<%= row.className %>" >
+              <% row.cells.forEach(function (cell) { %>
                 <td<% if (cell.colspan) { %> colspan="<%= cell.colspan %>" <% } %><% if (cell.className) { %> class="<%= cell.className %>" <% } %>><%= cell.value %></td>
               <% }) %>
             </tr>
@@ -78,7 +35,7 @@ class ReportTable extends Backbone.View
         </tbody>
         <tfoot>
           <tr>
-            <% _.last(table).forEach(function (cell) { %>
+            <% _.last(table).cells.forEach(function (cell) { %>
               <th><%= cell.value %></th>
             <% }) %>
           </tr>
@@ -98,7 +55,11 @@ class ReportTable extends Backbone.View
     "click .popup" : -> @popup.hide()
 
 
+
   initialize : ->
+
+    @groupByIterator = null
+
 
     console.log "report-table is initializing"
     
@@ -107,6 +68,7 @@ class ReportTable extends Backbone.View
     
 
     @monthPicker = new MonthPicker()
+
 
   editTime : (event) ->
 
@@ -122,7 +84,7 @@ class ReportTable extends Backbone.View
 
   render : ->
     @monthPicker.model = @currentDate
-    
+
     console.log "rendering is triggered"
   
     @$el.append(@template(
@@ -139,14 +101,22 @@ class ReportTable extends Backbone.View
   prepareTable : ->
 
     table = []
+
+    Row = (cells, className = "") -> {cells, className}
     Cell = (value, colspan = 0, className = "") -> { value, colspan, className }
 
     # thead
-    daysRange = _.range(1, @currentDate.endOf("month").date())
+    daysRange = _.range(1, @currentDate.endOf("month").date() + 1)
 
-    table.push([Cell("Issue"), Cell("Summary"), Cell("&sum;")].concat(
-      _.map(daysRange, (a) -> Cell(Utils.zeroPad(a)))
-    ))
+    table.push(
+      Row(
+        [
+          Cell("Issue")
+          # , Cell("Summary")
+          , Cell("&sum;")
+        ].concat(_.map(daysRange, (a) -> Cell(Utils.zeroPad(a))))
+      )
+    )
 
     #tbody
     for project, projectEntries of @model.projects
@@ -154,30 +124,69 @@ class ReportTable extends Backbone.View
       projectDaysGroups = _.groupBy(projectEntries, (a) -> moment(a.date).date())
 
       table.push(
-        [Cell(project, 2), Cell(Utils.sum(_.map(projectEntries, "duration")))].concat(
-          _.map(daysRange, (day) -> Cell(Utils.sum(_.map(projectDaysGroups[day] ? [], (a) -> a.duration)) || ""))
+        Row(
+          [
+            Cell(project, 2)
+            # , Cell(Utils.sum(_.map(projectEntries, "duration")))
+          ].concat(
+            _.map(daysRange, (day) -> Cell(Utils.minutesToHours(Utils.sum(_.map(projectDaysGroups[day] ? [], (a) -> a.duration))) || ""))
+          ),
+          "info"
         )
       )
 
-      _.forOwn(_.groupBy(projectEntries, "title"),
-        (entries) ->
+      _.forOwn(_.groupBy(projectEntries, @groupByIterator),
+        (entries) =>
 
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
 
-          table.push([
-            Cell(entries[0].issueNumber) # issue
-            Cell(entries[0].title)       # summary
-            Cell(Utils.sum(_.map(entries, "duration")))
-          ].concat(_.map(daysRange, (day) -> Cell(Utils.sum(_.map(entriesDaysGroups[day] ? [], (a) -> a.duration)) || "", 0, "edit-time"))))
+          table.push(
+            Row(
+              [
+                Cell(@groupByIterator entries[0])
+                # Cell(entries[0].title)       # summary
+                Cell(Utils.minutesToHours(Utils.sum(_.map(entries, "duration"))))
+              ].concat(
+                _.map(
+                  daysRange, (day) =>
+                    Cell(
+                      Utils.minutesToHours(Utils.sum(
+                        _.map(
+                          entriesDaysGroups[day] ? [],
+                          (a) => a.duration)
+                        )) || "",
+                      0,
+                      @cellClass
+                    )
+                )
+              )
+            )
+          )
       )
 
     #tfoot
     allEntries = _.flatten(_.values(@model.projects))
     allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
 
-    table.push([
-      Cell(""), Cell(""), Cell(Utils.sum(_.map(allEntries, "duration")))
-    ].concat(_.map(daysRange, (day) -> Cell(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration)) || ""))))
+    table.push(
+      Row(
+        [
+          Cell("&sum;")
+          # , Cell("")
+          , Cell(Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration"))))
+        ].concat(
+          _.map(
+            daysRange, (day) ->
+              Cell(Utils.minutesToHours(Utils.sum(
+                _.map(
+                  allDaysGroups[day] ? [],
+                  (a) -> a.duration)
+                )) || ""
+              )
+          )
+        )
+      )
+    )
 
     table
 

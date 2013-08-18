@@ -7,6 +7,8 @@ bootstrap : bootstrap
 
   $alert = $(".alert")
   $alert.alert()
+  $(".close").click ->
+    $(this).parent().removeClass 'in'
 
   $("input[type=submit]").on "click", (evt) ->
 
@@ -24,21 +26,19 @@ bootstrap : bootstrap
 
       setTimeout(
         -> window.history.back()
-        1
+        1000
       )
-      $alert.addClass("alert-success")
       $alert.text("Yeah! Your time got logged.")
-      $alert.show()
-      dismissAlert()
+      $alert.addClass("alert-success in")
+      # dismissAlert()
     )
     .fail (jqXHR, textStatus, error ) ->
 
-      $alert.addClass("alert-error")
+      $alert.addClass("alert-error in")
       $alert.text("Ups! Something went wrong.")
-      $alert.show()
-      console.error("There was an error submitting the entry: #{error}")
-      dismissAlert()
 
+      console.error("There was an error submitting the entry:", error)
+      # dismissAlert()
 
   dismissAlert = ->
 
@@ -46,4 +46,4 @@ bootstrap : bootstrap
       $alert.removeClass("alert-error")
       $alert.removeClass("alert-success")
       $alert.hide()
-    ), 2000
+    ), 5000

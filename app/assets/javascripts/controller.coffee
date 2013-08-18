@@ -11,7 +11,7 @@ class Controller
   constructor : ->
 
     @loadAndDisplay 2013, 8
-    
+  
 
   loadAndDisplay : (@year, @month) ->
     
@@ -21,26 +21,26 @@ class Controller
 
   displayModel : ->
 
-      @view = new ReportTable()
-      @view.model = @model
-      
-      @view.currentDate = moment([@year, @month - 1, 1])
-      
-      @view.render()
+    @instantiateView()
+    @view.render()
 
-      $("#main-container .container").empty().append(@view.el)
+    $("#main-container .container").empty().append(@view.el)
 
-      @view.monthPicker.on "change", (event) =>
-        @loadAndDisplay(event.year(), event.month() + 1)
-      
+    @view.monthPicker.on "change", (event) =>
+      @loadAndDisplay(event.year(), event.month() + 1)
+  
+  instantiateView : ->
+
+    @view = new ReportTable()
+    @view.model = @model
+    @view.currentDate = moment([@year, @month - 1, 1])
+
+    @view.groupByIterator = @groupByIterator
+    @view.cellClass = @cellClass
 
   requestData : ->
 
-    return jsRoutes.controllers.TimeEntryController.showTimeForUser(@year, @month).ajax().then (json) =>
-      console.log "json", json
+    # subclass responsibility
 
-      for currentProjectName, currentProject of json.projects
-        for currentLog in currentProject
-          currentLog.date = new Date(currentLog.timestamp)
 
-      @model = json
+
