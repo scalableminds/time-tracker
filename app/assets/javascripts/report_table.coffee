@@ -59,14 +59,7 @@ class ReportTable extends Backbone.View
   initialize : ->
 
     @groupByIterator = null
-
-
-    console.log "report-table is initializing"
-    
     @currentDate = moment()
-    console.log "@currentDate: ", @currentDate
-    
-
     @monthPicker = new MonthPicker()
 
 

@@ -75,7 +75,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
           val issue = Issue(fullName, issueNumber)
           val timeEntry = TimeEntry(issue, duration, user.githubId, timeEntryPost.timestamp)
           TimeEntryDAO.createTimeEntry(timeEntry)(user)
-          Ok
+          JsonOk("OK")
         }) ?~> "Not allowed."
       }
   }

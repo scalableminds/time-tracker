@@ -4,6 +4,7 @@ bootstrap : bootstrap
 time_entry : TimeEntryCode
 user_report_controller : UserReportController
 team_report_controller : TeamReportController
+datepicker : datepicker
 ###
 
 $ ->
@@ -36,8 +37,25 @@ $ ->
     "/home" : ->
       controller = new UserReportController("home")
 
+
     "/team" : ->
       controller = new TeamReportController("team")
 
+
     "/repos/:owner/:repo/issues/:issueId/create" : ->
+
       TimeEntryCode()
+
+
+    "/user/settings" : ->
+      
+      $("#generateKey").click ->
+        $.ajax({url : $(this).data("url"), method : 'post'}).done ->
+          location.reload()
+
+
+    "/admin/repositories" : ->
+
+      $("#deleteRepository").click ->
+        $.ajax({url : $(this).data("url"), method : 'delete'}).done ->
+          location.reload()

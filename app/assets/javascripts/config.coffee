@@ -14,6 +14,7 @@ requirejs
     "underscore" : "bower_components/lodash/dist/lodash.min"
     "backbone" : "bower_components/backbone/backbone-min"
     "bootstrap" : "bootstrap.min"
+    "datepicker" : "bootstrap-datepicker"
 
   shim :
     "moment" :
@@ -22,3 +23,6 @@ requirejs
     "backbone" : 
     	deps : ["jquery", "underscore"]
     	exports : "Backbone"
+    "datepicker" :
+      deps : ["jquery"]
+      exports : "datepicker"
