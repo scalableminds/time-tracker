@@ -2,8 +2,8 @@
 jquery : $
 bootstrap : bootstrap
 controller : Controller
-team_report_table : TeamReportTable
 ###
+
 
 class TeamReportController extends Controller
 
