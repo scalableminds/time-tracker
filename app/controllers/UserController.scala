@@ -1,7 +1,8 @@
 package controllers
 
 import scala.None
-import models.User
+import models.{UserDAO, User}
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * Company: scalableminds
@@ -15,5 +16,17 @@ object UserController extends Controller with securesocial.core.SecureSocial {
   def showSettings() = SecuredAction {
     implicit request =>
       Ok(views.html.user.settings(request.user.asInstanceOf[User]))
+  }
+
+  def createAccessKey() = SecuredAction {
+    implicit request =>
+      Async {
+        val a = User.generateAccessKey
+        for {
+          _ <- UserDAO.setAccessKey(request.user.asInstanceOf[User], a)
+        } yield {
+          Ok(views.html.user.settings(request.user.asInstanceOf[User]))
+        }
+      }
   }
 }

@@ -43,7 +43,7 @@ case class User( id: UserId,
                  oAuth1Info: Option[OAuth1Info],
                  oAuth2Info: Option[OAuth2Info],
                  passwordInfo: Option[PasswordInfo],
-                 accessKey: String = User.generateAccessKey) extends Identity with DBAccessContextPayload{
+                 accessKey: Option[String] = None) extends Identity with DBAccessContextPayload{
   val firstName = ""
   val lastName = ""
   val avatarUrl = None
@@ -79,6 +79,10 @@ object UserDAO extends BasicReactiveDAO[User]{
   def update(i: Identity)(implicit ctx: DBAccessContext) = {
     collectionUpdate(findByUserIdQ(i.id),
       Json.obj("$set" -> Json.toJson(BareUserFactory(i))), upsert = true)
+  }
+
+  def setAccessKey(user: User, accessKey: String)(implicit ctx: DBAccessContext)  = {
+    collectionUpdate(findByUserIdQ(user.id), Json.obj("$set" -> Json.obj("accessKey" -> accessKey)))
   }
 
   def fromIdentity(i: Identity) =

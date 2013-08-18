@@ -3,6 +3,6 @@
 @main("User Settings") {
     <div class="container">
         <h3>@user.fullName</h3>
-        <div>Access-Key: @user.accessKey</div>
+        <div>Access-Key: @user.accessKey.getOrElse("-none available-") <a href="@controllers.routes.UserController.createAccessKey()"><i class="icon-camera-retro"></i> generate</a></div>
 
 }
