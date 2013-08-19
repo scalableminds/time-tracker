@@ -1,7 +1,7 @@
 ### define 
 jquery : $
 bootstrap : bootstrap
-report_table : ReportTable
+../report_table : ReportTable
 ###
 
 

@@ -1,7 +1,7 @@
 ### define 
 jquery : $
 bootstrap : bootstrap
-controller : Controller
+controller/controller : Controller
 ###
 
 class ProjectReportController extends Controller
