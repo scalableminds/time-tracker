@@ -18,7 +18,7 @@ class ProjectReportController extends Controller
            
       @model = @groupByProjects data
 
-      for currentProjectName, currentProject of @model.projects
+      for currentProjectName, currentProject of @model.data
         for currentLog in currentProject
           currentLog.date = new Date(currentLog.timestamp)
 
@@ -61,4 +61,4 @@ class ProjectReportController extends Controller
 
 
     console.log "projects", projects
-    return {"projects" : projects}
+    return {"data" : projects}

@@ -76,9 +76,8 @@ class ReportTable extends Backbone.View
 
 
   render : ->
-    @monthPicker.model = @currentDate
 
-    console.log "rendering is triggered"
+    @monthPicker.model = @currentDate
   
     @$el.append(@template(
       userName : @model.name or @model.email
@@ -111,76 +110,65 @@ class ReportTable extends Backbone.View
       )
     )
 
+
+
     #tbody
-    for project, projectEntries of @model.projects
+    for element, elementEntries of @model.data
       
-      projectDaysGroups = _.groupBy(projectEntries, (a) -> moment(a.date).date())
+      elementDaysGroups = _.groupBy(elementEntries, (a) -> moment(a.date).date())
 
       table.push(
         Row(
           [
-            Cell(project, 2)
-            # , Cell(Utils.sum(_.map(projectEntries, "duration")))
+            Cell(element, 2)
+            # , Cell(Utils.sum(_.map(elementEntries, "duration")))
           ].concat(
-            _.map(daysRange, (day) -> Cell(Utils.minutesToHours(Utils.sum(_.map(projectDaysGroups[day] ? [], (a) -> a.duration))) || ""))
+            _.map(daysRange, (day) -> Cell(Utils.minutesToHours(Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration))) || ""))
           ),
           "info"
         )
       )
 
-      _.forOwn(_.groupBy(projectEntries, @groupByIterator),
+      _.forOwn(_.groupBy(elementEntries, @groupByIterator),
         (entries) =>
 
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
+          
+          leftCells = [
+            Cell(@groupByIteratorToString entries[0])
+            # Cell(entries[0].title)       # summary
+            Cell(Utils.minutesToHours(Utils.sum(_.map(entries, "duration"))))
+          ]
 
-          table.push(
-            Row(
-              [
-                Cell(@groupByIteratorToString entries[0])
-                # Cell(entries[0].title)       # summary
-                Cell(Utils.minutesToHours(Utils.sum(_.map(entries, "duration"))))
-              ].concat(
-                _.map(
-                  daysRange, (day) =>
-                    Cell(
-                      Utils.minutesToHours(Utils.sum(
-                        _.map(
-                          entriesDaysGroups[day] ? [],
-                          (a) => a.duration)
-                        )) || "",
-                      0,
-                      @cellClass
-                    )
-                )
-              )
-            )
+          rightCells = _.map(
+            daysRange, (day) =>
+              value = Utils.minutesToHours(Utils.sum(
+                _.map(entriesDaysGroups[day] ? [], (a) => a.duration)
+              )) || ""
+              
+              return Cell(value, 0, @cellClass)
           )
+          aRow = Row(leftCells.concat rightCells)
+          table.push aRow
       )
 
     #tfoot
-    allEntries = _.flatten(_.values(@model.projects))
+    allEntries = _.flatten(_.values(@model.data))
     allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
 
-    table.push(
-      Row(
-        [
-          Cell("&sum;")
-          # , Cell("")
-          , Cell(Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration"))))
-        ].concat(
-          _.map(
-            daysRange, (day) ->
-              Cell(Utils.minutesToHours(Utils.sum(
-                _.map(
-                  allDaysGroups[day] ? [],
-                  (a) -> a.duration)
-                )) || ""
-              )
-          )
+
+    rightCells = _.map(
+      daysRange, (day) ->
+        Cell(
+          Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""
         )
-      )
+    )
+
+    table.push Row(
+      [ Cell("&sum;")
+        # , Cell("")
+        , Cell(Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration"))))
+      ].concat rightCells
     )
 
     table
-
-
