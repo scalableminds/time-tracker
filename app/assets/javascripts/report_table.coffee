@@ -117,14 +117,15 @@ class ReportTable extends Backbone.View
       
       elementDaysGroups = _.groupBy(elementEntries, (a) -> moment(a.date).date())
 
+      daySums = _.map(daysRange, (day) -> Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration)))
+
       table.push(
         Row(
           [
-            Cell(element, 2)
+            Cell(element)
             # , Cell(Utils.sum(_.map(elementEntries, "duration")))
-          ].concat(
-            _.map(daysRange, (day) -> Cell(Utils.minutesToHours(Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration))) || ""))
-          ),
+            Cell(Utils.minutesToHours(Utils.sum(daySums)))
+          ].concat(_.map(daySums, (a) -> Cell(Utils.minutesToHours(a) || ""))),
           "info"
         )
       )
