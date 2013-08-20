@@ -20,7 +20,7 @@ class ReportTable extends Backbone.View
         <thead>
           <tr>
             <% _.first(table).cells.forEach(function (cell) { %>
-              <th><%= cell.value %></th>
+              <th<% if (cell.className) { %> class="<%= cell.className %>" <% } %>><%= cell.value %></th>
             <% }) %>
           </tr>
         </thead>
@@ -94,7 +94,7 @@ class ReportTable extends Backbone.View
 
     table = []
 
-    Row = (cells, className = "") -> {cells, className}
+    Row = (cells, className = "") -> { cells, className }
     Cell = (value, colspan = 0, className = "") -> { value, colspan, className }
 
     # thead
@@ -126,7 +126,7 @@ class ReportTable extends Backbone.View
             # , Cell(Utils.sum(_.map(elementEntries, "duration")))
             Cell(Utils.minutesToHours(Utils.sum(daySums)))
           ].concat(_.map(daySums, (a) -> Cell(Utils.minutesToHours(a) || ""))),
-          "info"
+          "project-row"
         )
       )
 
@@ -166,9 +166,10 @@ class ReportTable extends Backbone.View
     )
 
     table.push Row(
-      [ Cell("&sum;")
-        # , Cell("")
-        , Cell(Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration"))))
+      [ 
+        Cell("&sum;")
+        # Cell("")
+        Cell(Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration"))))
       ].concat rightCells
     )
 
