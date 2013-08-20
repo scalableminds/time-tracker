@@ -5,8 +5,9 @@
 <html>
     <head>
         <title>@title</title>
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/font-awesome.min.css")">
+
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("javascripts/bower_components/bootstrap/dist/css/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("javascripts/bower_components/font-awesome/css/font-awesome.min.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
@@ -19,7 +20,7 @@
         <header class="navbar" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="@controllers.routes.Application.home">Time-Tracker</a>
+                    <a class="navbar-brand" href="@controllers.routes.Application.home"><img src="@routes.Assets.at("images/stopwatch.png")" id="logo"> Time-Tracker</a>
                 </div>
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
                 @session.userOpt.map { user =>
@@ -62,6 +63,7 @@
         </div>
         <footer>
             <p>by <img src="@routes.Assets.at("images/scalableminds.png")" alt="scalable minds" /></p>
+            <p>with <a href="http://thenounproject.com/noun/stopwatch/#icon-No282" target="_blank">Stopwatch</a> from The Noun Project</p>
         </footer>
     </body>
 </html>
