@@ -1,6 +1,7 @@
 ### define 
 jquery : $
 bootstrap : bootstrap
+underscore : _
 controller/controller : Controller
 ###
 
@@ -16,16 +17,11 @@ class TeamReportController extends Controller
 
     return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@year, @month).ajax().then (data) =>
       
-      dic = {}
+      data = _.groupBy(data, "name")
+      data = _.forOwn(data, (value, key) -> data[key] = _.flatten(_.pluck(value, "times")))
 
-      for user in data
-        dic[user.name] = user.times
+      data = @addDateProperties(data)
 
-      @model = {data : dic}
-      console.log "data", data
-
-      for currentProjectName, currentProject of @model.data
-        for currentLog in currentProject
-          currentLog.date = new Date(currentLog.timestamp)
-
-      return @model
+      @model = 
+        data : data
+        title : "Team Report"

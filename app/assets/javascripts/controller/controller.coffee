@@ -1,6 +1,7 @@
 ### define 
 jquery : $
 bootstrap : bootstrap
+underscore : _
 ../report_table : ReportTable
 ###
 
@@ -29,6 +30,7 @@ class Controller
     @view.monthPicker.on "change", (event) =>
       @loadAndDisplay(event.year(), event.month() + 1)
   
+
   instantiateView : ->
 
     @view = new ReportTable()
@@ -40,9 +42,20 @@ class Controller
     @view.groupByIteratorToString = @groupByIteratorToString
     @view.cellClass = @cellClass
 
+
   requestData : ->
 
     # subclass responsibility
+
+
+  addDateProperties : (model) ->
+
+    for currentProjectName, currentProject of model
+      for currentLog in currentProject
+        currentLog.date = new Date(currentLog.timestamp)
+
+    model
+
 
 
 

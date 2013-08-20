@@ -2,6 +2,7 @@
 jquery : $
 bootstrap : bootstrap
 controller/controller : Controller
+underscore : _
 ###
 
 class ProjectReportController extends Controller
@@ -16,11 +17,14 @@ class ProjectReportController extends Controller
 
     return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@year, @month).ajax().then (data) =>
            
-      @model = @groupByProjects data
+      projects = @groupByProjects(data)
 
-      for currentProjectName, currentProject of @model.data
-        for currentLog in currentProject
-          currentLog.date = new Date(currentLog.timestamp)
+      @addDateProperties(@projects)
+
+      @model =
+        data : projects
+        title : "Project Report"
+
 
   groupByProjects : (data) ->
 
@@ -61,4 +65,4 @@ class ProjectReportController extends Controller
 
 
     console.log "projects", projects
-    return {"data" : projects}
+    return projects

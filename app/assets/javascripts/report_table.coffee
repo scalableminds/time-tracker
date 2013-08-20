@@ -12,7 +12,7 @@ class ReportTable extends Backbone.View
 
   template : _.template("""
     <div class="row">
-      <h2 class="col-lg-8"><%= userName %></h2>
+      <h2 class="col-lg-8"><%= title %></h2>
       <div class="col-lg-4 picker"></div>
     </div>
     <div>
@@ -80,7 +80,7 @@ class ReportTable extends Backbone.View
     @monthPicker.model = @currentDate
   
     @$el.append(@template(
-      userName : @model.name or @model.email
+      title : @model.title
       table : @prepareTable()
     ))
 

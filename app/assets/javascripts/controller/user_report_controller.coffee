@@ -1,6 +1,7 @@
 ### define 
 jquery : $
 bootstrap : bootstrap
+underscore : _
 controller/controller : Controller
 ###
 
@@ -18,12 +19,11 @@ class UserReportController extends Controller
 
       console.log "data", data
 
-      for currentProjectName, currentProject of data.projects
-        for currentLog in currentProject
-          currentLog.date = new Date(currentLog.timestamp)
+      projects = @addDateProperties(data.projects)
 
-      data.data = data.projects
-      @model = data
+      @model = 
+        data : projects
+        title : data.name
 
       ###
       model will hold information like
