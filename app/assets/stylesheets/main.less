@@ -53,11 +53,14 @@
   font-size: 12px;
 
   th, td {
-
     &:not(:first-child) {
       text-align: center;
     }
     padding: 6px !important;
+  }
+
+  .table-bordered > tfoot > tr > th {
+    border-top-width: 2px; 
   }
 
   .month-picker {
