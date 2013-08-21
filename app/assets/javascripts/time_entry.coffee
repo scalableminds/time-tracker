@@ -7,19 +7,21 @@ bootstrap : bootstrap
 
   $alert = $(".alert")
   $alert.alert()
-  $(".close").click ->
-    $(this).parent().removeClass 'in'
+  $(".alert .close").click ->
+    $(this).parent().removeClass("in")
 
-  dateFormat = "DD.MM.YYYY"
+  DATE_FORMAT = "dd.mm.yyyy"
+
   currentDate = moment()
-  $dp = $('.datepicker').datepicker()
-  $dp.on 'changeDate', (ev) ->
-    console.log "timestamp", ev.date.valueOf()
-    currentDate = moment ev.date.valueOf()
-    $(this).find("input").attr "value", currentDate.format(dateFormat)
 
-  $dp.datepicker("setValue", currentDate.format(dateFormat))
-  $dp.find("input").attr "value", currentDate.format(dateFormat)
+  datepicker = $("[data-datepicker] input").datepicker(
+    format : DATE_FORMAT
+  )
+
+  datepicker.on "changeDate", (event) ->
+    currentDate = moment(event.date.valueOf())
+
+  datepicker.datepicker("setValue", currentDate.toDate())
 
 
   $("input[type=submit]").on "click", (evt) ->

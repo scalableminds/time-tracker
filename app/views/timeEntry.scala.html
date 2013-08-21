@@ -12,16 +12,15 @@
         @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber), 'role -> "form") {
             <div class="form-group">
                 <label class="control-label" for="duration">Duration</label>
-                <div>
+                <div class="input-group">
                     <input id="duration" class="form-control" type="text" name="duration" autofocus required pattern="^\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$">
+                    <span class="input-group-addon"><i class="icon-time"></i></span>
                 </div>
 
                 <label class="control-label" for="date">Date</label>
-                <div>
-                    <div class="input-append datepicker" id="dp3" data-date="12-02-2012" data-date-format="dd.mm.yyyy">
-                        <input class="span2" size="16" type="text" value="12-02-2012">
-                        <span class="add-on"><i class="icon-th"></i></span>
-                    </div>
+                <div class="input-group" data-datepicker>
+                    <input class="form-control" type="text" name="date" pattern="^\d{2}\.\d{2}\.\d{4}">
+                    <span class="input-group-addon"><i class="icon-calendar"></i></span>
                 </div>
 
             </div>

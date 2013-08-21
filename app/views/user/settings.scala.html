@@ -2,7 +2,17 @@
 
 @main("User Settings") {
     <div class="container">
-        <h3>@user.fullName</h3>
-        <div>Access-Key: @user.accessKey.getOrElse("-none available-") <a id="generateKey" data-url="@controllers.routes.UserController.createAccessKey()" href="#"><i class="icon-camera-retro"></i> generate</a></div>
-
+      <h3>@user.fullName</h3>
+      <div class="form-group">
+        <label class="control-label" for="">Access-Key</label>
+        <div class="input-group">
+          <input class="form-control" value="@user.accessKey.getOrElse("n/a")" disabled>
+          <span class="input-group-btn">
+            <a id="generateKey" data-url="@controllers.routes.UserController.createAccessKey()" href="#" class="btn btn-default">
+              <i class="icon-camera-retro"></i> generate
+            </a>
+          </span>
+        </div>
+      </div>
+    </div>
 }

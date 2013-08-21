@@ -32,7 +32,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
           usedRepos <- RepositoryDAO.findAll
         } yield {
           val available = (orgaRepos.flatten ::: userRepos).diff(usedRepos.map(_.fullName))
-          Ok(html.admin.repositoryAdmin(available, usedRepos))
+          Ok(html.admin.repositoryAdmin(available, usedRepos, request.user.asInstanceOf[User]))
         }
       }
   }

@@ -1,63 +1,67 @@
-@(availableRepositories: List[String], usedRepositories: List[models.Repository])(implicit session: controllers.SessionData)
+@(availableRepositories: List[String], usedRepositories: List[models.Repository], user: models.User)(implicit session: controllers.SessionData)
 
 @main("Repository Administration") {
     <div class="container">
-    <h3>Add a new repository</h3>
-    @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal", 'role -> "form") {
-        <div class="form-group">
-            <label class="col-lg-2 control-label" for="inputRepo">Repository</label>
-            <div class="col-lg-10">
-                <select name="repository" class="form-control">
-                @availableRepositories.sortBy(_.toLowerCase).map { repository =>
-                    <option value="@repository"> @repository </option>
-                }
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label" for="inputAccess">Access-Token</label>
-            <div class="col-lg-10">
-                <input class="form-control" type="text" id="inputAccess" name="accessToken" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                <input type="submit" value="Add" class="btn btn-primary">
-            </div>
-        </div>
-    }
+        <section>
+            <h3>Add a new repository</h3>
+            @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal", 'role -> "form") {
+                <div class="form-group">
+                    <label class="col-lg-2 control-label" for="inputRepo">Repository</label>
+                    <div class="col-lg-10">
+                        <select name="repository" class="form-control">
+                        @availableRepositories.sortBy(_.toLowerCase).map { repository =>
+                            <option value="@repository"> @repository </option>
+                        }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label" for="inputAccess">Access-Token</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" type="text" id="inputAccess" name="accessToken" required value="@user.accessKey.getOrElse("")">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <input type="submit" value="Add" class="btn btn-primary">
+                    </div>
+                </div>
+            }
+        </section>
 
-    <h3>Used repositories</h3>
-    <table class="table table-striped">
-        <thead>
-            <th>#</th>
-            <th>Name</th>
-            <th>Access-Token</th>
-            <th>Admin Ids</th>
-        </thead>
-        <tbody>
-        @usedRepositories.zipWithIndex.map { case (repository, idx) =>
-            <tr>
-                <td>
-                @idx
-                </td>
-                <td>
-                @repository.fullName
-                </td>
-                <td>
-                @repository.accessToken
-                </td>
-                <td>
-                    @repository.admins.mkString(", ")
-                </td>
-                <td>
-                    <a href="@controllers.admin.routes.RepositoryAdministration.scan(repository.owner, repository.name)"><i class="icon-glass"></i> scan</a>
-                    <a href="@controllers.admin.routes.RepositoryAdministration.delete(repository.owner, repository.name)"><i class="icon-trash"></i> delete</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+        <section>
+            <h3>Used repositories</h3>
+            <table class="table table-striped">
+                <thead>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Access-Token</th>
+                    <th>Admin Ids</th>
+                </thead>
+                <tbody>
+                @usedRepositories.zipWithIndex.map { case (repository, idx) =>
+                    <tr>
+                        <td>
+                        @idx
+                        </td>
+                        <td>
+                        @repository.fullName
+                        </td>
+                        <td>
+                        @repository.accessToken
+                        </td>
+                        <td>
+                            @repository.admins.mkString(", ")
+                        </td>
+                        <td>
+                            <a href="@controllers.admin.routes.RepositoryAdministration.scan(repository.owner, repository.name)"><i class="icon-glass"></i> scan</a>
+                            <a href="@controllers.admin.routes.RepositoryAdministration.delete(repository.owner, repository.name)"><i class="icon-trash"></i> delete</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </section>
     </div>
 
 }
