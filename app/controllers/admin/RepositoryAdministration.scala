@@ -29,7 +29,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
           orgas <- GithubApi.listOrgs(user.githubAccessToken)
           orgaRepos <- Future.traverse(orgas)(orga => GithubApi.listOrgaRepositories(user.githubAccessToken, orga))
           userRepos <- GithubApi.listUserRepositories(user.githubAccessToken)
-          usedRepos <- RepositoryDAO.findAll
+          usedRepos <- RepositoryDAO.findAll(GlobalAccessContext)
         } yield {
           val available = (orgaRepos.flatten ::: userRepos).diff(usedRepos.map(_.fullName))
           Ok(html.admin.repositoryAdmin(available, usedRepos, request.user.asInstanceOf[User]))
@@ -46,14 +46,16 @@ object RepositoryAdministration extends Controller with SecureSocial {
           accessToken <- postParameter("accessToken")(request.request) ?~> "No access token supplied"
           r <- RepositoryDAO.findByName(repositoryName)(GlobalAccessContext)
         } yield {
-          if (r.isEmpty) {
-            val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
-            RepositoryDAO.insert(repo)
-            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
-            issueActor ! FullScan(repo)
-            Redirect(controllers.admin.routes.RepositoryAdministration.list)
-          } else
-            BadRequest("Repository allready added")
+          r match {
+            case None =>
+              val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
+              RepositoryDAO.insert(repo)
+              GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
+              issueActor ! FullScan(repo)
+              Redirect(controllers.admin.routes.RepositoryAdministration.list)
+            case Some(_) =>
+              BadRequest("Repository allready added")
+          }
         }
       }
   }

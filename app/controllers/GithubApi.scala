@@ -221,6 +221,8 @@ trait GithuIssueRequestor extends GithubRequestor {
   def updateIssueBody(token: String, issue: GithubIssue, body: String) = {
     githubRequest(issue.url, prependHost = false)(token).patch(issueBodyUpdate(body)).map{ response =>
       Logger.info("Update returned: " + response.status)
+      if(response.status != 200)
+        Logger.warn(response.body)
     }
   }
 
