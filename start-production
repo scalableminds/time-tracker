@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sbt clean compile stage
+target/start -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dconfig.file=conf/application_production.conf -Dmongodb.db="time-tracker" -Dhttp.port=12000 > logs/timetracker.log&
