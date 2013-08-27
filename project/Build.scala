@@ -22,9 +22,9 @@ object ApplicationBuild extends Build {
     "org.apache.commons" % "commons-email" % "1.2",
     "com.typesafe.akka" %% "akka-agent" % "2.1.0",
     "joda-time" % "joda-time" % "2.2",
-    "com.scalableminds" %% "securesocial" % "master-SNAPSHOT",
+    "com.scalableminds" %% "braingames-util" % "0.3",
+    "com.scalableminds" %% "securesocial" % "2.1.0-SCM"
     //"com.micronautics" %% "securesocial" % "2.1.1-SNAPSHOT",
-    "com.scalableminds" %% "braingames-util" % "0.2"
     )
 
   val dependencyResolvers = Seq(

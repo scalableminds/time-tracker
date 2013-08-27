@@ -20,7 +20,7 @@ import play.api.libs.json.JsObject
  * Time: 22:36
  */
 
-case class BareUser(id: UserId, firstName: String, lastName: String, fullName: String, email: Option[String],
+case class BareUser(id: UserId, firstName: String, lastName: String, fullName: String, nickName: Option[String], email: Option[String],
                       avatarUrl: Option[String], authMethod: AuthenticationMethod,
                       oAuth1Info: Option[OAuth1Info] = None,
                       oAuth2Info: Option[OAuth2Info] = None,
@@ -29,7 +29,7 @@ case class BareUser(id: UserId, firstName: String, lastName: String, fullName: S
 object BareUserFactory {
   def apply(i: Identity): BareUser = {
     BareUser(
-      i.id, i.firstName, i.lastName, i.fullName,
+      i.id, i.firstName, i.lastName, i.fullName, i.nickName,
       i.email, i.avatarUrl, i.authMethod, i.oAuth1Info,
       i.oAuth2Info, i.passwordInfo
     )
@@ -38,6 +38,7 @@ object BareUserFactory {
 
 case class User( id: UserId,
                  fullName: String,
+                 nickName: Option[String],
                  email: Option[String],
                  authMethod: AuthenticationMethod,
                  oAuth1Info: Option[OAuth1Info],
@@ -50,11 +51,29 @@ case class User( id: UserId,
 
   val githubId = id.id
 
+  def nick = nickName getOrElse User.generateNick(fullName)
+
   def githubAccessToken = oAuth2Info.get.accessToken
 }
 
 object User{
   def generateAccessKey = UUID.randomUUID().toString.replace("-", "")
+
+  def generateNick(fullName: String) = {
+    val vocals = List("a", "o", "i", "e", "u")
+    val nameV = fullName.toLowerCase.filter( vocals.contains ).take(3)
+    val nameK = fullName.toLowerCase.filter(_ == " ").filterNot( vocals.contains ).reverse.take(4)
+
+    val vocalsToUse = (if(nameV.size < 3) nameV + vocals.take(3 - nameV.size) else nameV).toList
+    val konsToUse = if(nameK.size < 4) nameK + List("l", "w", "z", "r").take(4 - nameK.size) else nameK
+
+    konsToUse.foldLeft(("", vocalsToUse)){
+      case ((s, v :: vs), k) =>
+        (s + k + v, vs)
+      case ((s, Nil), k) =>
+        (s + k, Nil)
+    }._1
+  }
 }
 
 object UserDAO extends BasicReactiveDAO[User]{
@@ -86,7 +105,7 @@ object UserDAO extends BasicReactiveDAO[User]{
   }
 
   def fromIdentity(i: Identity) =
-    User(i.id, i.fullName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo )
+    User(i.id, i.fullName, i.nickName,i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo )
 
   def findOneByGID(gid: String)(implicit ctx: DBAccessContext) = {
     collectionFind(Json.obj("id.id" -> gid)).one[User]

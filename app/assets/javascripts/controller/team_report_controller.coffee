@@ -17,7 +17,7 @@ class TeamReportController extends Controller
 
     return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@year, @month).ajax().then (data) =>
       
-      data = _.groupBy(data, "name")
+      data = _.groupBy(data, "nick")
       data = _.forOwn(data, (value, key) -> data[key] = _.flatten(_.pluck(value, "times")))
 
       data = @addDateProperties(data)

@@ -14,7 +14,7 @@ import models.TimeEntry._
 import play.api.libs.json.JsArray
 import models.User
 import play.api.libs.json.JsObject
-import braingames.mvc.Fox
+import braingames.util.Fox
 import play.api.Logger
 import securesocial.core.RequestWithUser
 
@@ -108,7 +108,11 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
   }
 
   def userInfo(user: User) =
-    Json.obj("userGID" -> user.githubId, "name" -> user.fullName, "email" -> user.email)
+    Json.obj(
+      "userGID" -> user.githubId,
+      "name" -> user.fullName,
+      "email" -> user.email,
+      "nick" -> user.nick)
 
   def showTimeForAUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsObject] = {
     for {

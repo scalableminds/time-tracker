@@ -52,7 +52,7 @@ class ProjectReportController extends Controller
 
     for user in data
       userID = user.userGID
-      @users[userID] = user.name
+      @users[userID] = user.nick
 
       for time in user.times
         projectName = time.issue.project

@@ -15,10 +15,7 @@ import play.api.mvc.RequestHeader
  * Date: 19.07.13
  * Time: 14:39
  */
-trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData{
-  def postParameter(parameter: String)(implicit request: Request[Map[String, Seq[String]]]) =
-    request.body.get(parameter).flatMap(_.headOption)
-}
+trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData
 
 
 trait ProvidesAccessContext{

@@ -23,7 +23,7 @@ class UserReportController extends Controller
 
       @model = 
         data : projects
-        title : data.name
+        title : data.nick
 
       ###
       model will hold information like
