@@ -1,12 +1,13 @@
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, JsArray, Json}
 import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
 import java.util.{Calendar, Date}
 import org.joda.time.{Interval, YearMonth}
 import play.api.Logger
-
+import scala.concurrent.Await
+import scala.concurrent.duration._
 /**
  * Company: scalableminds
  * User: tmbo
@@ -21,7 +22,7 @@ object Issue extends Function2[String, Int, Issue] {
 
 case class TimeEntry(issue: Issue, duration: Int, userGID: String, timestamp: Long = System.currentTimeMillis)
 
-object TimeEntry extends Function4[Issue, Int, String, Long, TimeEntry]{
+object TimeEntry extends{
   def fromForm(issue: Issue, duration: Int, userGID: String) =
     TimeEntry(issue, duration, userGID)
 
@@ -33,6 +34,19 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
   val collectionName = "timeEntries"
 
   import Issue.issueFormatter
+
+  override def findQueryFilter(implicit ctx: DBAccessContext) = {
+    ctx.data match {
+      case _ if(ctx.globalAccess) =>
+        AllowEveryone
+      case Some(user: User) =>
+        val repositories = Await.result(RepositoryDAO.findAllWhereUserIsAdmin(user), 5 seconds)
+        AllowIf(Json.obj("$or" -> Json.arr(
+          Json.obj("issue.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.fullName))))),
+          Json.obj("userGID" -> user.githubId)
+        )))
+    }
+  }
 
   val formatter = Json.format[TimeEntry]
 
