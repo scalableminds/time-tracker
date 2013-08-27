@@ -1,4 +1,17 @@
 #!/bin/sh
 
+if [ -f RUNNING_PID ]; then
+  echo "[info] Stopping application (with PID `cat RUNNING_PID`)..."
+  kill `cat RUNNING_PID`
+
+  RESULT=$?
+
+  if test "$RESULT" = 0; then
+    echo "[info] Done!"
+  else
+    echo "[\033[31merror\033[0m] Failed ($RESULT)"
+  fi
+fi
+
 sbt clean compile stage
 target/start -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dconfig.file=conf/application_production.conf -Dmongodb.db="time-tracker" -Dhttp.port=12000 > logs/timetracker.log&
