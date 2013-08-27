@@ -43,7 +43,7 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
   def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue) = {
     val link = timeTrackingLinkFor(repo, issue)
     if (!issue.body.contains(link)) {
-      val body = issue.body + "\n" + link
+      val body = issue.body + "\n\n" + link
       GithubApi.updateIssueBody(repo.accessToken, issue, body)
     }
   }
