@@ -8,7 +8,7 @@ import views.html
 import scala.concurrent.Future
 import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess}
 import play.api.libs.concurrent.Akka
-import models.services.{FullScan, GithubIssueActor}
+import models.services.{CollectCollaborators, GithubCollaboratorActor, FullScan, GithubIssueActor}
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
 
@@ -20,6 +20,7 @@ import play.api.libs.concurrent.Execution.Implicits._
  */
 object RepositoryAdministration extends Controller with SecureSocial {
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
+  lazy val collaboratorActor = Akka.system.actorFor("/user/" + GithubCollaboratorActor.name)
 
   def list = SecuredAction {
     implicit request =>
@@ -52,6 +53,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
               RepositoryDAO.insert(repo)
               GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
               issueActor ! FullScan(repo)
+              collaboratorActor ! CollectCollaborators(repositoryName)
               Redirect(controllers.admin.routes.RepositoryAdministration.list)
             case Some(_) =>
               BadRequest("Repository allready added")

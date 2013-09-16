@@ -1,7 +1,0 @@
-@(userTimeMapping: Map[String, List[models.TimeEntry]])(implicit session: controllers.SessionData)
-
-@main("User Time Mapping"){
-    @userTimeMapping.map{ case (userName, timeEntry) =>
-        @userName: @timeEntry
-    }
-}

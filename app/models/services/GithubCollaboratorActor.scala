@@ -40,7 +40,6 @@ class GithubCollaboratorActor extends Actor with GlobalDBAccess with BoxImplicit
     case CollectCollaborators(repositoryName) =>
       Logger.debug(s"Collecting collaborators of $repositoryName...")
       collectCollaborators(repositoryName)
-
   }
 
   def collectCollaborators(repositoryName: String) = {
