@@ -11,10 +11,10 @@ class Controller
 
   constructor : ->
 
-    @loadAndDisplay 2013, 8
     @users = {}
+    @loadAndDisplay moment()
 
-  loadAndDisplay : (@year, @month) ->
+  loadAndDisplay : (@currentDate) ->
     
     @requestData().done =>
       @displayModel()
@@ -28,7 +28,7 @@ class Controller
     $("#main-container .container").empty().append(@view.el)
 
     @view.monthPicker.on "change", (event) =>
-      @loadAndDisplay(event.year(), event.month() + 1)
+      @loadAndDisplay(@view.monthPicker.model)
   
 
   instantiateView : ->
@@ -36,7 +36,7 @@ class Controller
     @view = new ReportTable()
     @view.model = @model
     @view.users = @users
-    @view.currentDate = moment([@year, @month - 1, 1])
+    @view.currentDate = @currentDate
 
     @view.groupByIterator = @groupByIterator
     @view.groupByIteratorToString = @groupByIteratorToString
@@ -55,8 +55,5 @@ class Controller
         currentLog.date = new Date(currentLog.timestamp)
 
     model
-
-
-
 
 

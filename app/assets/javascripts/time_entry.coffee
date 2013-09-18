@@ -32,8 +32,6 @@ bootstrap : bootstrap
 
     duration = $("#duration").val()
     timestamp = 1000 * currentDate.unix()
-
-    console.log {duration, timestamp}
     
     $.ajax(
 

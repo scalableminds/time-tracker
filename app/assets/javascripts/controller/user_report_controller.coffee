@@ -15,9 +15,7 @@ class UserReportController extends Controller
 
   requestData : ->
 
-    return jsRoutes.controllers.TimeEntryController.showTimeForUser(@year, @month).ajax().then (data) =>
-
-      console.log "data", data
+    return jsRoutes.controllers.TimeEntryController.showTimeForUser(@currentDate.year(), @currentDate.month()).ajax().then (data) =>
 
       projects = @addDateProperties(data.projects)
 
