@@ -23,4 +23,4 @@ Utils =
 
   minutesToHours : (minutes) ->
 
-    return @decimalPlaces(minutes / 60, 1)
+    return @decimalPlaces(minutes / 60, 2)
