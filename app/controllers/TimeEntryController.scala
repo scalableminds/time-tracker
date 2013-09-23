@@ -67,7 +67,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
         (for {
           user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
           repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
-          if (repository.isCollaborator(user))
+          if (repository.isCollaborator(user) || repository.isAdmin(user))
           timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
           duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
         } yield {
@@ -86,7 +86,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
         val user = request.user.asInstanceOf[User]
         (for {
           repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo)) ?~> "Repository couldn't be found"
-          if (repository.isCollaborator(user))
+          if (repository.isCollaborator(user) || repository.isAdmin(user))
         } yield {
           Ok(html.timeEntry(owner, repo, issueNumber))
         }) ?~> "Not allowed."
