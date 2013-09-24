@@ -15,7 +15,7 @@ class ProjectReportController extends Controller
   
   requestData : ->
 
-    return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@currentDate.year(), @currentDate.month()).ajax().then (data) =>
+    return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@currentDate.year(), @currentDate.month()+1).ajax().then (data) =>
            
       projects = @groupByProjects(data)
 
