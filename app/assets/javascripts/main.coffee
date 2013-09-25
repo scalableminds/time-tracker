@@ -51,6 +51,21 @@ $ ->
 
       TimeEntryCode()
 
+    "/create" : ->
+
+      TimeEntryCode()
+
+      actionUpdater = ->
+        selectedRepo = $("select option:selected").val()
+        actionURL = "/repos/" + selectedRepo + "/issues/0"
+        console.log "actionURL", actionURL
+
+        $('form').get(0).setAttribute('action', actionURL)
+
+      $("select[name=repository]").change(actionUpdater)
+
+      actionUpdater()
+
 
     "/user/settings" : ->
       

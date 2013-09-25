@@ -1,0 +1,47 @@
+@(usedRepositories: List[models.Repository])(implicit session: controllers.SessionData)
+
+@additionalHeader = {
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/datepicker.css")">
+}
+@main("Log now", additionalHeader) {
+    <div class="alert fade">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+    </div>
+    <div class="container">
+        <h3>Log time for issue #0</h3>
+        <!-- TODO remove dirty dummy call -->
+        @helper.form(routes.TimeEntryController.create("", "", 0), 'role -> "form") {
+            <div class="form-group">
+                <label class="control-label" for="inputRepo">Repository</label>
+                <div style="width: 100%">
+                    <select name="repository" class="form-control">
+                        @usedRepositories.map { case (repository) =>
+                            <option value="@repository.fullName"> @repository.fullName </option>
+                        }
+                    </select>
+                </div>
+
+                <label class="control-label" for="duration">Duration</label>
+                <div class="input-group">
+                    <input id="duration" class="form-control" type="text" name="duration" autofocus required pattern="^\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$">
+                    <span class="input-group-addon"><i class="icon-time"></i></span>
+                </div>
+
+                <label class="control-label" for="date">Date</label>
+                <div class="input-group" data-datepicker>
+                    <input class="form-control" type="text" name="date" pattern="^\d{2}\.\d{2}\.\d{4}">
+                    <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                </div>
+
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Log" class="btn btn-default">
+            </div>
+        }
+
+
+
+
+    </div>
+}
