@@ -31,7 +31,9 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
   override def findQueryFilter(implicit ctx: DBAccessContext) = {
     ctx.data match{
       case Some(user: User) =>
-        AllowIf(Json.obj("collaborators" -> user.githubId))
+        AllowIf(Json.obj("$or" -> List(
+          Json.obj("collaborators" -> user.githubId),
+          Json.obj("admins" -> user.githubId))))
       case _ if ctx.globalAccess =>
         AllowEveryone
       case _ =>
