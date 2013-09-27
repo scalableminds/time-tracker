@@ -9,13 +9,12 @@
     </div>
     <div class="container">
         <h3>Log time for issue #0</h3>
-        <!-- TODO remove dirty dummy call -->
-        @helper.form(routes.TimeEntryController.create("", "", 0), 'role -> "form") {
+        <form action="" method="POST" role="form">
             <div class="form-group">
                 <label class="control-label" for="inputRepo">Repository</label>
                 <div style="width: 100%">
                     <select name="repository" class="form-control">
-                        @usedRepositories.map { case (repository) =>
+                        @usedRepositories.map { repository =>
                             <option value="@repository.fullName"> @repository.fullName </option>
                         }
                     </select>
@@ -33,15 +32,11 @@
                     <span class="input-group-addon"><i class="icon-calendar"></i></span>
                 </div>
 
-
             </div>
             <div class="form-group">
                 <input type="submit" value="Log" class="btn btn-default">
             </div>
-        }
-
-
-
+        </form>
 
     </div>
 }

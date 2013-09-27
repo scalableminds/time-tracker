@@ -84,11 +84,11 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     implicit request =>
       Async {
         val user = request.user.asInstanceOf[User]
-        (for {
-          usedRepos <- RepositoryDAO.findAll(GlobalAccessContext)
+        for {
+          usedRepos <- RepositoryDAO.findAll(GlobalAccessContext) ?~> "Not allowed."
         } yield {
           Ok(html.genericTimeEntry(usedRepos))
-        }) ?~> "Not allowed."
+        }
       }
   }
 
