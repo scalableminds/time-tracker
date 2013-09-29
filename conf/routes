@@ -6,7 +6,7 @@
 GET         /                                                     controllers.Application.index
 GET         /home                                                 controllers.Application.home
 GET         /team                                                 controllers.Application.team
-GET					/project																							controllers.Application.project
+GET                 /project                                                                                            controllers.Application.project
 
 # Admin
 GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
@@ -15,6 +15,7 @@ GET         /admin/repositories/:owner/:name/scan                 controllers.ad
 DELETE      /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
 
 # Add Issue time entry
+GET         /create 		                                      controllers.TimeEntryController.createGenericForm
 GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int)
 POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
 POST        /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)

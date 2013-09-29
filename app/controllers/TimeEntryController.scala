@@ -80,6 +80,18 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
+  def createGenericForm() = SecuredAction {
+    implicit request =>
+      Async {
+        val user = request.user.asInstanceOf[User]
+        for {
+          usedRepos <- RepositoryDAO.findAll(GlobalAccessContext) ?~> "Not allowed."
+        } yield {
+          Ok(html.genericTimeEntry(usedRepos))
+        }
+      }
+  }
+
   def createForm(owner: String, repo: String, issueNumber: Int) = SecuredAction {
     implicit request =>
       Async {
