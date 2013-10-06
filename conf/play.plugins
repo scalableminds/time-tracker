@@ -3,4 +3,4 @@
 9995:securesocial.core.DefaultIdGenerator
 9997:securesocial.controllers.DefaultTemplatesPlugin
 9998:models.services.UserService
-10005:securesocial.core.providers.GitHubProvider
+10005:controllers.GitHubProvider
