@@ -43,7 +43,7 @@ object DurationParser {
 object TimeEntryController extends Controller with securesocial.core.SecureSocial {
   val DefaultAccessRole = None
 
-  case class TimeEntryPost(duration: String, timestamp: Long = System.currentTimeMillis())
+  case class TimeEntryPost(duration: String, comment: Option[String], timestamp: Long = System.currentTimeMillis())
 
   implicit val timeEntryPostFormat = Json.format[TimeEntryPost]
 
