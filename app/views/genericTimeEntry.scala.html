@@ -8,8 +8,12 @@
       <button type="button" class="close" data-dismiss="alert">×</button>
     </div>
     <div class="container">
-        <h3>Log time for issue #0</h3>
         <form action="" method="POST" role="form">
+            <h3>
+                Log time for issue #
+                <input id="issueNumber" class="form-control" type="text" value="0" name="issueNumber" required pattern="^\d+$" style="width: 64px; display: inline; margin-left: 5px; font-size: 24px; padding: 0; text-align: center; ">
+
+            </h3>
             <div class="form-group">
                 <label class="control-label" for="inputRepo">Repository</label>
                 <div style="width: 100%">

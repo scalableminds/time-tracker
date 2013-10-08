@@ -52,9 +52,9 @@ bootstrap : bootstrap
       # dismissAlert()
     )
     .fail (jqXHR, textStatus, error ) ->
-
-      $alert.addClass("alert-error in")
+      $alert.removeClass("alert-success")
       $alert.text("Ups! Something went wrong.")
+      $alert.addClass("alert-danger in")
 
       console.error("There was an error submitting the entry:", error)
       # dismissAlert()
@@ -62,7 +62,7 @@ bootstrap : bootstrap
   dismissAlert = ->
 
     window.setTimeout (->
-      $alert.removeClass("alert-error")
+      $alert.removeClass("alert-danger")
       $alert.removeClass("alert-success")
       $alert.hide()
     ), 5000

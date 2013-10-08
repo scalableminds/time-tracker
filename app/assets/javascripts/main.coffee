@@ -55,14 +55,18 @@ $ ->
 
       TimeEntryCode()
 
+      $issueNumber = $("#issueNumber")
+
       actionUpdater = ->
         selectedRepo = $("select option:selected").val()
-        actionURL = "/repos/" + selectedRepo + "/issues/0"
+        actionURL = "/repos/" + selectedRepo + "/issues/" + $issueNumber.val()
         console.log "actionURL", actionURL
 
         $('form').get(0).setAttribute('action', actionURL)
 
       $("select[name=repository]").change(actionUpdater)
+      $issueNumber.change(actionUpdater)
+
 
       actionUpdater()
 
