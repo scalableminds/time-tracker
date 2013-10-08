@@ -19,7 +19,7 @@ class ProjectReportController extends Controller
            
       projects = @groupByProjects(data)
 
-      @addDateProperties(@projects)
+      projects = @addDateProperties(projects)
 
       @model =
         data : projects
