@@ -1,8 +1,9 @@
 package controllers
 
-import securesocial.core.providers.{GitHubProvider => SGP}
+import securesocial.core.providers.{GitHubProvider => OriginalGithubProvider}
 import play.api.libs.ws.Response
-import play.api.{Logger, Application}
+import play.api.{Logger}
+import play.api.{Application => PlayApplication}
 import securesocial.core.{AuthenticationException, OAuth2Info}
 
 /**
@@ -11,7 +12,7 @@ import securesocial.core.{AuthenticationException, OAuth2Info}
  * Date: 06.10.13
  * Time: 11:12
  */
-class GitHubProvider(app: Application) extends SGP(app) {
+class GitHubProvider(app: PlayApplication) extends OriginalGithubProvider(app) {
   def regexForUrlEncodedParameter(name: String) = {
     (".*" + name + "=" + "([^=&\\?]*)") r
   }
