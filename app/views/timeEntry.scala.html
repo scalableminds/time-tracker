@@ -11,11 +11,15 @@
         <h3>/@owner/@repo/@issueNumber</h3>
         @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber), 'role -> "form") {
             <div class="form-group">
+
                 <label class="control-label" for="duration">Duration</label>
                 <div class="input-group">
                     <input id="duration" class="form-control" type="text" name="duration" autofocus required pattern="^\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$">
                     <span class="input-group-addon"><i class="icon-time"></i></span>
                 </div>
+
+                <label class="control-label" for="duration">Comment</label>
+                <input id="comment" name="comment" class="form-control" type="text">
 
                 <label class="control-label" for="date">Date</label>
                 <div class="input-group" data-datepicker>
