@@ -36,7 +36,7 @@ object DurationParser {
         val h = if (_h == null) 0 else _h.toInt
         val m = if (_m == null) 0 else _m.toInt
 
-        sign * (d * 8 + h) * 60 + m
+        sign * ((d * 8 + h) * 60 + m)
     }
   }
 }
