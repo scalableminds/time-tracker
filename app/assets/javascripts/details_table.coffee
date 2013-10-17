@@ -15,7 +15,7 @@ class DetailsTable extends Backbone.View
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title"><%= title %></h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="overflow-y: auto; max-height: 800px">
         <div>
           <table id="timetable" class="table table-hover table-bordered table-striped">
             <thead>
@@ -84,16 +84,19 @@ class DetailsTable extends Backbone.View
       )
     )
 
+    if @model
 
-    #tbody
-    for element in @model
-      table.push(
-        Row([
-          Cell(moment(element.date).format("hh:mm") + " h"),
-          Cell(element.comment or ""),
-          Cell(Utils.minutesToHours(element.duration))
-        ])
-      )
+      #tbody
+      for element in @model
+        table.push(
+          Row([
+            Cell(moment(element.date).format("hh:mm") + " h"),
+            Cell(element.comment or ""),
+            Cell(Utils.minutesToHours(element.duration))
+          ])
+        )
+    else
+      table.push(Row(["", "", ""]))
 
 
     # don't display summarizing tfoot if there is only one log

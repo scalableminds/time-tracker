@@ -43,7 +43,7 @@ class ReportTable extends Backbone.View
         </tfoot>
       </table>
     </div>
-    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden"></div>
 
   """)
 

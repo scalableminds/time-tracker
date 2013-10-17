@@ -43,7 +43,7 @@ object DurationParser {
 object TimeEntryController extends Controller with securesocial.core.SecureSocial {
   val DefaultAccessRole = None
 
-  case class TimeEntryPost(duration: String, comment: String, timestamp: Long = System.currentTimeMillis())
+  case class TimeEntryPost(duration: String, comment: Option[String], timestamp: Long = System.currentTimeMillis())
 
   implicit val timeEntryPostFormat = Json.format[TimeEntryPost]
 
@@ -73,7 +73,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
         } yield {
 
           val issue = Issue(fullName, issueNumber)
-          val timeEntry = TimeEntry(issue, duration, user.githubId, Some(timeEntryPost.comment), timeEntryPost.timestamp)
+          val timeEntry = TimeEntry(issue, duration, user.githubId, timeEntryPost.comment, timeEntryPost.timestamp)
           TimeEntryDAO.createTimeEntry(timeEntry)(user)
           JsonOk("OK")
         }) ?~> "Not allowed."
