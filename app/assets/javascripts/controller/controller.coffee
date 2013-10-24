@@ -47,6 +47,7 @@ class Controller
   
   testTableHierarchy: ->
 
+    # avoids ugly <a> tags in header
     MinimalHeaderCell = Backgrid.HeaderCell.extend(
 
       render: -> 
@@ -58,38 +59,53 @@ class Controller
       
     )
     
-
+    # allows for styled section-rows
     ClickableRow = Backgrid.Row.extend(
       
-      events: { "click" : "onClick" }
+      events:
+        "click" : "onClick"
+        "style" : "onStyle"
       
       onClick: ->
-        console.log("this", @)
-        window.test = @
-        @$el.addClass("project-row")
-        Backbone.trigger("rowclicked", @model)
+
+        console.log("this was clicked", @)
+        # Backbone.trigger("rowclicked", @model)
+
+
+      onStyle: ->
+
+        if @model.attributes.sectionRow
+          @$el.addClass("project-row")
+
 
     )
 
-    Backbone.on("rowclicked", (model) ->
-      console.log("model", model)
+    ClickableCell = Backgrid.Row.extend(
+      
+      events:
+
+        "click" : "onClick"
+      
+
+      onClick: ->
+
+        console.log("clickableCell this was clicked", @)
+
     )
+
+   
+
+    # Backbone.on("rowclicked", (model) ->
+    #   console.log("model", model)
+    # )
 
 
     columns = [
       name: "issue"
-      label: "Issue"
-      editable: false
-      cell: "string"
-      sortable: false
-      headerCell: MinimalHeaderCell
+      label: "Issue"      
     ,
       name: "sum"
       label: "&sum;"
-      editable: false
-      sortable: false
-      cell: "string"
-      headerCell: MinimalHeaderCell
     ]
 
     data = @prepareModel()
@@ -98,26 +114,43 @@ class Controller
       columns.push(
         name: d
         label: Utils.zeroPad(d)
-        editable: false
-        sortable: false
-        cell: "string"
-        headerCell: MinimalHeaderCell
       )
     )
 
+    for aColumn in columns
+      aColumn.editable = false
+      aColumn.cell = "string"
+      aColumn.sortable = false
+      aColumn.headerCell = MinimalHeaderCell
 
-    console.log("data", data)
 
     dataCollection = new Backbone.Collection(data)
     
+
+    console.warn("footer doesnt work?")
+    CaptionFooter = Backgrid.Footer.extend(
+  
+      render = -> 
+        
+        @$el.empty()
+        @$el.append($("<tr><td colspan='6'>Hello World!</td></tr>"))
+        @delegateEvents()
+        return @
+
+    )
+
+
     grid = new Backgrid.Grid(
       columns: columns
       collection: dataCollection
       row: ClickableRow
+      cell: ClickableCell
+      footer: CaptionFooter
       className: "table table-hover table-bordered table-striped"
     )
 
     $("div.report-table").append(grid.render().$el)
+    grid.$el.find("tr").trigger("style")
 
 
   instantiateView : ->
@@ -170,13 +203,13 @@ class Controller
       sectionHeaderRow = 
         "issue" : element
         "sum" : Utils.minutesToHours(Utils.sum(daySums))
+        "sectionRow" : true
 
       _.map(daySums, (sum, index) ->
-        sectionHeaderRow[index] = Utils.minutesToHours(sum) || ""
+        sectionHeaderRow[index + 1] = Utils.minutesToHours(sum) || ""
       )
 
       table.push(sectionHeaderRow)
-
 
 
       _.forOwn(_.groupBy(elementEntries, @groupByIterator),
@@ -184,12 +217,12 @@ class Controller
 
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
           
-          entry = @groupByIteratorToString entries[0]
+          entry = @groupByIteratorToString(entries[0])
 
           currentRow =
             "issue" : entry
             "sum" : Utils.minutesToHours(Utils.sum(_.map(entries, "duration")))
-          
+            "entriesDaysGroups" : entriesDaysGroups
 
           _.map(daysRange, (day) =>
               value = Utils.minutesToHours(Utils.sum(
@@ -200,7 +233,7 @@ class Controller
           )
 
 
-          table.push currentRow
+          table.push(currentRow)
       )
 
     #tfoot
