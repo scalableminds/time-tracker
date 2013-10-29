@@ -3,9 +3,8 @@ jquery : $
 bootstrap : bootstrap
 underscore : _
 ../report_table : ReportTable
-../table_view : TableView
 ../utils : Utils
-
+details_table : DetailsTable
 backgrid : Backgrid
 
 ###
@@ -27,138 +26,23 @@ class Controller
 
   displayModel : ->
 
-    console.warn("exiting early in displayModel")
-    # return
-
-
     @instantiateView()
     @view.render()
 
-
-    console.warn("add empty again")
     $("#main-container .container").empty().append(@view.el)
-
-    @testTableHierarchy()
-
 
     @view.monthPicker.on "change", (event) =>
       @loadAndDisplay(@view.monthPicker.model)
 
   
-  testTableHierarchy: ->
-
-    # avoids ugly <a> tags in header
-    MinimalHeaderCell = Backgrid.HeaderCell.extend(
-
-      render: -> 
-        @$el.empty()
-        $label = @column.get("label")
-        @$el.append($label)
-        @delegateEvents()
-        return @
-      
-    )
-    
-    # allows for styled section-rows
-    ClickableRow = Backgrid.Row.extend(
-      
-      events:
-        "click" : "onClick"
-        "style" : "onStyle"
-      
-      onClick: ->
-
-        console.log("this was clicked", @)
-        # Backbone.trigger("rowclicked", @model)
-
-
-      onStyle: ->
-
-        if @model.attributes.sectionRow
-          @$el.addClass("project-row")
-
-
-    )
-
-    ClickableCell = Backgrid.Row.extend(
-      
-      events:
-
-        "click" : "onClick"
-      
-
-      onClick: ->
-
-        console.log("clickableCell this was clicked", @)
-
-    )
-
-   
-
-    # Backbone.on("rowclicked", (model) ->
-    #   console.log("model", model)
-    # )
-
-
-    columns = [
-      name: "issue"
-      label: "Issue"      
-    ,
-      name: "sum"
-      label: "&sum;"
-    ]
-
-    data = @prepareModel()
-
-    _.range(1, @currentDate.endOf("month").date() + 1).forEach( (d) ->
-      columns.push(
-        name: d
-        label: Utils.zeroPad(d)
-      )
-    )
-
-    for aColumn in columns
-      aColumn.editable = false
-      aColumn.cell = "string"
-      aColumn.sortable = false
-      aColumn.headerCell = MinimalHeaderCell
-
-
-    dataCollection = new Backbone.Collection(data)
-    
-
-    console.warn("footer doesnt work?")
-    CaptionFooter = Backgrid.Footer.extend(
-  
-      render = -> 
-        
-        @$el.empty()
-        @$el.append($("<tr><td colspan='6'>Hello World!</td></tr>"))
-        @delegateEvents()
-        return @
-
-    )
-
-
-    grid = new Backgrid.Grid(
-      columns: columns
-      collection: dataCollection
-      row: ClickableRow
-      cell: ClickableCell
-      footer: CaptionFooter
-      className: "table table-hover table-bordered table-striped"
-    )
-
-    $("div.report-table").append(grid.render().$el)
-    grid.$el.find("tr").trigger("style")
-
-
   instantiateView : ->
 
     @view = new ReportTable()
-    @view.model = @model
+    @view.model =
+      "title" : @model.title
+      "data" : @prepareModel()
+
     @view.currentDate = @currentDate
-    @view.table = @prepareTable()
     @view.groupByIterator = @groupByIterator
     
 
@@ -180,18 +64,8 @@ class Controller
 
     table = []
     
-    # thead
     daysRange = _.range(1, @currentDate.endOf("month").date() + 1)
 
-    # headerRow = 
-    #   "issue" : "Issue"
-    #   "sum"   : "&sum;"
-    
-    # _.map(daysRange, (a) ->
-    #   headerRow[a] = Utils.zeroPad(a)
-    # )
-    
-    # table.push(headerRow)
 
     #tbody
     for element, elementEntries of @model.data
@@ -203,7 +77,7 @@ class Controller
       sectionHeaderRow = 
         "issue" : element
         "sum" : Utils.minutesToHours(Utils.sum(daySums))
-        "sectionRow" : true
+        "className" : "project-row"
 
       _.map(daySums, (sum, index) ->
         sectionHeaderRow[index + 1] = Utils.minutesToHours(sum) || ""
@@ -243,6 +117,7 @@ class Controller
     footerRow =
       "issue" : "&sum;"
       "sum" :  Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration")))
+      "className" : "tfoot"
 
     _.map(daysRange, (day) ->
         footerRow[day] = Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""
@@ -253,94 +128,3 @@ class Controller
 
     return table
 
-
-
-
-  prepareTable : ->
-
-    table = []
-
-    Row = (cells, groupByIdentifier = "", entityIdentifier = "", className = "") -> { cells, groupByIdentifier, entityIdentifier, className }
-    Cell = (value, colspan = 0, className = "") -> { value, colspan, className }
-
-    # thead
-    daysRange = _.range(1, @currentDate.endOf("month").date() + 1)
-
-    table.push(
-      Row(
-        [
-          Cell("Issue")
-          # , Cell("Summary")
-          , Cell("&sum;")
-        ].concat(_.map(daysRange, (a) -> Cell(Utils.zeroPad(a))))
-      )
-    )
-
-
-
-    #tbody
-    for element, elementEntries of @model.data
-      
-      elementDaysGroups = _.groupBy(elementEntries, (a) -> moment(a.date).date())
-
-      daySums = _.map(daysRange, (day) -> Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration)))
-
-      table.push(
-        Row(
-          [
-            Cell(element)
-            # , Cell(Utils.sum(_.map(elementEntries, "duration")))
-            Cell(Utils.minutesToHours(Utils.sum(daySums)))
-          ].concat(_.map(daySums, (a) -> Cell(Utils.minutesToHours(a) || ""))),
-          "", "",
-          "project-row"
-        )
-      )
-
-      _.forOwn(_.groupBy(elementEntries, @groupByIterator),
-        (entries) =>
-
-          entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
-          
-          entry = @groupByIteratorToString entries[0]
-
-          leftCells = [
-            Cell(entry)
-            # Cell(entries[0].title)       # summary
-            Cell(Utils.minutesToHours(Utils.sum(_.map(entries, "duration"))))
-          ]
-
-          rightCells = _.map(
-            daysRange, (day) =>
-              value = Utils.minutesToHours(Utils.sum(
-                _.map(entriesDaysGroups[day] ? [], (a) => a.duration)
-              )) || ""
-              
-              return Cell(value, 0, @cellClass)
-          )
-          aRow = Row(leftCells.concat(rightCells), element, entry)
-          table.push aRow
-      )
-
-    #tfoot
-    allEntries = _.flatten(_.values(@model.data))
-    allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
-
-
-    rightCells = _.map(
-      daysRange, (day) ->
-        Cell(
-          Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""
-        )
-    )
-
-    table.push Row(
-      [ 
-        Cell("&sum;")
-        # Cell("")
-        Cell(Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration"))))
-      ].concat rightCells
-    )
-
-
-    return table
