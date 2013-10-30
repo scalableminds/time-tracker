@@ -2,6 +2,7 @@
 jquery : $
 underscore : _
 backbone : Backbone
+details_table : DetailsTable
 ./month_picker : MonthPicker
 ./utils : Utils
 ###
@@ -26,7 +27,7 @@ class ReportTable extends Backbone.View
         </thead>
         <tbody>
           <% table.slice(1, -1).forEach(function (row) { %>
-            <tr class="<%= row.className %>" >
+            <tr class="<%= row.className %>" data-group-by-identifier="<%= row.groupByIdentifier %>" data-entity-identifier="<%= row.entityIdentifier %>">
               <% row.cells.forEach(function (cell) { %>
                 <td<% if (cell.colspan) { %> colspan="<%= cell.colspan %>" <% } %><% if (cell.className) { %> class="<%= cell.className %>" <% } %>><%= cell.value %></td>
               <% }) %>
@@ -42,18 +43,14 @@ class ReportTable extends Backbone.View
         </tfoot>
       </table>
     </div>
-    <div class="popup">
-      <h2>Iframe with new issue/ edit issue</h2>
-      <!-- <iframe src="/404"></iframe> -->
-    </div>
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden"></div>
+
   """)
 
 
   events : 
 
     "click .edit-time" : "editTime"
-    "click .popup" : -> @popup.hide()
-
 
 
   initialize : ->
@@ -64,15 +61,29 @@ class ReportTable extends Backbone.View
 
 
   editTime : (event) ->
-
+    
     event.stopPropagation()
-
+    
     $el = $(event.target)
-    width = $el.width()
-    value = $el.text()
-    issueNumber = $el.data("issueNumber")
+    $parent = $el.parent()
+    
+    groupByIdentifier = $parent.data("group-by-identifier")
+    entityIdentifier = $parent.data("entity-identifier")
 
-    @popup.toggle()
+    sectionEntries = @model.data[groupByIdentifier]
+    groupedEntries = _.groupBy(sectionEntries, @groupByIterator)
+    monthEntries = groupedEntries[entityIdentifier]
+    entriesDaysGroups = _.groupBy(monthEntries, (a) -> moment(a.date).date())
+
+    # Range of dayEntries begins with 1. The first-day-of-the-month-column has the index 2.
+    day = $el[0].cellIndex - 1
+    dayEntries = entriesDaysGroups[day]
+  
+    detailsTable = new DetailsTable()
+    detailsTable.model = dayEntries
+    detailsTable.render()
+
+    $("#modal").html(detailsTable.el).modal("show")
 
 
   render : ->
@@ -94,7 +105,7 @@ class ReportTable extends Backbone.View
 
     table = []
 
-    Row = (cells, className = "") -> { cells, className }
+    Row = (cells, groupByIdentifier = "", entityIdentifier = "", className = "") -> { cells, groupByIdentifier, entityIdentifier, className }
     Cell = (value, colspan = 0, className = "") -> { value, colspan, className }
 
     # thead
@@ -126,6 +137,7 @@ class ReportTable extends Backbone.View
             # , Cell(Utils.sum(_.map(elementEntries, "duration")))
             Cell(Utils.minutesToHours(Utils.sum(daySums)))
           ].concat(_.map(daySums, (a) -> Cell(Utils.minutesToHours(a) || ""))),
+          "", "",
           "project-row"
         )
       )
@@ -135,8 +147,10 @@ class ReportTable extends Backbone.View
 
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
           
+          entry = @groupByIteratorToString entries[0]
+
           leftCells = [
-            Cell(@groupByIteratorToString entries[0])
+            Cell(entry)
             # Cell(entries[0].title)       # summary
             Cell(Utils.minutesToHours(Utils.sum(_.map(entries, "duration"))))
           ]
@@ -149,7 +163,7 @@ class ReportTable extends Backbone.View
               
               return Cell(value, 0, @cellClass)
           )
-          aRow = Row(leftCells.concat rightCells)
+          aRow = Row(leftCells.concat(rightCells), element, entry)
           table.push aRow
       )
 
