@@ -33,14 +33,15 @@ bootstrap : bootstrap
 
     duration = $("#duration").val()
     timestamp = 1000 * currentDate.unix()
-    
+    comment = $("#comment").val()
+
     $.ajax(
 
       url: $form.attr("action")
       method: $form.attr("method")
       contentType: "application/json; charset=utf-8"
       dataType: "json"
-      data: JSON.stringify {duration, timestamp}
+      data: JSON.stringify {duration, timestamp, comment}
     )
     .done( -> 
 
