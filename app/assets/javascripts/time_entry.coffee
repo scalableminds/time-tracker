@@ -31,6 +31,11 @@ bootstrap : bootstrap
 
     $form = $("form")
 
+
+    unless $form[0].checkValidity()
+      showAlert("Your specified time couldn't be recognized. Use something like: 2h 10m", "failure")
+      return
+
     duration = $("#duration").val()
     timestamp = 1000 * currentDate.unix()
     comment = $("#comment").val()
@@ -44,22 +49,32 @@ bootstrap : bootstrap
       data: JSON.stringify {duration, timestamp, comment}
     )
     .done( -> 
-
+      
       setTimeout(
         -> window.history.back()
         1000
       )
-      $alert.text("Yeah! Your time got logged.")
-      $alert.addClass("alert-success in")
+      showAlert("Yeah! Your time got logged.", "success")
       # dismissAlert()
     )
     .fail (jqXHR, textStatus, error ) ->
-      $alert.removeClass("alert-success")
-      $alert.text("Ups! Something went wrong.")
-      $alert.addClass("alert-danger in")
-
+      
       console.error("There was an error submitting the entry:", error)
+      showAlert("Ups! Something went wrong.", "failure")
       # dismissAlert()
+
+  showAlert = (msg, state) ->
+
+    # clear existing styles
+    $alert.removeClass("alert-success")
+    $alert.removeClass("alert-danger")
+    
+    $alert.text(msg)
+
+    if state == "success"
+      $alert.addClass("alert-success in")
+    else
+      $alert.addClass("alert-danger in")
 
   dismissAlert = ->
 
