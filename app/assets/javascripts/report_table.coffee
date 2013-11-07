@@ -5,6 +5,8 @@ backbone : Backbone
 details_table : DetailsTable
 ./month_picker : MonthPicker
 ./utils : Utils
+backgrid : Backgrid
+./backgrid_modifications : BackgridModifications
 ###
 
 class ReportTable extends Backbone.View
@@ -32,76 +34,7 @@ class ReportTable extends Backbone.View
     @monthPicker = new MonthPicker()
 
 
-  createGrid : ->
-
-    # avoids ugly <a> tags in header
-    MinimalHeaderCell = Backgrid.HeaderCell.extend(
-
-      render: -> 
-
-        @$el.empty()
-        $label = @column.get("label")
-        @$el.append($label)
-        @delegateEvents()
-        return @
-      
-
-    )
-    
-    # allows for styled section-rows
-    StylableRow = Backgrid.Row.extend(
-      
-      events:
-        "style" : "onStyle"
-      
-
-      onStyle: ->
-        className = @model.attributes.className
-        if className
-          @$el.addClass(className)
-
-
-    )
-
-
-    ClickableCell = Backgrid.Cell.extend(
-      
-      events:
-
-        "click" : "onClick"
-      
-
-      onClick: ->
-
-        day = @el.cellIndex - 1
-        entriesDaysGroups = @model.attributes.entriesDaysGroups
-        
-        # existence of entriesDaysGroups should ensure that we aren't on a sectionRow or in tfoot
-        console.warn("check if we are in user-view?")
-        
-        if day > 0 and entriesDaysGroups
-
-          event.stopPropagation()
-
-          dayEntries = entriesDaysGroups[day]
-
-          console.log("@model.attributes.entriesDaysGroups",  dayEntries)
-          # Backbone.trigger("rowclicked", @model)
-                  
-
-          detailsTable = new DetailsTable()
-          detailsTable.model = dayEntries
-          detailsTable.render()
-
-          $("#modal").html(detailsTable.el).modal("show")
-
-    )
-  
-
-    # Backbone.on("rowclicked", (model) ->
-    #   console.log("model", model)
-    # )
-
+  createColumns : ->
 
     columns = [
       name: "issue"
@@ -118,12 +51,25 @@ class ReportTable extends Backbone.View
       )
     )
 
+    return columns
+
+  createGrid : ->
+    
+    columns = @createColumns()
+
+    options = 
+      "cellOnClick" : @cellOnClick
+
+    { MinimalHeaderCell, StylableRow, ClickableCell } = BackgridModifications(options)
+
+
     for aColumn in columns
       aColumn.editable = false
       aColumn.cell = ClickableCell
       aColumn.sortable = false
       aColumn.headerCell = MinimalHeaderCell
 
+    console.log(@model.data, "@model.data")
 
     return new Backgrid.Grid(
       columns: columns
@@ -131,6 +77,7 @@ class ReportTable extends Backbone.View
       row: StylableRow
       className: "table table-hover table-bordered table-striped"
     )
+
 
   render : ->
 
@@ -140,15 +87,33 @@ class ReportTable extends Backbone.View
       title : @model.title
     ))
 
-
     grid = @createGrid()    
+
     @$el.append(grid.render().$el)
 
-    console.warn("right way and time to trigger this?")
     grid.$el.find("tr").trigger("style")
-
 
     @monthPicker.render()
     @$el.find(".picker").append(@monthPicker.el)
 
     @popup = @$el.find(".popup")
+
+
+  cellOnClick: ->
+
+    day = @el.cellIndex - 1
+    entriesDaysGroups = @model.attributes.entriesDaysGroups
+    
+    # existence of entriesDaysGroups should ensure that we aren't on a sectionRow or in tfoot (where this event shouldn't be triggered)
+
+    if day > 0 and entriesDaysGroups
+
+      event.stopPropagation()
+
+      dayEntries = entriesDaysGroups[day]
+
+      detailsTable = new DetailsTable()
+      detailsTable.model = dayEntries
+      detailsTable.render()
+
+      $("#modal").html(detailsTable.el).modal("show")

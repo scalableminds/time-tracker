@@ -18,6 +18,7 @@ class Controller
     @users = {}
     @loadAndDisplay moment()
 
+
   loadAndDisplay : (@currentDate) ->
     
     @requestData().done =>
@@ -122,7 +123,7 @@ class Controller
     _.map(daysRange, (day) ->
         footerRow[day] = Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""
     )
-
+    
     table.push(footerRow)
 
 
