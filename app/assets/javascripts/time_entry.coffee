@@ -22,6 +22,7 @@ bootstrap : bootstrap
     currentDate = moment(event.date.valueOf())
 
   datepicker.datepicker("setValue", currentDate.toDate())
+  datepicker.datepicker('update')
 
 
   $("input[type=submit]").on "click", (evt) ->
