@@ -43,7 +43,7 @@ $ ->
       controller = new ProjectReportController()
 
     "/team" : ->
-      # controller = new TeamP
+      
       controller = new TeamReportController()
 
 
@@ -60,7 +60,6 @@ $ ->
       actionUpdater = ->
         selectedRepo = $("select option:selected").val()
         actionURL = "/repos/" + selectedRepo + "/issues/" + $issueNumber.val()
-        console.log "actionURL", actionURL
 
         $('form').get(0).setAttribute('action', actionURL)
 

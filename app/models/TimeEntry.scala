@@ -20,14 +20,14 @@ object Issue extends Function2[String, Int, Issue] {
   implicit val issueFormatter = Json.format[Issue]
 }
 
-case class TimeEntry(issue: Issue, duration: Int, userGID: String, timestamp: Long = System.currentTimeMillis)
+case class TimeEntry(issue: Issue, duration: Int, userGID: String, comment: Option[String], timestamp: Long = System.currentTimeMillis)
 
 object TimeEntry extends{
-  def fromForm(issue: Issue, duration: Int, userGID: String) =
-    TimeEntry(issue, duration, userGID)
+  def fromForm(issue: Issue, duration: Int, userGID: String, comment: Option[String]) =
+    TimeEntry(issue, duration, userGID, comment)
 
   def toForm(t: TimeEntry) =
-    Some((t.issue, t.duration, t.userGID))
+    Some((t.issue, t.duration, t.userGID, t.comment))
 }
 
 object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {

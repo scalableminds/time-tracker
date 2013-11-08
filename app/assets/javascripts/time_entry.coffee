@@ -22,6 +22,7 @@ bootstrap : bootstrap
     currentDate = moment(event.date.valueOf())
 
   datepicker.datepicker("setValue", currentDate.toDate())
+  datepicker.datepicker('update')
 
 
   $("input[type=submit]").on "click", (evt) ->
@@ -30,19 +31,25 @@ bootstrap : bootstrap
 
     $form = $("form")
 
+
+    unless $form[0].checkValidity()
+      showAlert("Your specified time couldn't be recognized. Use something like: 2h 10m", "failure")
+      return
+
     duration = $("#duration").val()
     timestamp = 1000 * currentDate.unix()
-    
+    comment = $("#comment").val()
+
     $.ajax(
 
       url: $form.attr("action")
       method: $form.attr("method")
       contentType: "application/json; charset=utf-8"
       dataType: "json"
-      data: JSON.stringify {duration, timestamp}
+      data: JSON.stringify {duration, timestamp, comment}
     )
     .done( -> 
-
+      
       setTimeout(
         ->
           if isUserComingFromGithub()
@@ -52,18 +59,15 @@ bootstrap : bootstrap
             window.history.back()
         1000
       )
-
-      $alert.text("Yeah! Your time got logged.")
-      $alert.addClass("alert-success in")
+      showAlert("Yeah! Your time got logged.", "success")
       # dismissAlert()
     )
     .fail (jqXHR, textStatus, error ) ->
-      $alert.removeClass("alert-success")
-      $alert.text("Ups! Something went wrong.")
-      $alert.addClass("alert-danger in")
-
+      
       console.error("There was an error submitting the entry:", error)
+      showAlert("Ups! Something went wrong.", "failure")
       # dismissAlert()
+
 
   isUserComingFromGithub = ->
 
@@ -71,6 +75,21 @@ bootstrap : bootstrap
     # so, we just check if timer.scm.io is in the referrer
     # don't close on localhost (for development)
     return document.referrer.indexOf("timer.scm.io") == -1 and document.location.toString().indexOf("localhost") == -1
+
+
+  showAlert = (msg, state) ->
+
+    # clear existing styles
+    $alert.removeClass("alert-success")
+    $alert.removeClass("alert-danger")
+    
+    $alert.text(msg)
+
+    if state == "success"
+      $alert.addClass("alert-success in")
+    else
+      $alert.addClass("alert-danger in")
+
 
   dismissAlert = ->
 
