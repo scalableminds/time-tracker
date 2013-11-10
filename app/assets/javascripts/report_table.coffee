@@ -34,7 +34,7 @@ class ReportTable extends Backbone.View
     @monthPicker = new MonthPicker()
 
 
-  createColumns : ->
+  createColumns : (ClickableCell, MinimalHeaderCell) ->
 
     columns = [
       name: "issue"
@@ -51,23 +51,23 @@ class ReportTable extends Backbone.View
       )
     )
 
-    return columns
-
-  createGrid : ->
-    
-    columns = @createColumns()
-
-    options = 
-      "cellOnClick" : @cellOnClick
-
-    { MinimalHeaderCell, StylableRow, ClickableCell } = BackgridModifications(options)
-
-
     for aColumn in columns
       aColumn.editable = false
       aColumn.cell = ClickableCell
       aColumn.sortable = false
       aColumn.headerCell = MinimalHeaderCell
+
+    return columns
+
+
+  createGrid : ->
+    
+    options = 
+      "cellOnClick" : @cellOnClick
+
+    { MinimalHeaderCell, StylableRow, ClickableCell } = BackgridModifications(options)
+
+    columns = @createColumns(ClickableCell, MinimalHeaderCell)
 
     return new Backgrid.Grid(
       columns: columns
