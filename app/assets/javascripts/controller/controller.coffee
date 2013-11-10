@@ -75,10 +75,13 @@ class Controller
 
       daySums = _.map(daysRange, (day) -> Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration)))
 
+      sectionHeaderRowData =
+        "className" : "project-row"
+
       sectionHeaderRow = 
         "issue" : element
         "sum" : Utils.minutesToHours(Utils.sum(daySums))
-        "className" : "project-row"
+        "additionalData" : sectionHeaderRowData
 
       _.map(daySums, (sum, index) ->
         sectionHeaderRow[index + 1] = Utils.minutesToHours(sum) || ""
@@ -94,10 +97,20 @@ class Controller
           
           entry = @groupByIteratorToString(entries[0])
 
+
+          # this is used in order to fix backgrids incapabilities of handling single cells independently
+          additionalData =
+            "entriesDaysGroups" : entriesDaysGroups
+            "getCellClass" : (cellIndex) ->
+              # skip issue and sum row so that they don't get highlighted
+              if cellIndex > 1
+                return "edit-time"
+
+
           currentRow =
             "issue" : entry
             "sum" : Utils.minutesToHours(Utils.sum(_.map(entries, "duration")))
-            "entriesDaysGroups" : entriesDaysGroups
+            "additionalData" : additionalData
 
           _.map(daysRange, (day) =>
               value = Utils.minutesToHours(Utils.sum(
@@ -115,10 +128,15 @@ class Controller
     allEntries = _.flatten(_.values(@model.data))
     allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
 
+
+    footerRowData = 
+      "className" : "tfoot"
+
+
     footerRow =
       "issue" : "&sum;"
       "sum" :  Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration")))
-      "className" : "tfoot"
+      "additionalData" : footerRowData
 
     _.map(daysRange, (day) ->
         footerRow[day] = Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""
@@ -128,4 +146,3 @@ class Controller
 
 
     return table
-

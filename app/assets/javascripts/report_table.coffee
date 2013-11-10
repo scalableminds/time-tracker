@@ -69,8 +69,6 @@ class ReportTable extends Backbone.View
       aColumn.sortable = false
       aColumn.headerCell = MinimalHeaderCell
 
-    console.log(@model.data, "@model.data")
-
     return new Backgrid.Grid(
       columns: columns
       collection: new Backbone.Collection(@model.data)
@@ -102,7 +100,9 @@ class ReportTable extends Backbone.View
   cellOnClick: ->
 
     day = @el.cellIndex - 1
-    entriesDaysGroups = @model.attributes.entriesDaysGroups
+
+    additionalData = @model.attributes.additionalData
+    entriesDaysGroups = additionalData.entriesDaysGroups
     
     # existence of entriesDaysGroups should ensure that we aren't on a sectionRow or in tfoot (where this event shouldn't be triggered)
 
