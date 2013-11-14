@@ -75,13 +75,12 @@ class Controller
 
       daySums = _.map(daysRange, (day) -> Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration)))
 
-      sectionHeaderRowData =
-        "className" : "project-row"
+      
 
       sectionHeaderRow = 
         "issue" : element
         "sum" : Utils.minutesToHours(Utils.sum(daySums))
-        "additionalData" : sectionHeaderRowData
+        "_className" : "project-row"
 
       _.map(daySums, (sum, index) ->
         sectionHeaderRow[index + 1] = Utils.minutesToHours(sum) || ""
@@ -98,28 +97,34 @@ class Controller
           entry = @groupByIteratorToString(entries[0])
 
 
-          # this is used in order to fix backgrids incapabilities of handling single cells independently
-          additionalData =
-            "entriesDaysGroups" : entriesDaysGroups
-            "getCellClass" : (cellIndex) ->
-              # skip issue and sum row so that they don't get highlighted
-              if cellIndex > 1
-                return "edit-time"
-
-
           currentRow =
             "issue" : entry
             "sum" : Utils.minutesToHours(Utils.sum(_.map(entries, "duration")))
-            "additionalData" : additionalData
+            "_entriesDaysGroups" : entriesDaysGroups
+
 
           _.map(daysRange, (day) =>
+              
+              dayEntries = entriesDaysGroups[day]
+
               value = Utils.minutesToHours(Utils.sum(
-                _.map(entriesDaysGroups[day] ? [], (a) => a.duration)
+                _.map(dayEntries ? [], (a) => a.duration)
               )) || ""
               
-              currentRow[day] = value
-          )
+              currentRow[day] = 
+                text: value
+                cellClass: "edit-time"
+                onClick: ->
 
+                  event.stopPropagation()
+
+                  detailsTable = new DetailsTable()
+                  detailsTable.model = dayEntries
+                  detailsTable.render()
+
+                  $("#modal").html(detailsTable.el).modal("show")
+
+          )
 
           table.push(currentRow)
       )
@@ -129,14 +134,11 @@ class Controller
     allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
 
 
-    footerRowData = 
-      "className" : "tfoot"
-
-
+    
     footerRow =
       "issue" : "&sum;"
       "sum" :  Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration")))
-      "additionalData" : footerRowData
+      "_className" : "tfoot"
 
     _.map(daysRange, (day) ->
         footerRow[day] = Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""

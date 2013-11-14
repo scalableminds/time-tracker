@@ -34,7 +34,7 @@ class ReportTable extends Backbone.View
     @monthPicker = new MonthPicker()
 
 
-  createColumns : (ClickableCell, MinimalHeaderCell) ->
+  createColumns : (ExtendedCell, MinimalHeaderCell) ->
 
     columns = [
       name: "issue"
@@ -53,7 +53,7 @@ class ReportTable extends Backbone.View
 
     for aColumn in columns
       aColumn.editable = false
-      aColumn.cell = ClickableCell
+      aColumn.cell = ExtendedCell
       aColumn.sortable = false
       aColumn.headerCell = MinimalHeaderCell
 
@@ -62,12 +62,9 @@ class ReportTable extends Backbone.View
 
   createGrid : ->
     
-    options = 
-      "cellOnClick" : @cellOnClick
+    { MinimalHeaderCell, StylableRow, ExtendedCell } = BackgridModifications()
 
-    { MinimalHeaderCell, StylableRow, ClickableCell } = BackgridModifications(options)
-
-    columns = @createColumns(ClickableCell, MinimalHeaderCell)
+    columns = @createColumns(ExtendedCell, MinimalHeaderCell)
 
     return new Backgrid.Grid(
       columns: columns
@@ -89,31 +86,8 @@ class ReportTable extends Backbone.View
 
     @$el.append(grid.render().$el)
 
-    grid.$el.find("tr").trigger("style")
-
     @monthPicker.render()
     @$el.find(".picker").append(@monthPicker.el)
 
     @popup = @$el.find(".popup")
 
-
-  cellOnClick: ->
-
-    day = @el.cellIndex - 1
-
-    additionalData = @model.attributes.additionalData
-    entriesDaysGroups = additionalData.entriesDaysGroups
-    
-    # existence of entriesDaysGroups should ensure that we aren't on a sectionRow or in tfoot (where this event shouldn't be triggered)
-
-    if day > 0 and entriesDaysGroups
-
-      event.stopPropagation()
-
-      dayEntries = entriesDaysGroups[day]
-
-      detailsTable = new DetailsTable()
-      detailsTable.model = dayEntries
-      detailsTable.render()
-
-      $("#modal").html(detailsTable.el).modal("show")

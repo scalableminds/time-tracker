@@ -1,13 +1,13 @@
 ### define ###
 
-BackgridModifications = (options = {}) ->
+BackgridModifications = ->
 
-  # avoids ugly <a> tags in header
+  # removes sorting carets in header etc.
   MinimalHeaderCell: Backgrid.HeaderCell.extend(
 
     render: -> 
-      # is basically a copy of the standard render-function without any sorting carets etc
-
+      # see also backgrids implentation of HeaderCell.render()
+      
       @$el.empty()
       $label = @column.get("label")
       @$el.append($label)
@@ -17,54 +17,45 @@ BackgridModifications = (options = {}) ->
   )
   
   # allows for styled section-rows
-  # additionalData may yield the following attributes:
-  #   className: is a string which specifies the css class for the entire table-row
-  #   getCellClass: is a function which takes the cellIndex and returns the css class which the cell shall have
 
   StylableRow: Backgrid.Row.extend(
     
-    events:
-      "style" : "onStyle"
+    render: ->
+     
+      # call super
+      Backgrid.Row.prototype.render.apply(this, arguments)      
+      
+      if c = @model.get("_className")
+        @$el.addClass(c)
 
-
-    onStyle: ->
-
-      additionalData = @model.attributes.additionalData
-
-      @styleRow(additionalData.className)
-      @styleCells(additionalData.getCellClass)
-    
-
-    styleRow: (className) ->
-
-      if className?
-        @$el.addClass(className)
-
-
-    styleCells: (getCellClass) ->
-
-        unless getCellClass?
-          return
-
-        $(@el).find("td").each( (index, element) ->
-          cellClass = getCellClass(index)
-          if cellClass
-            $(element).addClass(cellClass)
-        )
-
+      @
   )
 
 
-  ClickableCell: Backgrid.Cell.extend(
+  ExtendedCell: Backgrid.Cell.extend(
     
-    events:
+    render: ->
+      # see also backgrids implentation of Cell.render()
 
-      "click" : "onClick"
+      @$el.empty()
+      modelContent = @model.get(@column.get("name"))
+
+      # is it a modified model?
+      if modelContent.text?
+
+        if modelContent.cellClass?
+          @$el.addClass(modelContent.cellClass)
+
+        if modelContent.onClick?
+          @$el.click(modelContent.onClick)
+
+        modelContent = modelContent.text
+
+      # calling html instead of text allows &sum; to render correctly
+      @$el.html(@formatter.fromRaw(modelContent))
+
+      @delegateEvents()
+      return @
     
-    onClick: ->
-
-      # deliver the right context
-      options["cellOnClick"]?.call(@)
-     
 
   )
