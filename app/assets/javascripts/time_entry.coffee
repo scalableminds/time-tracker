@@ -51,7 +51,12 @@ bootstrap : bootstrap
     .done( -> 
       
       setTimeout(
-        -> window.history.back()
+        ->
+          if isUserComingFromGithub()
+            # hacky hack hack
+            open(location, '_self').close();
+          else
+            window.history.back()
         1000
       )
       showAlert("Yeah! Your time got logged.", "success")
@@ -62,6 +67,15 @@ bootstrap : bootstrap
       console.error("There was an error submitting the entry:", error)
       showAlert("Ups! Something went wrong.", "failure")
       # dismissAlert()
+
+
+  isUserComingFromGithub = ->
+
+    # unfortunately, the referrer never seems to be set when the user comes from github
+    # so, we just check if timer.scm.io is in the referrer
+    # don't close on localhost (for development)
+    return document.referrer.indexOf("timer.scm.io") == -1 and document.location.toString().indexOf("localhost") == -1
+
 
   showAlert = (msg, state) ->
 
@@ -75,6 +89,7 @@ bootstrap : bootstrap
       $alert.addClass("alert-success in")
     else
       $alert.addClass("alert-danger in")
+
 
   dismissAlert = ->
 
