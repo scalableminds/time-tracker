@@ -69,7 +69,7 @@ class DetailsTable extends Backbone.View
 
     table = []
 
-    Row = (cells, groupByIdentifier = "", entityIdentifier = "", className = "") -> { cells, groupByIdentifier, entityIdentifier, className }
+    Row = (cells, className = "") -> { cells, className }
     Cell = (value, colspan = 0, className = "") -> { value, colspan, className }
 
     # thead
@@ -104,7 +104,7 @@ class DetailsTable extends Backbone.View
             
       sumOfDurations = Utils.minutesToHours(Utils.sum(_.map(@model, (a) -> a.duration))) || ""
 
-      table.push Row([Cell(""), Cell(""), Cell("&sum; " + sumOfDurations)])
+      table.push(Row([Cell(""), Cell(""), Cell("&sum; " + sumOfDurations)]))
 
 
     table
