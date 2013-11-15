@@ -3,8 +3,10 @@ package models.services
 import akka.actor.Actor
 import models.Repository
 import controllers.{Application, GithubApi, GithubIssue}
+import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
 import braingames.util.StartableActor
 import play.api.Logger
+import models.{IssueDAO, ArchivedIssue}
 
 /**
  * Company: scalableminds
@@ -24,6 +26,7 @@ class GithubIssueActor extends Actor {
         issues =>
           issues.map {
             issue =>
+              GithubIssueActor.ensureIssueIsArchived(repo, issue)
               GithubIssueActor.ensureTimeTrackingLink(repo, issue)
           }
       }
@@ -46,5 +49,9 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
       val body = issue.body + "\n\n" + link
       GithubApi.updateIssueBody(repo.accessToken, issue, body)
     }
+  }
+
+  def ensureIssueIsArchived(repo: Repository, issue: GithubIssue) = {
+    IssueDAO.archiveIssue(ArchivedIssue(repo.fullName, issue.number, issue.title))(GlobalAccessContext)
   }
 }

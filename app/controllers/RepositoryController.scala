@@ -27,6 +27,7 @@ object RepositoryController extends Controller {
       } {
         RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repository))(GlobalAccessContext).map {
           case Some(repo) =>
+            GithubIssueActor.ensureIssueIsArchived(repo, issue)
             GithubIssueActor.ensureTimeTrackingLink(repo, issue)
           case _ =>
             Logger.warn(s"Issue hook triggered, but couldn't find repository $owner/$repository")

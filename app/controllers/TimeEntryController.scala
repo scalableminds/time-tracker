@@ -106,6 +106,17 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
+  def showIssues(owner: String, repo: String) = SecuredAction {
+    implicit request =>
+      implicit val formatter = Json.format[CondensedIssue]
+      Async {
+        for {
+          entries <- IssueDAO.findByRepo(owner + "/" + repo)
+        } yield {
+          Ok(Json.obj("issue" -> entries))
+        }
+      }
+  }
 
   def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = SecuredAction {
     implicit request =>
