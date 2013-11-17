@@ -18,6 +18,10 @@ case class CondensedIssue(number: Int, title: String) {
   def this(issue: ArchivedIssue) = this(issue.number, issue.title)
 }
 
+object CondensedIssue {
+  implicit val formatter = Json.format[CondensedIssue]
+}
+
 object IssueDAO extends BasicReactiveDAO[ArchivedIssue] {
   val collectionName = "issues"
 
@@ -38,13 +42,8 @@ object IssueDAO extends BasicReactiveDAO[ArchivedIssue] {
   }
 
   def archiveIssue(issue: ArchivedIssue)(implicit ctx: DBAccessContext) = {
-
-    findByNumberAndRepo(issue.number, issue.fullRepoName).map {
-      case Some(existingIssue) => existingIssue
-      case _ =>
-        insert(issue)
-    }
-
+    val jsIssue = Json.obj("number" -> issue.number, "fullRepoName" -> issue.fullRepoName)
+    collectionUpdate(jsIssue, Json.obj("$set" -> Json.toJson(issue) ), upsert = true)
   }
 
 }
