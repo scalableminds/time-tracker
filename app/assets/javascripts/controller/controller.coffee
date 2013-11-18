@@ -75,7 +75,7 @@ class Controller
 
       daySums = _.map(daysRange, (day) -> Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration)))
 
-      
+
 
       sectionHeaderRow = 
         "issue" : element
@@ -94,8 +94,7 @@ class Controller
 
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
           
-          entry = @groupByIteratorToString(entries[0])
-
+          entry = @getSecondLevelLabel(entries[0], element)
 
           currentRow =
             "issue" : entry

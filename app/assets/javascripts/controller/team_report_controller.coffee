@@ -11,7 +11,7 @@ class TeamReportController extends Controller
   cellClass : ""
   
   groupByIterator : (time) -> return time.issue.project
-  groupByIteratorToString : (time) -> @groupByIterator time
+  getSecondLevelLabel : (time) -> @groupByIterator(time)
   
   requestData : ->
 
