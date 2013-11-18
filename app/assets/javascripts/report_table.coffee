@@ -92,9 +92,7 @@ class ReportTable extends Backbone.View
     @popup = @$el.find(".popup")
 
 
-  addIssueTooltips : ->
-
-    issueCache = {}
+  addIssueTooltips : (issueCache) ->
 
     $("[rel=tooltip").each( (index, element) ->
 
@@ -109,7 +107,7 @@ class ReportTable extends Backbone.View
 
       issueCache[repo].then( (data) ->
         
-        issue = _.find(data.issue, (info) -> info.number == issueNumber)
+        issue = _.find(data.issues, (info) -> info.number == issueNumber)
 
         $element.tooltip(
           "placement" : "right"

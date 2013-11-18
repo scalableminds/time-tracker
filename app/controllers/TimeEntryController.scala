@@ -112,7 +112,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
         for {
           entries <- IssueDAO.findByRepo(owner + "/" + repo)
         } yield {
-          Ok(Json.obj("issue" -> entries))
+          Ok(Json.obj("issues" -> entries))
         }
       }
   }

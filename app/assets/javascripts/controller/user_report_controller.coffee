@@ -10,6 +10,8 @@ class UserReportController extends Controller
 
   cellClass : "edit-time"
 
+  issueCache : {}
+
   groupByIterator : (time) -> return time.issue.number
   
   getSecondLevelLabel : (time, repo) ->
@@ -23,7 +25,7 @@ class UserReportController extends Controller
   displayModel : ->
 
     super()
-    @view.addIssueTooltips()
+    @view.addIssueTooltips(@issueCache)
 
   requestData : ->
 
