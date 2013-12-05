@@ -10,7 +10,7 @@ class ProjectReportController extends Controller
   cellClass : ""
   
   groupByIterator : (time) -> return time.userGID
-  groupByIteratorToString : (time) -> @users[@groupByIterator time]
+  getSecondLevelLabel : (time) -> @users[@groupByIterator(time)]
 
   
   requestData : ->

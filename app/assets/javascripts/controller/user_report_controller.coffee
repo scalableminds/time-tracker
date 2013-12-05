@@ -10,8 +10,22 @@ class UserReportController extends Controller
 
   cellClass : "edit-time"
 
+  issueCache : {}
+
   groupByIterator : (time) -> return time.issue.number
-  groupByIteratorToString : (time) -> @groupByIterator(time)
+  
+  getSecondLevelLabel : (time, repo) ->
+
+    issueNumber = @groupByIterator(time)
+    $link = "<a rel='tooltip' href='https://github.com/#{repo}/issues/#{issueNumber}' data-repo='#{repo}' data-issue='#{issueNumber}'>" + issueNumber + "</a>"
+
+    return $link
+
+
+  displayModel : ->
+
+    super()
+    @view.addIssueTooltips(@issueCache)
 
   requestData : ->
 

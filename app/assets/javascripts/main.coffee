@@ -36,6 +36,7 @@ $ ->
   route
 
     "/home" : ->
+
       controller = new UserReportController()
 
 
