@@ -15,14 +15,14 @@ class ReportTable extends Backbone.View
 
   template : _.template("""
     <div class="row">
-      <h2 class="col-lg-8"><%= title %></h2>
-      <div class="col-lg-4 picker"></div>
+      <h2 class="col-lg-5 col-xs-5"><%= title %></h2>
+      <div class="col-lg-7 col-xs-7 picker"></div>
     </div>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden"></div>
   """)
 
 
-  events : 
+  events :
 
     "click .edit-time" : "editTime"
 
@@ -38,7 +38,7 @@ class ReportTable extends Backbone.View
 
     columns = [
       name: "issue"
-      label: "Issue"      
+      label: "Issue"
     ,
       name: "sum"
       label: "&sum;"
@@ -61,7 +61,7 @@ class ReportTable extends Backbone.View
 
 
   createGrid : ->
-    
+
     { MinimalHeaderCell, StylableRow, ExtendedCell } = BackgridModifications()
 
     columns = @createColumns(ExtendedCell, MinimalHeaderCell)
@@ -77,12 +77,12 @@ class ReportTable extends Backbone.View
   render : ->
 
     @monthPicker.model = @currentDate
-  
+
     @$el.append(@template(
       title : @model.title
     ))
 
-    grid = @createGrid()    
+    grid = @createGrid()
 
     @$el.append(grid.render().$el)
 
