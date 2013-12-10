@@ -70,7 +70,7 @@ class ReportTable extends Backbone.View
       columns: columns
       collection: new Backbone.Collection(@model.data)
       row: StylableRow
-      className: "table table-hover table-bordered table-striped"
+      className: "table table-hover table-bordered table-striped responsive"
     )
 
 

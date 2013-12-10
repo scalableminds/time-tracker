@@ -9,7 +9,7 @@ class DetailsTable extends Backbone.View
 
   className : "modal-dialog"
 
-  template : _.template(""" 
+  template : _.template("""
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -17,7 +17,7 @@ class DetailsTable extends Backbone.View
       </div>
       <div class="modal-body" style="overflow-y: auto; max-height: 800px">
         <div>
-          <table id="timetable" class="table table-hover table-bordered table-striped">
+	  <table id="timetable" class="table table-hover table-bordered table-striped responsive">
             <thead>
               <tr>
                 <% _.first(table).cells.forEach(function (cell) { %>
@@ -52,13 +52,13 @@ class DetailsTable extends Backbone.View
   """)
 
 
-  # events : 
+  # events :
 
   initialize : ->
 
 
   render : ->
-  
+
     @$el.append(@template(
       title : "Details"
       table : @prepareTable()
@@ -73,7 +73,7 @@ class DetailsTable extends Backbone.View
     Cell = (value, colspan = 0, className = "") -> { value, colspan, className }
 
     # thead
-    
+
     table.push(
       Row(
         [
@@ -101,7 +101,7 @@ class DetailsTable extends Backbone.View
 
     # don't display summarizing tfoot if there is only one log
     if table.length > 2
-            
+
       sumOfDurations = Utils.minutesToHours(Utils.sum(_.map(@model, (a) -> a.duration))) || ""
 
       table.push(Row([Cell(""), Cell(""), Cell("&sum; " + sumOfDurations)]))

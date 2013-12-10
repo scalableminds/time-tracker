@@ -1,4 +1,6 @@
 @import "_user_time_report.less";
+@import "_responsive.less";
+
 
 #main-container {
   padding: 50px 0;
@@ -33,10 +35,9 @@
   }
 }
 .container.wide {
-  margin-left: 20px;
-  margin-right: 20px;
   width: auto;
   max-width: initial;
+  margin: 0px 20px;
 }
 
 section + section {
@@ -59,22 +60,7 @@ section + section {
   }
 }
 
-@media (max-width: 768px) {
-  .month-picker {
-    width: 100%;
-    .month-title {
-      width: 72%;
-    }
 
-    .btn-group {
-      display: block;
-    }
-  }
-
-  #main-container {
-    padding: 0px 0px;
-  }
-}
 
 .form-control:invalid {
   background: #fee;

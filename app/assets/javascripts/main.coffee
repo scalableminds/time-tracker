@@ -44,7 +44,7 @@ $ ->
       controller = new ProjectReportController()
 
     "/team" : ->
-      
+
       controller = new TeamReportController()
 
 
@@ -72,7 +72,7 @@ $ ->
 
 
     "/user/settings" : ->
-      
+
       $("#generateKey").click ->
         $.ajax({url : $(this).data("url"), method : 'post'}).done ->
           location.reload()
