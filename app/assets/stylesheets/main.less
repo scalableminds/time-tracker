@@ -51,8 +51,28 @@ section + section {
 }
 
 .month-picker {
-  .month_title {
+  float: right;
+  margin: 20px 0px;
+
+  .month-title {
     width: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .month-picker {
+    width: 100%;
+    .month-title {
+      width: 72%;
+    }
+
+    .btn-group {
+      display: block;
+    }
+  }
+
+  #main-container {
+    padding: 0px 0px;
   }
 }
 
@@ -71,17 +91,13 @@ section + section {
   }
 
   .tfoot {
-    border-top-width: 2px; 
+    border-top-width: 2px;
   }
 
   .tfoot td {
     font-weight: bold;
   }
 
-  .month-picker {
-    float: right;
-    margin-top: 20px;
-  }
   .popup {
     z-index: 10;
     position: absolute;
@@ -131,7 +147,7 @@ section + section {
         -webkit-font-smoothing: antialiased;
         content: "\f040";
 
-        pointer-events: none;    
+	pointer-events: none;
       }
     }
   }

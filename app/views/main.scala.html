@@ -5,6 +5,8 @@
 <html>
   <head>
     <title>@title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("javascripts/bower_components/bootstrap/dist/css/bootstrap.min.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("javascripts/bower_components/font-awesome/css/font-awesome.min.css")">
@@ -17,7 +19,7 @@
     @additionalHeader
   </head>
   <body>
-    <nav class="navbar navbar-default" role="navigation">
+    <header class="navbar navbar-default" role="navigation">
       <div class="container">
 	<div class="navbar-header">
 	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-header-collapse">
@@ -28,7 +30,7 @@
 	  </button>
 	  <a class="navbar-brand" href="@controllers.routes.Application.home"><img src="@routes.Assets.at("images/stopwatch.png")" id="logo"> Time-Tracker</a>
 	</div>
-	<div class="collapse navbar-collapse" id="navbar-header-collapse">
+	<nav class="collapse navbar-collapse" id="navbar-header-collapse">
 	@session.userOpt.map { user =>
 	  <ul class="nav navbar-nav">
 	    <li @if(title=="Home"){class="active"}><a href="@controllers.routes.Application.home">Me</a></li>
@@ -62,9 +64,9 @@
 	  </ul>
 
 	}
-        </div>
+	</nav>
       </div>
-    </nav>
+    </header>
     <div id="main-container">
     @content
     </div>

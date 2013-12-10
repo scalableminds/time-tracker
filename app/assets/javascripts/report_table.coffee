@@ -15,8 +15,8 @@ class ReportTable extends Backbone.View
 
   template : _.template("""
     <div class="row">
-      <h2 class="col-lg-5 col-xs-5"><%= title %></h2>
-      <div class="col-lg-7 col-xs-7 picker"></div>
+      <h2 class="col-lg-5 col-xs-12"><%= title %></h2>
+      <div class="col-lg-7 col-xs-12 picker"></div>
     </div>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden"></div>
   """)
