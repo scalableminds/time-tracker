@@ -1,9 +1,10 @@
 @import "_user_time_report.less";
 @import "_responsive.less";
 
-
-#main-container {
-  padding: 50px 0;
+@media screen and (min-width: 768px) {
+  #main-container {
+    padding: 50px 0;
+  }
 }
 
 #logo {
@@ -55,9 +56,12 @@ section + section {
   float: right;
   margin: 20px 0px;
 
-  .month-title {
-    width: 160px;
+  @media screen and (min-width: 768px) {
+    .month-title {
+      width: 160px;
+    }
   }
+
 }
 
 

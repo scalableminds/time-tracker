@@ -4,7 +4,7 @@
   .month-picker {
     width: 100%;
     .month-title {
-      width: 76% !important;
+      width: 76%;
     }
 
     .btn-group {
@@ -20,12 +20,12 @@
   }
 
   #main-container {
-    padding: 10px 0px !important;
+    padding: 10px 0px;
   }
 
   // One mobile devices only display the first two columns
   table.responsive {
-    th:first-child, td:first-child, td:first-child,  th:nth-child(2), td:nth-child(2), td:nth-child(2) {display: table-cell}
+    th:nth-child(-n+2), td:nth-child(-n+2){ display: table-cell }
     td, th{ display: none; }
   }
 }
