@@ -1,4 +1,4 @@
-### define 
+### define
 jquery : $
 bootstrap : bootstrap
 underscore : _
@@ -20,7 +20,7 @@ class Controller
 
 
   loadAndDisplay : (@currentDate) ->
-    
+
     @requestData().done =>
       @displayModel()
 
@@ -35,7 +35,7 @@ class Controller
     @view.monthPicker.on "change", (event) =>
       @loadAndDisplay(@view.monthPicker.model)
 
-  
+
   instantiateView : ->
 
     @view = new ReportTable()
@@ -45,7 +45,7 @@ class Controller
 
     @view.currentDate = @currentDate
     @view.groupByIterator = @groupByIterator
-    
+
 
   requestData : ->
 
@@ -64,20 +64,18 @@ class Controller
   prepareModel : ->
 
     table = []
-    
+
     daysRange = _.range(1, @currentDate.endOf("month").date() + 1)
 
 
     #tbody
     for element, elementEntries of @model.data
-      
+
       elementDaysGroups = _.groupBy(elementEntries, (a) -> moment(a.date).date())
 
       daySums = _.map(daysRange, (day) -> Utils.sum(_.map(elementDaysGroups[day] ? [], (a) -> a.duration)))
 
-
-
-      sectionHeaderRow = 
+      sectionHeaderRow =
         "issue" : element
         "sum" : Utils.minutesToHours(Utils.sum(daySums))
         "_className" : "project-row"
@@ -93,7 +91,6 @@ class Controller
         (entries) =>
 
           entriesDaysGroups = _.groupBy(entries, (a) -> moment(a.date).date())
-          
           entry = @getSecondLevelLabel(entries[0], element)
 
           currentRow =
@@ -103,14 +100,14 @@ class Controller
 
 
           _.map(daysRange, (day) =>
-              
+
               dayEntries = entriesDaysGroups[day]
 
               value = Utils.minutesToHours(Utils.sum(
                 _.map(dayEntries ? [], (a) => a.duration)
               )) || ""
-              
-              currentRow[day] = 
+
+              currentRow[day] =
                 text: value
                 cellClass: "edit-time"
                 onClick: ->
@@ -133,7 +130,7 @@ class Controller
     allDaysGroups = _.groupBy(allEntries, (a) -> moment(a.date).date())
 
 
-    
+
     footerRow =
       "issue" : "&sum;"
       "sum" :  Utils.minutesToHours(Utils.sum(_.map(allEntries, "duration")))
@@ -142,7 +139,7 @@ class Controller
     _.map(daysRange, (day) ->
         footerRow[day] = Utils.minutesToHours(Utils.sum(_.map(allDaysGroups[day] ? [], (a) -> a.duration))) || ""
     )
-    
+
     table.push(footerRow)
 
 

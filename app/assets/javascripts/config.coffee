@@ -21,7 +21,7 @@ requirejs
     "moment" :
       exports : "moment"
     "bootstrap" : ["jquery"]
-    "backbone" : 
+    "backbone" :
     	deps : ["jquery", "underscore"]
     	exports : "Backbone"
     "datepicker" :

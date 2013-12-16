@@ -11,17 +11,17 @@ class MonthPicker extends Backbone.View
 
   template : _.template("""
     <div class="btn-group">
-        <button class="btn btn-default month_prev"><i class=" icon-chevron-left"></i></button>
-        <button class="btn btn-default month_title"><%= monthTitle %></button> 
-        <button class="btn btn-default month_next"><i class=" icon-chevron-right"></i></button>
+	<button class="btn btn-default month-prev"><i class=" icon-chevron-left"></i></button>
+	<button class="btn btn-default month-title"><%= monthTitle %></button>
+	<button class="btn btn-default month-next"><i class=" icon-chevron-right"></i></button>
     </div>
   """)
 
   events :
 
-    "click .month_prev" : "monthPrev"
-    "click .month_next" : "monthNext"
-    "click .month_title" : "monthReset"
+    "click .month-prev" : "monthPrev"
+    "click .month-next" : "monthNext"
+    "click .month-title" : "monthReset"
 
 
   initialize : ->
@@ -57,7 +57,7 @@ class MonthPicker extends Backbone.View
 
   updateMonthTitle : ->
 
-    @$el.find(".month_title").text(moment(@model).format("MMMM YYYY"))
+    @$el.find(".month-title").text(moment(@model).format("MMMM YYYY"))
 
 
   render : ->

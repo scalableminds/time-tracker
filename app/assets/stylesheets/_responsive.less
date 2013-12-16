@@ -1,0 +1,31 @@
+@media screen and (max-width: 768px) {
+
+  // Make the month picker full width
+  .month-picker {
+    width: 100%;
+    .month-title {
+      width: 76%;
+    }
+
+    .btn-group {
+      display: block;
+    }
+    button:first-child, button:last-child {
+      width: 12%;
+    }
+  }
+
+  .container.wide {
+    margin: 0px 0px;
+  }
+
+  #main-container {
+    padding: 10px 0px;
+  }
+
+  // One mobile devices only display the first two columns
+  table.responsive {
+    th:nth-child(-n+2), td:nth-child(-n+2){ display: table-cell }
+    td, th{ display: none; }
+  }
+}

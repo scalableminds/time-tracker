@@ -1,7 +1,10 @@
 @import "_user_time_report.less";
+@import "_responsive.less";
 
-#main-container {
-  padding: 50px 0;
+@media screen and (min-width: 768px) {
+  #main-container {
+    padding: 50px 0;
+  }
 }
 
 #logo {
@@ -33,10 +36,9 @@
   }
 }
 .container.wide {
-  margin-left: 20px;
-  margin-right: 20px;
   width: auto;
   max-width: initial;
+  margin: 0px 20px;
 }
 
 section + section {
@@ -51,10 +53,18 @@ section + section {
 }
 
 .month-picker {
-  .month_title {
-    width: 160px;
+  float: right;
+  margin: 20px 0px;
+
+  @media screen and (min-width: 768px) {
+    .month-title {
+      width: 160px;
+    }
   }
+
 }
+
+
 
 .form-control:invalid {
   background: #fee;
@@ -71,17 +81,13 @@ section + section {
   }
 
   .tfoot {
-    border-top-width: 2px; 
+    border-top-width: 2px;
   }
 
   .tfoot td {
     font-weight: bold;
   }
 
-  .month-picker {
-    float: right;
-    margin-top: 20px;
-  }
   .popup {
     z-index: 10;
     position: absolute;
@@ -131,7 +137,7 @@ section + section {
         -webkit-font-smoothing: antialiased;
         content: "\f040";
 
-        pointer-events: none;    
+	pointer-events: none;
       }
     }
   }
