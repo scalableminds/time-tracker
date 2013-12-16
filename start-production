@@ -1,13 +1,15 @@
 #!/bin/sh
 
+set -e
+
 USER="time-tracker"
 PID_FILE="/var/lib/${USER}/RUNNING_PID"
 
 sbt clean compile stage
 
 if [ -f ${PID_FILE} ];then
-  echo "[info] Stopping application (with PID `cat RUNNING_PID`)..."
-  sudo -u $USER kill `cat RUNNING_PID`
+  echo "[info] Stopping application (with PID `cat ${PID_FILE}`)..."
+  sudo -u $USER kill `cat ${PID_FILE}`
 
   RESULT=$?
 
