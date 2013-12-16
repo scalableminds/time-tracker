@@ -1,7 +1,7 @@
 #!/bin/sh
 
 USER="time-tracker"
-PID_FILE="/var/lib/${USER}/RUNNING_PID
+PID_FILE="/var/lib/${USER}/RUNNING_PID"
 
 sbt clean compile stage
 
