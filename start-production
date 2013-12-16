@@ -1,8 +1,11 @@
 #!/bin/sh
 
 USER="time-tracker"
+PID_FILE="/var/lib/${USER}/RUNNING_PID
 
-if [ -f RUNNING_PID ]; then
+sbt clean compile stage
+
+if [ -f ${PID_FILE} ];then
   echo "[info] Stopping application (with PID `cat RUNNING_PID`)..."
   sudo -u $USER kill `cat RUNNING_PID`
 
@@ -15,5 +18,4 @@ if [ -f RUNNING_PID ]; then
   fi
 fi
 
-sbt clean compile stage
 sudo -u $USER bash -c "target/start -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dconfig.file=conf/application_production.conf -Dmongodb.db="time-tracker" -Dhttp.port=12000 -Dpidfile.path=/var/lib/time-tracker/RUNNING_PID >> /var/log/time-tracker/timetracker.log&"
