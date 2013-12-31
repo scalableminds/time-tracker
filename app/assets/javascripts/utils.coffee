@@ -3,7 +3,7 @@ underscore : _
 ###
 
 Utils =
-  
+
   zeroPad : (number, digits = 2) ->
 
     number = "" + number

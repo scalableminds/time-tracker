@@ -64,8 +64,6 @@ section + section {
 
 }
 
-
-
 .form-control:invalid {
   background: #fee;
 }
@@ -88,31 +86,17 @@ section + section {
     font-weight: bold;
   }
 
-  .popup {
-    z-index: 10;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 600px;
-    height: 400px;
-    margin-left: -300px;
-    margin-top: -200px;
-
-    border: 1px solid grey;
-    border-radius: 10px;
-    background: white;
-
-    display: none;
-  }
-
   .project-row {
     td, th {
       background: #eef8ee !important;
     }
+
+    td:first-child {
+      font-weight: bold;
+    }
   }
 
   .edit-time {
-
     &:hover {
       position: relative;
       cursor: pointer;
@@ -137,7 +121,7 @@ section + section {
         -webkit-font-smoothing: antialiased;
         content: "\f040";
 
-	pointer-events: none;
+        pointer-events: none;
       }
     }
   }
