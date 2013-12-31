@@ -2,7 +2,7 @@
 jquery : $
 underscore : _
 backbone : Backbone
-./utils : Utils
+../utils : Utils
 ###
 
 class DetailsTable extends Backbone.View

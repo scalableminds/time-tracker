@@ -2,11 +2,11 @@
 jquery : $
 underscore : _
 backbone : Backbone
-details_table : DetailsTable
-./month_picker : MonthPicker
-./utils : Utils
 backgrid : Backgrid
-./backgrid_modifications : BackgridModifications
+./details_table : DetailsTable
+./month_picker : MonthPicker
+../utils : Utils
+../backgrid_modifications : BackgridModifications
 ###
 
 class ReportTable extends Backbone.View
@@ -106,13 +106,13 @@ class ReportTable extends Backbone.View
 
 
       issueCache[repo].then( (data) ->
-        
+
         issue = _.find(data.issues, (info) -> info.number == issueNumber)
 
         $element.tooltip(
           "placement" : "right"
-          "title" : 
-            if issue 
+          "title" :
+            if issue
               issue.title
             else if issueNumber == 0
               "Issue #0"
