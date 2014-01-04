@@ -1,8 +1,8 @@
 ### define
-jquery : $
 underscore : _
 backbone.marionette : Marionette
 ./billing_rates_item : BillingRatesItemView
+models/billing_rates_collection : BillingRatesCollection
 ###
 
 class BillingRatesPanel extends Backbone.Marionette.CompositeView
@@ -51,10 +51,7 @@ class BillingRatesPanel extends Backbone.Marionette.CompositeView
 
   initialize : ->
 
-    model = Backbone.Model.extend({defaults:{project: "LEER", rate: 0}})
-    collection = Backbone.Collection.extend({model: model})
-
-    @collection = new collection([{project: "ABC", rate: 20}, {project: "Test", rate: 40}])
+    @collection = new BillingRatesCollection
 
 
   showInput: ->

@@ -1,5 +1,4 @@
 ### define
-jquery : $
 underscore : _
 backbone.marionette : Marionette
 ###
