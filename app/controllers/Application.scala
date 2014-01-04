@@ -31,6 +31,11 @@ object Application extends Controller with SecureSocial {
       Ok(html.project())
   }
 
+  def admin = SecuredAction {
+    implicit request =>
+      Ok(html.admin.panelAdmin())
+  }
+
   def javascriptRoutes = Action { implicit request =>
     Ok(
       Routes.javascriptRouter("jsRoutes")(

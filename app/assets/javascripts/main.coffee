@@ -5,6 +5,7 @@ time_entry : TimeEntryCode
 controller/user_report_controller : UserReportController
 controller/project_report_controller : ProjectReportController
 controller/team_report_controller : TeamReportController
+views/admin_panel : AdminPanel
 datepicker : datepicker
 ###
 
@@ -41,6 +42,7 @@ $ ->
 
 
     "/project" : ->
+
       controller = new ProjectReportController()
 
     "/team" : ->
@@ -77,6 +79,11 @@ $ ->
         $.ajax({url : $(this).data("url"), method : 'post'}).done ->
           location.reload()
 
+
+    "/admin" : ->
+
+      controller = new AdminPanel(el: "#main-container .container")
+      controller.render()
 
     "/admin/repositories" : ->
 

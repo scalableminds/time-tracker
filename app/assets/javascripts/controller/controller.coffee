@@ -30,7 +30,7 @@ class Controller
     @instantiateView()
     @view.render()
 
-    $("#main-container .container").empty().append(@view.el)
+    $("#main-container .container").html(@view.el)
 
     @view.monthPicker.on "change", (event) =>
       @loadAndDisplay(@view.monthPicker.model)

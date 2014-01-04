@@ -13,6 +13,7 @@ requirejs
     "moment" : "bower_components/momentjs/min/moment.min"
     "underscore" : "bower_components/lodash/dist/lodash.min"
     "backbone" : "bower_components/backbone/backbone-min"
+    "backbone.marionette" : "bower_components/backbone.marionette/lib/backbone.marionette.min"
     "backgrid" : "backgrid"
     "bootstrap" : "bower_components/bootstrap/dist/js/bootstrap.min"
     "datepicker" : "bootstrap-datepicker"
@@ -24,6 +25,9 @@ requirejs
     "backbone" :
     	deps : ["jquery", "underscore"]
     	exports : "Backbone"
+    "backbone.marionette" :
+      deps : ["backbone"]
+      exports : "marionette"
     "datepicker" :
       deps : ["jquery"]
       exports : "datepicker"
