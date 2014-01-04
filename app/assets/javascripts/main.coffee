@@ -5,7 +5,7 @@ time_entry : TimeEntryCode
 controller/user_report_controller : UserReportController
 controller/project_report_controller : ProjectReportController
 controller/team_report_controller : TeamReportController
-views/admin_panel : AdminPanel
+views/admin/admin_panel : AdminPanel
 datepicker : datepicker
 ###
 

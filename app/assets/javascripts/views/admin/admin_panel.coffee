@@ -4,15 +4,15 @@ underscore : _
 backbone.marionette : Marionette
 ./billing_rates_panel : BillingRatesPanelView
 ./repository_panel : RepositoryPanelView
+./info_panel : InfoPanelView
 ###
 
 class AdminPanel extends Backbone.Marionette.Layout
 
   template: _.template("""
-    <h2>Admin Panel</h2>
     <section class="row">
-      <div class="col-lg-6 well"></div>
-      <div class="col-lg-6 well" id="billing_rates_panel"></div>
+      <div class="col-lg-5 well" id="info_panel"></div>
+      <div class="col-lg-6 col-md-offset-1 well" id="billing_rates_panel"></div>
     </section>
     <section class="row">
       <div class="col-lg-12 well" id="repository_panel"></div>
@@ -22,12 +22,14 @@ class AdminPanel extends Backbone.Marionette.Layout
   regions:
     billingRatesPanel: "#billing_rates_panel"
     repositoryPanel: "#repository_panel"
+    infoPanel: "#info_panel"
 
 
   initialize: ->
 
     #Set up sub-views
     @billingRatesPanelView = new BillingRatesPanelView()
+    @infoPanelView = new InfoPanelView()
     @repositoryPanelView = new RepositoryPanelView()
 
 
@@ -36,5 +38,6 @@ class AdminPanel extends Backbone.Marionette.Layout
     @$el.html(@template())
 
     # subviews
-    @.billingRatesPanel.show(@billingRatesPanelView)
-    @.repositoryPanel.show(@repositoryPanelView)
+    @billingRatesPanel.show(@billingRatesPanelView)
+    @infoPanel.show(@infoPanelView)
+    @repositoryPanel.show(@repositoryPanelView)
