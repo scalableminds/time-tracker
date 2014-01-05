@@ -12,7 +12,7 @@ class AdminPanel extends Backbone.Marionette.Layout
   template: _.template("""
     <section class="row">
       <div class="col-lg-5 well" id="info_panel"></div>
-      <div class="col-lg-6 col-md-offset-1 well" id="billing_rates_panel"></div>
+      <div class="col-lg-6 col-lg-offset-1 well" id="billing_rates_panel"></div>
     </section>
     <section class="row">
       <div class="col-lg-12 well" id="repository_panel"></div>
