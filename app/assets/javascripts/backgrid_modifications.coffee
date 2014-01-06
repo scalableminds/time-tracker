@@ -5,26 +5,26 @@ BackgridModifications = ->
   # removes sorting carets in header etc.
   MinimalHeaderCell: Backgrid.HeaderCell.extend(
 
-    render: -> 
+    render: ->
       # see also backgrids implentation of HeaderCell.render()
-      
+
       @$el.empty()
       $label = @column.get("label")
       @$el.append($label)
       @delegateEvents()
       return @
-    
+
   )
-  
+
   # allows for styled section-rows
 
   StylableRow: Backgrid.Row.extend(
-    
+
     render: ->
-     
+
       # call super
-      Backgrid.Row.prototype.render.apply(this, arguments)      
-      
+      Backgrid.Row.prototype.render.apply(this, arguments)
+
       if c = @model.get("_className")
         @$el.addClass(c)
 
@@ -33,7 +33,7 @@ BackgridModifications = ->
 
 
   ExtendedCell: Backgrid.Cell.extend(
-    
+
     render: ->
       # see also backgrids implentation of Cell.render()
 
@@ -56,6 +56,6 @@ BackgridModifications = ->
 
       @delegateEvents()
       return @
-    
+
 
   )

@@ -1,22 +1,22 @@
-### define 
+### define
 jquery : $
 bootstrap : bootstrap
-controller/controller : Controller
 underscore : _
+controller/controller : Controller
 ###
 
 class ProjectReportController extends Controller
 
   cellClass : ""
-  
+
   groupByIterator : (time) -> return time.userGID
   getSecondLevelLabel : (time) -> @users[@groupByIterator(time)]
 
-  
+
   requestData : ->
 
     return jsRoutes.controllers.TimeEntryController.showTimesForInterval(@currentDate.year(), @currentDate.month()+1).ajax().then (data) =>
-           
+
       projects = @groupByProjects(data)
 
       projects = @addDateProperties(projects)
@@ -55,7 +55,7 @@ class ProjectReportController extends Controller
 
       for time in user.times
         projectName = time.issue.project
-        
+
         if not projects[projectName]
           projects[projectName] = []
 

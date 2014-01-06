@@ -2,9 +2,9 @@
 jquery : $
 bootstrap : bootstrap
 underscore : _
-../report_table : ReportTable
+../views/report_table : ReportTable
+../views/details_table : DetailsTable
 ../utils : Utils
-details_table : DetailsTable
 backgrid : Backgrid
 
 ###
