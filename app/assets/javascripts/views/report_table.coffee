@@ -92,34 +92,27 @@ class ReportTable extends Backbone.View
     @popup = @$el.find(".popup")
 
 
-  addIssueTooltips : (issueCache) ->
+  addIssueTooltips : (controller) ->
 
     $("[rel=tooltip").each( (index, element) ->
+      $el = $(element)
 
-      $element = $(element)
+      [repo, issue] = [$el.data("repo"), $el.data("issue")]
 
-      repo = $element.data("repo")
-      issueNumber = $element.data("issue")
-
-      unless issueCache[repo]?
-        issueCache[repo] = $.get("/issues/#{repo}")
+      controller.getIssueTitle(repo, issue).done( (issueTitle) ->
 
 
-      issueCache[repo].then( (data) ->
+        if issueTitle.length > 53
+          # display full name in tooltip
 
-        issue = _.find(data.issues, (info) -> info.number == issueNumber)
+          $el.tooltip(
+            "placement" : "right"
+            "title" : issueTitle
+          )
 
-        $element.tooltip(
-          "placement" : "right"
-          "title" :
-            if issue
-              issue.title
-            else if issueNumber == 0
-              "Issue #0"
-            else
-              "Issue could not be found."
+          issueTitle = issueTitle.slice(0, 50) + "..."
 
-        )
-
+        $el.parent().append("  " + issueTitle)
+        
       )
     )

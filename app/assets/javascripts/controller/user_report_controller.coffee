@@ -1,4 +1,4 @@
-### define
+### define 
 jquery : $
 bootstrap : bootstrap
 underscore : _
@@ -13,7 +13,7 @@ class UserReportController extends Controller
   issueCache : {}
 
   groupByIterator : (time) -> return time.issue.number
-
+  
   getSecondLevelLabel : (time, repo) ->
 
     issueNumber = @groupByIterator(time)
@@ -21,11 +21,31 @@ class UserReportController extends Controller
 
     return $link
 
+  getIssueTitle : (repo, issueNumber) ->
+
+    unless @issueCache[repo]?
+      @issueCache[repo] = $.get("/issues/#{repo}")
+
+    return @issueCache[repo].then( (data) ->
+      
+      issue = _.find(data.issues, (info) -> info.number == issueNumber)
+
+      title =
+        if issue
+          issue.title
+        else if issueNumber == 0
+          "Issue #0"
+        else
+          "Issue could not be found."
+
+      return title
+    )
+
 
   displayModel : ->
 
     super()
-    @view.addIssueTooltips(@issueCache)
+    @view.addIssueTooltips(this)
 
   requestData : ->
 
@@ -33,7 +53,7 @@ class UserReportController extends Controller
 
       projects = @addDateProperties(data.projects)
 
-      @model =
+      @model = 
         data : projects
         title : data.nick
 
