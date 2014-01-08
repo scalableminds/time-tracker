@@ -11,8 +11,8 @@ class BillingRatesItem extends Backbone.Marionette.ItemView
       <%= project %>
     </td>
     <td>
-      <%= rate %>
-      <a href="#" class="pull-right" id="link_remove_item"><span class="glyphicon glyphicon-remove"></a>
+      <%= rate %>€
+      <a href="#" class="pull-right" id="link_remove_item"><i class="glyphicon glyphicon-remove"></i></a>
     </td>
   """)
 

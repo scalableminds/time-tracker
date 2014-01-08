@@ -13,6 +13,7 @@ class BillingRatesPanel extends Backbone.Marionette.CompositeView
       <button type="button" class="btn col-md-1 col-sm-1" id="button_create_rate">
 	<span class="glyphicon glyphicon-plus">
       </button>
+	<button type="button" class="btn btn-block btn-default" id="button_create_rate">
     </header>
     <section class="row hidden fade" id="section_create_new">
       <div class="input-group col-md-6 col-sm-6">

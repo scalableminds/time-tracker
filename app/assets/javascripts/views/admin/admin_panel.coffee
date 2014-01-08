@@ -41,3 +41,11 @@ class AdminPanel extends Backbone.Marionette.Layout
     @billingRatesPanel.show(@billingRatesPanelView)
     @infoPanel.show(@infoPanelView)
     @repositoryPanel.show(@repositoryPanelView)
+
+
+  onClose: ->
+
+    #TODO check if this works
+    @billingRatesPanel.close()
+    @infoPanel.close()
+    @repositoryPanel.close()
