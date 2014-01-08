@@ -113,6 +113,6 @@ class ReportTable extends Backbone.View
           issueTitle = issueTitle.slice(0, 50) + "..."
 
         $el.parent().append("  " + issueTitle)
-        
+
       )
     )
