@@ -2,29 +2,32 @@
 underscore : _
 backbone.marionette : Marionette
 ./billing_rates_item : BillingRatesItemView
-models/billing_rates_collection : BillingRatesCollection
+models/admin/billing_rates_collection : BillingRatesCollection
 ###
 
 class BillingRatesPanel extends Backbone.Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
-      <h2 class="col-md-11 col-sm-11">Billing Rates</h2>
-      <button type="button" class="btn col-md-1 col-sm-1" id="button_create_rate">
-	<span class="glyphicon glyphicon-plus">
-      </button>
+      <h3 class="col-md-10 col-sm-10 col-xs-9">Billing Rates</h3>
+      <div class="col-md-2 col-sm-2 col-xs-3" >
 	<button type="button" class="btn btn-block btn-default" id="button_create_rate">
+	  <span class="glyphicon glyphicon-plus">
+	</button>
+      </div>
     </header>
     <section class="row hidden fade" id="section_create_new">
-      <div class="input-group col-md-6 col-sm-6">
-	<span class="input-group-addon glyphicon glyphicon-briefcase"></span>
+      <div class="input-group col-md-5 col-sm-5">
+	<span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
 	<input type="text" id="input_project_name" class="form-control" required placeholder="Project Name">
       </div>
-      <div class="input-group col-md-5 col-sm-5 col-xs-10">
-	<span class="input-group-addon glyphicon glyphicon-euro"></span>
+      <div class="input-group col-md-5 col-sm-5">
+	<span class="input-group-addon"><i class="glyphicon glyphicon-euro"></i></span>
 	<input type="number" id="input_rate" class="form-control" required placeholder="Hourly Rate">
       </div>
-      <button type="button" class="btn col-md-1 col-sm-1 col-xs-2" id="button_add_rate">OK</button>
+      <div class="col-md-2 col-sm-2">
+	<button type="button" class="btn btn-block btn-default" id="button_add_rate">OK</button>
+      </div>
     </section>
     <table class="table table-striped table-hover">
       <thead class="col-md-12">
@@ -52,7 +55,7 @@ class BillingRatesPanel extends Backbone.Marionette.CompositeView
 
   initialize : ->
 
-    @collection = new BillingRatesCollection
+    @collection = new BillingRatesCollection()
 
 
   showInput: ->
@@ -70,3 +73,7 @@ class BillingRatesPanel extends Backbone.Marionette.CompositeView
 
       @ui.$sectionCreateNew.removeClass("in")
       @ui.$sectionCreateNew.addClass("hidden")
+
+      @ui.$inputProjectName.val("")
+      @ui.$inputRate.val("")
+      @ui.$inputProjectName.val("")

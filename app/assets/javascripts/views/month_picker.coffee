@@ -11,9 +11,9 @@ class MonthPicker extends Backbone.View
 
   template : _.template("""
     <div class="btn-group">
-	<button class="btn btn-default month-prev"><i class=" icon-chevron-left"></i></button>
+	<button class="btn btn-default month-prev"><i class="fa  fa-chevron-left"></i></button>
 	<button class="btn btn-default month-title"><%= monthTitle %></button>
-	<button class="btn btn-default month-next"><i class=" icon-chevron-right"></i></button>
+	<button class="btn btn-default month-next"><i class="fa  fa-chevron-right"></i></button>
     </div>
   """)
 

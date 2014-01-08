@@ -9,9 +9,9 @@ class ActiveRepositories extends Backbone.Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
-      <h2 class="col-lg-12">Used repositories</h2>
+      <h3 class="col-lg-12">Used Repositories</h3>
     </header>
-    <div class="row">
+    <div class="table-responsive">
       <table class="table table-striped">
 	<thead>
 	  <tr>
