@@ -7,7 +7,7 @@ import securesocial.core.{IdentityId, Identity, UserServicePlugin}
 import securesocial.core.providers.Token
 import scala.concurrent.duration._
 import scala.concurrent.Await
-
+             import play.api.libs.concurrent.Execution.Implicits._
 /**
  * Company: scalableminds
  * User: tmbo

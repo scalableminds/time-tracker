@@ -31,7 +31,7 @@ object DurationParser {
   def parse(s: String) = {
     durationRx.findFirstMatchIn(s).map {
       case durationRx(_sign, _d, _h, _m) =>
-        val sign = if(_sign == null || _sign == "") 1 else -1
+        val sign = if (_sign == null || _sign == "") 1 else -1
         val d = if (_d == null) 0 else _d.toInt
         val h = if (_h == null) 0 else _h.toInt
         val m = if (_m == null) 0 else _m.toInt
@@ -53,80 +53,70 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
   }
 
   def userFromRequestOrKey(accessKey: String)(implicit request: RequestWithUser[_]) = {
-    for{
+    for {
       u1 <- Future.successful(request.user.map(u => (u.asInstanceOf[User])))
-      u2 <-  UserDAO.findByAccessKey(accessKey)(GlobalAccessContext)
+      u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext)
     } yield {
       u1 orElse u2
     }
   }
 
-  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction(parse.json) {
+  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction.async(parse.json) {
     implicit request =>
-      Async {
-        val fullName = RepositoryDAO.createFullName(owner, repo)
-        (for {
-          user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
-          repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
-          if (repository.isCollaborator(user) || repository.isAdmin(user))
-          timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
-          duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
-        } yield {
+      val fullName = RepositoryDAO.createFullName(owner, repo)
+      (for {
+        user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
+        repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
+        if (repository.isCollaborator(user) || repository.isAdmin(user))
+        timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
+        duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
+      } yield {
 
-          val issue = Issue(fullName, issueNumber)
-          val timeEntry = TimeEntry(issue, duration, user.githubId, timeEntryPost.comment, timeEntryPost.timestamp)
-          TimeEntryDAO.createTimeEntry(timeEntry)(user)
-          JsonOk("OK")
-        }) ?~> "Not allowed."
+        val issue = Issue(fullName, issueNumber)
+        val timeEntry = TimeEntry(issue, duration, user.githubId, timeEntryPost.comment, timeEntryPost.timestamp)
+        TimeEntryDAO.createTimeEntry(timeEntry)(user)
+        JsonOk("OK")
+      }) ?~> "Not allowed."
+  }
+
+  def createGenericForm() = SecuredAction.async {
+    implicit request =>
+      val user = request.user.asInstanceOf[User]
+      for {
+        usedRepos <- RepositoryDAO.findAll(GlobalAccessContext) ?~> "Not allowed."
+      } yield {
+        Ok(html.genericTimeEntry(usedRepos))
       }
   }
 
-  def createGenericForm() = SecuredAction {
+  def createForm(owner: String, repo: String, issueNumber: Int) = SecuredAction.async {
     implicit request =>
-      Async {
-        val user = request.user.asInstanceOf[User]
-        for {
-          usedRepos <- RepositoryDAO.findAll(GlobalAccessContext) ?~> "Not allowed."
-        } yield {
-          Ok(html.genericTimeEntry(usedRepos))
-        }
+      val user = request.user.asInstanceOf[User]
+      (for {
+        repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo)) ?~> "Repository couldn't be found"
+        if (repository.isCollaborator(user) || repository.isAdmin(user))
+      } yield {
+        Ok(html.timeEntry(owner, repo, issueNumber))
+      }) ?~> "Not allowed."
+  }
+
+  def showIssues(owner: String, repo: String) = SecuredAction.async {
+    implicit request =>
+      for {
+        entries <- IssueDAO.findByRepo(owner + "/" + repo)
+      } yield {
+        Ok(Json.obj("issues" -> entries))
       }
   }
 
-  def createForm(owner: String, repo: String, issueNumber: Int) = SecuredAction {
+  def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = SecuredAction.async {
     implicit request =>
-      Async {
-        val user = request.user.asInstanceOf[User]
-        (for {
-          repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo)) ?~> "Repository couldn't be found"
-          if (repository.isCollaborator(user) || repository.isAdmin(user))
-        } yield {
-          Ok(html.timeEntry(owner, repo, issueNumber))
-        }) ?~> "Not allowed."
-      }
-  }
-
-  def showIssues(owner: String, repo: String) = SecuredAction {
-    implicit request =>
-      Async {
-        for {
-          entries <- IssueDAO.findByRepo(owner + "/" + repo)
-        } yield {
-          Ok(Json.obj("issues" -> entries))
-        }
-      }
-  }
-
-  def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = SecuredAction {
-    implicit request =>
-      Async {
-        val fullName = RepositoryDAO.createFullName(owner, repo)
-        for {
-          entries <- TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber))
-          jsonUserTimesList <- createUserTimesList(entries)
-        } yield {
-          Ok(JsArray(jsonUserTimesList))
-        }
+      val fullName = RepositoryDAO.createFullName(owner, repo)
+      for {
+        entries <- TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber))
+        jsonUserTimesList <- createUserTimesList(entries)
+      } yield {
+        Ok(JsArray(jsonUserTimesList))
       }
   }
 
@@ -153,14 +143,12 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     }
   }
 
-  def showTimeForUser(year: Int, month: Int) = SecuredAction {
+  def showTimeForUser(year: Int, month: Int) = SecuredAction.async {
     implicit request =>
-      Async {
-        for {
-          times <- showTimeForAUser(request.user.identityId.userId, year, month)
-        } yield {
-          Ok(times)
-        }
+      for {
+        times <- showTimeForAUser(request.user.identityId.userId, year, month)
+      } yield {
+        Ok(times)
       }
   }
 
@@ -178,15 +166,13 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     }.map(_.filterNot(_.fields.isEmpty).toSeq)
   }
 
-  def showTimesForInterval(year: Int, month: Int) = SecuredAction {
+  def showTimesForInterval(year: Int, month: Int) = SecuredAction.async {
     implicit request =>
-      Async {
-        for {
-          entries <- TimeEntryDAO.loggedTimeForInterval(year, month)
-          jsonUserTimesList <- createUserTimesList(entries)
-        } yield {
-          Ok(JsArray(jsonUserTimesList))
-        }
+      for {
+        entries <- TimeEntryDAO.loggedTimeForInterval(year, month)
+        jsonUserTimesList <- createUserTimesList(entries)
+      } yield {
+        Ok(JsArray(jsonUserTimesList))
       }
   }
 }

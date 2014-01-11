@@ -103,7 +103,7 @@ object UserDAO extends BasicReactiveDAO[User] {
     User(i.identityId, i.firstName, i.lastName, i.fullName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
 
   def findOneByGID(gid: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("id.userId" -> gid)).one[User]
+    collectionFind(Json.obj("identityId.userId" -> gid)).one[User]
   }
 
   implicit val AuthenticationMethodFormat: Format[AuthenticationMethod] =
