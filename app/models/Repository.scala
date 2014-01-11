@@ -3,7 +3,6 @@ package models
 import play.api.libs.json.Json
 import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
-import securesocial.core.UserId
 
 /**
  * Company: scalableminds
@@ -58,7 +57,7 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
   }
 
   def findAllWhereUserIsAdmin(user: User)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("admins" -> user.githubId)).cursor[Repository].toList
+    collectionFind(Json.obj("admins" -> user.githubId)).cursor[Repository].collect[List]()
   }
 
   def updateCollaborators(fullName: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {

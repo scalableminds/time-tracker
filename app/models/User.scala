@@ -7,11 +7,11 @@ import play.modules.reactivemongo.json.BSONFormats._
 import braingames.reactivemongo.{DBAccessContextPayload, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core._
-import securesocial.core.UserId
 import securesocial.core.OAuth2Info
 import securesocial.core.OAuth1Info
 import securesocial.core.PasswordInfo
 import play.api.libs.json.JsObject
+import play.api.Logger
 
 /**
  * Company: scalableminds
@@ -20,54 +20,47 @@ import play.api.libs.json.JsObject
  * Time: 22:36
  */
 
-case class BareUser(id: UserId, firstName: String, lastName: String, fullName: String, nickName: Option[String], email: Option[String],
-                      avatarUrl: Option[String], authMethod: AuthenticationMethod,
-                      oAuth1Info: Option[OAuth1Info] = None,
-                      oAuth2Info: Option[OAuth2Info] = None,
-                      passwordInfo: Option[PasswordInfo] = None)
-
-object BareUserFactory {
-  def apply(i: Identity): BareUser = {
-    BareUser(
-      i.id, i.firstName, i.lastName, i.fullName, i.nickName,
-      i.email, i.avatarUrl, i.authMethod, i.oAuth1Info,
-      i.oAuth2Info, i.passwordInfo
-    )
+object UserFactory {
+  def apply(i: Identity): User = {
+    User(
+      i.identityId, i.firstName, i.lastName, i.fullName,
+      i.email, i.authMethod, i.oAuth1Info,
+      i.oAuth2Info, i.passwordInfo)
   }
 }
 
-case class User( id: UserId,
-                 fullName: String,
-                 nickName: Option[String],
-                 email: Option[String],
-                 authMethod: AuthenticationMethod,
-                 oAuth1Info: Option[OAuth1Info],
-                 oAuth2Info: Option[OAuth2Info],
-                 passwordInfo: Option[PasswordInfo],
-                 accessKey: Option[String] = None) extends Identity with DBAccessContextPayload{
-  val firstName = ""
-  val lastName = ""
+case class User(identityId: IdentityId,
+                firstName: String,
+                lastName: String,
+                fullName: String,
+                email: Option[String],
+                authMethod: AuthenticationMethod,
+                oAuth1Info: Option[OAuth1Info],
+                oAuth2Info: Option[OAuth2Info],
+                passwordInfo: Option[PasswordInfo],
+                accessKey: Option[String] = None) extends Identity with DBAccessContextPayload {
+
   val avatarUrl = None
 
-  val githubId = id.id
+  val githubId = identityId.userId
 
-  def nick = nickName getOrElse User.generateNick(fullName)
+  def nick = User.generateNick(fullName)
 
   def githubAccessToken = oAuth2Info.get.accessToken
 }
 
-object User{
+object User {
   def generateAccessKey = UUID.randomUUID().toString.replace("-", "")
 
   def generateNick(fullName: String) = {
-    val vocals = List("a", "o", "i", "e", "u")
-    val nameV = fullName.toLowerCase.filter( vocals.contains ).take(3)
-    val nameK = fullName.toLowerCase.filter(_ == " ").filterNot( vocals.contains ).reverse.take(4)
+    val vocals = List('a', 'o', 'i', 'e', 'u')
+    val nameV = fullName.toLowerCase.split(' ').flatMap(_.find(vocals.contains))
+    val nameK = fullName.toLowerCase.split(' ').flatMap(_.find(c => !vocals.contains(c)))
 
-    val vocalsToUse = (if(nameV.size < 3) nameV + vocals.take(3 - nameV.size) else nameV).toList
-    val konsToUse = if(nameK.size < 4) nameK + List("l", "w", "z", "r").take(4 - nameK.size) else nameK
+    val vocalsToUse = (nameV ++ vocals).toList
+    val konsToUse = (nameK ++ List('l', 'w', 'z', 'r')).take(2)
 
-    konsToUse.foldLeft(("", vocalsToUse)){
+    konsToUse.foldLeft(("", vocalsToUse)) {
       case ((s, v :: vs), k) =>
         (s + k + v, vs)
       case ((s, Nil), k) =>
@@ -76,15 +69,17 @@ object User{
   }
 }
 
-object UserDAO extends BasicReactiveDAO[User]{
+object UserDAO extends BasicReactiveDAO[User] {
   val collectionName = "users"
 
   def findOneByEmail(email: String)(implicit ctx: DBAccessContext) = findHeadOption("email", email)
 
-  def findByUserIdQ(userId: UserId)= Json.obj("id.id" -> userId.id, "id.providerId" -> userId.providerId)
+  def findByUserIdQ(identityId: IdentityId) = Json.obj(
+    "identityId.userId" -> identityId.userId,
+    "identityId.providerId" -> identityId.providerId)
 
-  def findOneByUserId(userId: UserId)(implicit ctx: DBAccessContext) = {
-    collectionFind(findByUserIdQ(userId)).one[User]
+  def findOneByUserId(identityId: IdentityId)(implicit ctx: DBAccessContext) = {
+    collectionFind(findByUserIdQ(identityId)).one[User]
   }
 
   def findByAccessKey(accessKey: String)(implicit ctx: DBAccessContext) = {
@@ -92,27 +87,29 @@ object UserDAO extends BasicReactiveDAO[User]{
   }
 
   def findOneByEmailAndProvider(email: String, provider: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("email" -> email, "id.providerId" -> provider)).one[User]
+    collectionFind(Json.obj("email" -> email, "identityId.providerId" -> provider)).one[User]
   }
 
   def update(i: Identity)(implicit ctx: DBAccessContext) = {
-    collectionUpdate(findByUserIdQ(i.id),
-      Json.obj("$set" -> Json.toJson(BareUserFactory(i))), upsert = true)
+    collectionUpdate(findByUserIdQ(i.identityId),
+      Json.obj("$set" -> Json.toJson(UserFactory(i))), upsert = true)
   }
 
-  def setAccessKey(user: User, accessKey: String)(implicit ctx: DBAccessContext)  = {
-    collectionUpdate(findByUserIdQ(user.id), Json.obj("$set" -> Json.obj("accessKey" -> accessKey)))
+  def setAccessKey(user: User, accessKey: String)(implicit ctx: DBAccessContext) = {
+    collectionUpdate(findByUserIdQ(user.identityId), Json.obj("$set" -> Json.obj("accessKey" -> accessKey)))
   }
 
   def fromIdentity(i: Identity) =
-    User(i.id, i.fullName, i.nickName,i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo )
+    User(i.identityId, i.firstName, i.lastName, i.fullName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
 
   def findOneByGID(gid: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("id.id" -> gid)).one[User]
+    collectionFind(Json.obj("id.userId" -> gid)).one[User]
   }
 
   implicit val AuthenticationMethodFormat: Format[AuthenticationMethod] =
-    Format(Reads.StringReads.map(AuthenticationMethod.apply), Writes { am: AuthenticationMethod => Writes.StringWrites.writes(am.method) })
+    Format(Reads.StringReads.map(AuthenticationMethod.apply), Writes {
+      am: AuthenticationMethod => Writes.StringWrites.writes(am.method)
+    })
 
   implicit val OAuth1InfoFormat: Format[OAuth1Info] = Json.format[OAuth1Info]
 
@@ -120,13 +117,11 @@ object UserDAO extends BasicReactiveDAO[User]{
 
   implicit val PasswordInfoFormat: Format[PasswordInfo] = Json.format[PasswordInfo]
 
-  implicit val UserIdFormat: Format[UserId] = Json.format[UserId]
-
-  implicit val bareUserFactoryFormat: Format[BareUser] = Json.format[BareUser]
+  implicit val IdentityIdFormat: Format[IdentityId] = Json.format[IdentityId]
 
   implicit val formatter: OFormat[User] = {
-    val f:Reads[User] = Json.reads[User]
-    val w:OWrites[User] = OWrites.apply(o => Json.writes[User].writes(o).as[JsObject])
+    val f: Reads[User] = Json.reads[User]
+    val w: OWrites[User] = OWrites.apply(o => Json.writes[User].writes(o).as[JsObject])
     OFormat.apply[User](f, w)
   }
 }

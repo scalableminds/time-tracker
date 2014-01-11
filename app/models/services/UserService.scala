@@ -3,7 +3,7 @@ package models.services
 import models.{UserDAO, User}
 import braingames.reactivemongo.GlobalDBAccess
 import play.api.{Logger, Application}
-import securesocial.core.{UserId, Identity, UserServicePlugin}
+import securesocial.core.{IdentityId, Identity, UserServicePlugin}
 import securesocial.core.providers.Token
 import scala.concurrent.duration._
 import scala.concurrent.Await
@@ -17,7 +17,7 @@ import scala.concurrent.Await
 class UserService(application: Application) extends UserServicePlugin(application) with GlobalDBAccess{
   val timeout = 5 seconds
 
-  def find(id: UserId): Option[User] = {
+  def find(id: IdentityId): Option[User] = {
     Await.result(UserCache.findUser(id), timeout)
   }
 
@@ -26,7 +26,7 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
   }
 
   def save(identity: Identity): User = {
-    UserCache.removeUserFromCache(identity.id)
+    UserCache.removeUserFromCache(identity.identityId)
     UserDAO.update(identity)
     UserDAO.fromIdentity(identity)
   }

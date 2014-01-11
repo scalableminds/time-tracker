@@ -3,7 +3,6 @@ package models
 import play.api.libs.json.Json
 import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
-import securesocial.core.UserId
 
 /**
  * Company: scalableminds
@@ -36,7 +35,7 @@ object IssueDAO extends BasicReactiveDAO[ArchivedIssue] {
   def findByRepo(fullRepoName: String)(implicit ctx: DBAccessContext) = {
     val archivedIssueList = collectionFind(
       Json.obj("fullRepoName" -> fullRepoName)
-    ).cursor[ArchivedIssue].toList
+    ).cursor[ArchivedIssue].collect[List]()
 
     archivedIssueList.map { l => l.map { i => new CondensedIssue(i) } }
   }

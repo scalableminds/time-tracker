@@ -61,7 +61,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     }
   }
 
-  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction(p = parse.json) {
+  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction(parse.json) {
     implicit request =>
       Async {
         val fullName = RepositoryDAO.createFullName(owner, repo)
@@ -157,7 +157,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     implicit request =>
       Async {
         for {
-          times <- showTimeForAUser(request.user.id.id, year, month)
+          times <- showTimeForAUser(request.user.identityId.userId, year, month)
         } yield {
           Ok(times)
         }

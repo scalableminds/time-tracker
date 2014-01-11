@@ -38,7 +38,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
       }
   }
 
-  def add = SecuredAction(ajaxCall = false, authorize = None, p = parse.urlFormEncoded) {
+  def add = SecuredAction(ajaxCall = false)(parse.urlFormEncoded) {
     implicit request =>
       Async {
         val user = request.user.asInstanceOf[User]

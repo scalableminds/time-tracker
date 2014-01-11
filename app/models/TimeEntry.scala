@@ -55,7 +55,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
   }
 
   def loggedTimeForIssue(issue: Issue)(implicit ctx: DBAccessContext) = {
-    find(Json.obj("issue" -> issue)).toList
+    find(Json.obj("issue" -> issue)).collect[List]()
   }
 
   def toInterval(year: Int, month: Int) = {
@@ -74,11 +74,11 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
   def loggedTimeForUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
     val interval = toInterval(year, month)
     find(
-      Json.obj("userGID" -> userGID) ++ timeStampQuery(interval)).toList
+      Json.obj("userGID" -> userGID) ++ timeStampQuery(interval)).collect[List]()
   }
 
   def loggedTimeForInterval(year: Int, month: Int)(implicit ctx: DBAccessContext) = {
     val interval = toInterval(year, month)
-    find(timeStampQuery(interval)).toList
+    find(timeStampQuery(interval)).collect[List]()
   }
 }

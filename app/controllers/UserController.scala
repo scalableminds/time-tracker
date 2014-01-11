@@ -27,7 +27,7 @@ object UserController extends Controller with securesocial.core.SecureSocial {
         for {
           _ <- UserDAO.setAccessKey(user, a)
         } yield {
-          UserCache.removeUserFromCache(user.id)
+          UserCache.removeUserFromCache(user.identityId)
           JsonOk("A new access key was created.")
         }
       }

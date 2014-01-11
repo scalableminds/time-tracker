@@ -2,7 +2,7 @@ package controllers
 
 import play.api.Play.current
 import models.User
-import play.api.libs.ws.WS
+import play.api.libs.ws.{SignatureCalculator, Response, WS}
 import play.api.libs.json._
 import play.api.libs.json.Json._
 import play.api.libs.json.Reads._
@@ -10,9 +10,11 @@ import play.api.libs.functional.syntax._
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.Identity
-import play.api.libs.ws.WS.WSRequestHolder
-import scala.concurrent.Future
-import play.api.http.Status
+import play.api.libs.ws.WS.{WSRequest, WSRequestHolder}
+import scala.concurrent.{Promise, Future}
+import play.api.http.{ContentTypeOf, Writeable, Status}
+import com.ning.http.client.{Response, PerRequestConfig}
+import com.ning.http.client.Realm.AuthScheme
 
 /**
  * Company: scalableminds
@@ -159,7 +161,7 @@ trait GithubCollaboratorRequestor extends GithubRequestor {
   def repoCollaboratorsUrl(repo: String): String
 
   def isCollaborator(user: Identity, token: String, repo: String) =
-    listCollaborators(token, repo).map(_.map(_.toString).contains(user.id.id))
+    listCollaborators(token, repo).map(_.map(_.toString).contains(user.identityId.userId))
 
   def listCollaborators(token: String, repo: String) =
     githubRequest(repoCollaboratorsUrl(repo))(token).get().map {
@@ -202,7 +204,7 @@ trait GithubHooksRequestor extends GithubRequestor {
 
 case class GithubIssue(url: String, title: String, body: String, number: Int)
 
-trait GithuIssueRequestor extends GithubRequestor {
+trait GithuIssueRequestor extends GithubRequestor{
 
 
   implicit val githubIssueFormat = Json.format[GithubIssue]
@@ -219,7 +221,7 @@ trait GithuIssueRequestor extends GithubRequestor {
     Json.obj("body" -> body)
 
   def updateIssueBody(token: String, issue: GithubIssue, body: String) = {
-    githubRequest(issue.url, prependHost = false)(token).patch(issueBodyUpdate(body)).map{ response =>
+    githubRequest(issue.url, prependHost = false)(token).post(issueBodyUpdate(body)).map{ response =>
       Logger.info("Update returned: " + response.status)
       if(response.status != 200)
         Logger.warn(response.body)

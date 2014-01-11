@@ -4,7 +4,7 @@ import play.api.cache.Cache
 import play.api.Play.current
 import models.UserDAO
 import braingames.reactivemongo.GlobalDBAccess
-import securesocial.core.{UserId}
+import securesocial.core.IdentityId
 
 /**
  * Company: scalableminds
@@ -16,16 +16,16 @@ object UserCache extends GlobalDBAccess{
   val userCacheTimeout = current.configuration.getInt("director.user.cacheTimeout") getOrElse 300
   val userCacheKeyPrefix = current.configuration.getString("director.user.cacheKey") getOrElse "user"
 
-  def cacheKeyForUser(id: UserId): String =
-    cacheKeyForUser(id.providerId, id.id)
+  def cacheKeyForUser(id: IdentityId): String =
+    cacheKeyForUser(id.providerId, id.userId)
 
-  def removeUserFromCache(id: UserId) =
+  def removeUserFromCache(id: IdentityId) =
     Cache.remove(cacheKeyForUser(id))
 
   def cacheKeyForUser(p: String, id: String) =
     s"$userCacheKeyPrefix.$p.$id"
 
-  def findUser(id: UserId) = {
+  def findUser(id: IdentityId) = {
     Cache.getOrElse(cacheKeyForUser(id), userCacheTimeout) {
       UserDAO.findOneByUserId(id)
     }
