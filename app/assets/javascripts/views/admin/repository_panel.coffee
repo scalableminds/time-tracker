@@ -25,6 +25,8 @@ class RepositoryPanel extends Backbone.Marionette.Layout
     @availableRepositoriesView = new AvailableRepositoriesView()
     @activeRepositoriesView = new ActiveRepositoriesView()
 
+    @listenTo(@availableRepositoriesView, "newItem", @addActiveRepository)
+
 
   render: ->
 
@@ -35,12 +37,8 @@ class RepositoryPanel extends Backbone.Marionette.Layout
     @activeRepositories.show(@activeRepositoriesView)
 
 
-  addItem: ->
+  addActiveRepository: ->
 
-    if @ui.$inputProjectName[0].checkValidity() and @ui.$inputRate[0].checkValidity()
-      projectName = @ui.$inputProjectName.val()
-      projectRate = @ui.$inputRate.val()
-      @collection.add({project: projectName, rate: projectRate})
+    #TODO fetch the collection again from the server
+    @activeRepositoriesView.collection.add({id: Math.random(), repository: "scalableminds/auth-proxy", accessToken: 1234567, adminId: 123})
 
-      @ui.$sectionCreateNew.removeClass("in")
-      @ui.$sectionCreateNew.addClass("hidden")

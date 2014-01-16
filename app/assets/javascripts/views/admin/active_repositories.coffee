@@ -19,6 +19,7 @@ class ActiveRepositories extends Backbone.Marionette.CompositeView
             <th>Name</th>
             <th>Access-Token</th>
             <th>Admin Ids</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -33,3 +34,4 @@ class ActiveRepositories extends Backbone.Marionette.CompositeView
   initialize: ->
 
     @collection = new ActiveRepositoriesCollection()
+

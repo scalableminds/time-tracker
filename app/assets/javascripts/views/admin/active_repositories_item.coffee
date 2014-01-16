@@ -21,7 +21,7 @@ class ActiveRepositoriesItem extends Backbone.Marionette.ItemView
     </td>
     <td>
       <a id="scan" href="/admin/repositories/<%= repository %>/scan"><i class="glyphicon glyphicon-refresh"></i> scan</a>
-      <a id="remove" href="/admin/repositories/<%= repository %>"><i class="glyphicon glyphicon-trash"></i> remove</a>
+      <a id="remove" href="#"><i class="glyphicon glyphicon-trash"></i> remove</a>
     </td>
   """)
 

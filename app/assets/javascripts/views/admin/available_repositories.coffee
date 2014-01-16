@@ -29,7 +29,15 @@ class AvailableRepositories extends Backbone.Marionette.CompositeView
 
   itemView: AvailableRepositoriesItem
   itemViewContainer: "select"
+  events:
+    "click button": "addItem"
+
 
   initialize: ->
 
     @collection = new AvailableRepositoriesCollection()
+
+
+  addItem: ->
+
+    @trigger("newItem")
