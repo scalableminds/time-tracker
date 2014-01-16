@@ -1,4 +1,4 @@
- ### define
+### define
 underscore : _
 backbone.marionette : Marionette
 ./active_repositories_item : ActiveRepositoriesItem
@@ -13,16 +13,16 @@ class ActiveRepositories extends Backbone.Marionette.CompositeView
     </header>
     <div class="table-responsive">
       <table class="table table-striped">
-	<thead>
-	  <tr>
-	    <th>#</th>
-	    <th>Name</th>
-	    <th>Access-Token</th>
-	    <th>Admin Ids</th>
-	  </tr>
-	</thead>
-	<tbody>
-	</tbody>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Access-Token</th>
+            <th>Admin Ids</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
       </table>
     </div>
   """)

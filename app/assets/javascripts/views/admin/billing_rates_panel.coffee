@@ -11,30 +11,34 @@ class BillingRatesPanel extends Backbone.Marionette.CompositeView
     <header class="row">
       <h3 class="col-md-10 col-sm-10 col-xs-9">Billing Rates</h3>
       <div class="col-md-2 col-sm-2 col-xs-3" >
-	<button type="button" class="btn btn-block btn-default" id="button_create_rate">
-	  <span class="glyphicon glyphicon-plus">
-	</button>
+        <button type="button" class="btn btn-block btn-default" id="button_create_rate">
+          <span class="glyphicon glyphicon-plus">
+        </button>
       </div>
     </header>
     <section class="row hidden fade" id="section_create_new">
-      <div class="input-group col-md-5 col-sm-5">
-	<span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-	<input type="text" id="input_project_name" class="form-control" required placeholder="Project Name">
+      <div class="col-md-5 col-sm-5">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+          <input type="text" id="input_project_name" class="form-control" required placeholder="Project Name">
+        </div>
       </div>
-      <div class="input-group col-md-5 col-sm-5">
-	<span class="input-group-addon"><i class="glyphicon glyphicon-euro"></i></span>
-	<input type="number" id="input_rate" class="form-control" required placeholder="Hourly Rate">
+      <div class="col-md-5 col-sm-5">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-euro"></i></span>
+          <input type="number" id="input_rate" class="form-control" required placeholder="Hourly Rate">
+        </div>
       </div>
       <div class="col-md-2 col-sm-2">
-	<button type="button" class="btn btn-block btn-default" id="button_add_rate">OK</button>
+        <button type="button" class="btn btn-block btn-default" id="button_add_rate">OK</button>
       </div>
     </section>
     <table class="table table-striped table-hover">
-      <thead class="col-md-12">
-	<tr>
-	  <th>Project Name</th>
-	  <th>Rate / Hour</th>
-	</tr>
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Rate / Hour</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
