@@ -1,8 +1,7 @@
 package controllers
 
 import play.api.Play.current
-import models.User
-import play.api.libs.ws.{SignatureCalculator, Response, WS}
+import play.api.libs.ws.WS
 import play.api.libs.json._
 import play.api.libs.json.Json._
 import play.api.libs.json.Reads._
@@ -10,11 +9,9 @@ import play.api.libs.functional.syntax._
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.Identity
-import play.api.libs.ws.WS.{WSRequest, WSRequestHolder}
-import scala.concurrent.{Promise, Future}
-import play.api.http.{ContentTypeOf, Writeable, Status}
-import com.ning.http.client.{Response, PerRequestConfig}
-import com.ning.http.client.Realm.AuthScheme
+import play.api.libs.ws.WS.WSRequestHolder
+import scala.concurrent.Future
+import play.api.http.Status
 
 /**
  * Company: scalableminds

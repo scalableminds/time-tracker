@@ -1,8 +1,6 @@
 package controllers
 
 import play.api.mvc.Action
-import java.io.File
-import scala.reflect.io.Path
 import play.api.Logger
 import models.services.GithubIssueActor
 import models.RepositoryDAO

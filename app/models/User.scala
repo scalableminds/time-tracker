@@ -44,29 +44,11 @@ case class User(identityId: IdentityId,
 
   val githubId = identityId.userId
 
-  def nick = User.generateNick(fullName)
-
   def githubAccessToken = oAuth2Info.get.accessToken
 }
 
 object User {
   def generateAccessKey = UUID.randomUUID().toString.replace("-", "")
-
-  def generateNick(fullName: String) = {
-    val vocals = List('a', 'o', 'i', 'e', 'u')
-    val nameV = fullName.toLowerCase.split(' ').flatMap(_.find(vocals.contains))
-    val nameK = fullName.toLowerCase.split(' ').flatMap(_.find(c => !vocals.contains(c)))
-
-    val vocalsToUse = (nameV ++ vocals).toList
-    val konsToUse = (nameK ++ List('l', 'w', 'z', 'r')).take(2)
-
-    konsToUse.foldLeft(("", vocalsToUse)) {
-      case ((s, v :: vs), k) =>
-        (s + k + v, vs)
-      case ((s, Nil), k) =>
-        (s + k, Nil)
-    }._1
-  }
 }
 
 object UserDAO extends BasicReactiveDAO[User] {
