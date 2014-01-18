@@ -12,8 +12,10 @@ object Application extends Controller with SecureSocial {
   def index = UserAwareAction{ implicit request =>
     if(request.user.isDefined)
       Redirect(controllers.routes.Application.home)
-    else
-      Ok(views.html.index("Your new application is ready."))
+    else{
+      // automatic login
+      Redirect(securesocial.controllers.routes.ProviderController.authenticate("github"))
+    }
   }
 
   def home = SecuredAction {
@@ -38,6 +40,11 @@ object Application extends Controller with SecureSocial {
         controllers.routes.javascript.TimeEntryController.showTimesForInterval,
         controllers.routes.javascript.TimeEntryController.showTimeForUser
       )).as("text/javascript")
+  }
+
+  def loggedOut = Action { implicit request =>
+    // is used so that the user won't get loggin automatically after logging out
+    Ok(views.html.index())
   }
 
 }
