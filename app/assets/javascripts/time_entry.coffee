@@ -1,4 +1,4 @@
-### define 
+### define
 jquery : $
 bootstrap : bootstrap
 ###
@@ -48,22 +48,20 @@ bootstrap : bootstrap
       dataType: "json"
       data: JSON.stringify {duration, timestamp, comment}
     )
-    .done( -> 
-      
+    .done( ->
+
       setTimeout(
         ->
           if isUserComingFromGithub()
             # hacky hack hack
             open(location, '_self').close();
-          else
-            window.history.back()
         1000
       )
       showAlert("Yeah! Your time got logged.", "success")
       # dismissAlert()
     )
     .fail (jqXHR, textStatus, error ) ->
-      
+
       console.error("There was an error submitting the entry:", error)
       showAlert("Ups! Something went wrong.", "failure")
       # dismissAlert()
@@ -82,7 +80,7 @@ bootstrap : bootstrap
     # clear existing styles
     $alert.removeClass("alert-success")
     $alert.removeClass("alert-danger")
-    
+
     $alert.text(msg)
 
     if state == "success"
