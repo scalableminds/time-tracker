@@ -12,16 +12,16 @@ class AvailableRepositories extends Backbone.Marionette.CompositeView
       <h3 class="col-lg-12">Add a New Repository</h3>
     </header>
     <div class="row">
-      <div class="col-lg-5">
+      <div class="col-sm-5">
         <select name="repository" class="form-control"></select>
       </div>
-      <div class="col-lg-5">
+      <div class="col-sm-5">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-key"></i></span>
           <input class="form-control" type="text" id="inputAccess" name="accessToken" required="" value="" placeholder="Access Token">
         </div>
       </div>
-      <div class="col-lg-2">
+      <div class="col-sm-2">
         <button type="button" class="btn btn-block btn-default">Add</button>
       </div>
     </div>

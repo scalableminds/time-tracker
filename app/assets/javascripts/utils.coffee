@@ -21,6 +21,7 @@ Utils =
 
     return parseInt(Math.pow(10, digits) * number) / Math.pow(10, digits)
 
+
   minutesToHours : (minutes) ->
 
     return @decimalPlaces(minutes / 60, 2)
