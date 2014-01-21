@@ -4,3 +4,4 @@
 logs/
 target/
 RUNNING_PID
+public/javascripts/bower_components

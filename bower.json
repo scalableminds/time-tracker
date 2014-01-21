@@ -1,0 +1,17 @@
+{
+  "name": "time tracker",
+  "version": "0.0.0",
+  "dependencies": {
+    "bootstrap": "~3.0.0",
+    "jquery": "~1.10.2",
+    "requirejs": "~2.1.9",
+    "lodash": "~2.2.1",
+    "backbone": "~1.1.0",
+    "backbone.marionette": "~1.5.1",
+    "font-awesome": "~4.0.3"
+  },
+  "devDependencies": {},
+  "resolutions": {
+    "jquery": "2.0.3"
+  }
+}
