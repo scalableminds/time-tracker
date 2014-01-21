@@ -5,9 +5,6 @@
 # Home page
 GET         /                                                     controllers.Application.index
 GET         /home                                                 controllers.Application.home
-GET         /team                                                 controllers.Application.team
-GET         /project                                              controllers.Application.project
-GET         /admin                                                controllers.Application.admin
 
 # Admin
 GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
@@ -57,3 +54,5 @@ GET         /assets/javascripts/routes.js                       controllers.Appl
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                         controllers.Assets.at(path="/public", file)
+
+GET         /*any                                                    controllers.Application.team(any: String)

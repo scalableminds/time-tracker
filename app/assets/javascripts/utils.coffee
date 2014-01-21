@@ -12,10 +12,13 @@ Utils =
     number
 
 
-  sum : (arr) ->
+  sum : (arr, key) ->
 
-    arr.reduce(( (r, a) -> r + a ), 0)
+    if arguments.length == 1
+      arr.reduce(( (r, a) -> r + a ), 0)
 
+    else
+      arr.reduce(( (r, a) -> r + a[key] ), 0)
 
   decimalPlaces : (number, digits) ->
 

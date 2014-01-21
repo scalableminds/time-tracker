@@ -21,7 +21,7 @@ object Application extends Controller with SecureSocial {
       Ok(html.home())
   }
 
-  def team = SecuredAction {
+  def team(any: String)= SecuredAction {
     implicit request =>
       Ok(html.team())
   }

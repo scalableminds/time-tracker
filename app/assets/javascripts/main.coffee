@@ -45,11 +45,6 @@ $ ->
   #         location.reload()
 
 
-  #   "/admin" : ->
-
-  #     controller = new AdminPanel(el: "#main-container .container")
-  #     controller.render()
-
   #   "/admin/repositories" : ->
 
   #     $("#deleteRepository").click ->
