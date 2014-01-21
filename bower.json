@@ -8,10 +8,8 @@
     "lodash": "~2.2.1",
     "backbone": "~1.1.0",
     "backbone.marionette": "~1.5.1",
-    "font-awesome": "~4.0.3"
+    "font-awesome": "~4.0.3",
+    "momentjs": "~2.5.0"
   },
-  "devDependencies": {},
-  "resolutions": {
-    "jquery": "2.0.3"
-  }
+  "devDependencies": {}
 }
