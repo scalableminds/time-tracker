@@ -24,6 +24,11 @@ class Router extends Backbone.Router
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
     "*url"  : "redirectWithSlash"
 
+  whitelist: [
+    "/authenticate/github"
+  ]
+
+
 
   constructor: ->
 
@@ -63,7 +68,29 @@ class Router extends Backbone.Router
     else
       @user()
 
+
   changeView: (view) ->
 
     view.render()
     $("#main-container .container").html(view.el)
+
+
+  handlePageLinks : ->
+
+    # Globally capture clicks and route them through Backbone's navigate method.
+    $(document).on "click", "a[href^='/']", (event) ->
+
+      url = $(event.currentTarget).attr('href')
+
+      # Check if url is whitelisted
+      if whitelist.contains(url)
+        return
+
+      # Allow shift+click for new tabs, etc.
+      if !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
+        event.preventDefault()
+
+        # Instruct Backbone to trigger routing events
+        app.router.navigate(url, { trigger: true })
+
+        return false
