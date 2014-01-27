@@ -7,6 +7,7 @@ import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessCo
 import braingames.util.StartableActor
 import play.api.Logger
 import models.{IssueDAO, ArchivedIssue}
+import scala.concurrent.Future
 
 /**
  * Company: scalableminds
@@ -37,17 +38,28 @@ class GithubIssueActor extends Actor {
 object GithubIssueActor extends StartableActor[GithubIssueActor] {
   val name = "githubIssueActor"
 
+  val linkRx = "<a[^>]*>Log Time</a>"
+
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
     val link =
-      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number).url
+      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number, Some("github")).url
     s"""<a href="$link" target="_blank">Log Time</a>"""
   }
 
+  def containsLinkHeuristic(s: String) = linkRx.r.findFirstIn(s)
+
   def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue) = {
     val link = timeTrackingLinkFor(repo, issue)
-    if (!issue.body.contains(link)) {
-      val body = issue.body + "\n\n" + link
-      GithubApi.updateIssueBody(repo.accessToken, issue, body)
+    containsLinkHeuristic(issue.body) match {
+      case Some(currentLink) if currentLink == link =>
+        // there is nothing to do here
+        Future.successful(false)
+      case Some(currentLink) =>
+        val body = issue.body.replaceAll(linkRx, link)
+        GithubApi.updateIssueBody(repo.accessToken, issue, body)
+      case _ =>
+        val body = issue.body + "\n\n" + link
+        GithubApi.updateIssueBody(repo.accessToken, issue, body)
     }
   }
 

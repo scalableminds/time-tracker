@@ -84,7 +84,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
-  def createForm(owner: String, repo: String, issueNumber: Int) = SecuredAction.async {
+  def createForm(owner: String, repo: String, issueNumber: Int, referer: Option[String]) = SecuredAction.async {
     implicit request =>
       val user = request.user.asInstanceOf[User]
       (for {
