@@ -20,6 +20,7 @@ Utils =
     else
       arr.reduce(( (r, a) -> r + a[key] ), 0)
 
+
   decimalPlaces : (number, digits) ->
 
     return parseInt(Math.pow(10, digits) * number) / Math.pow(10, digits)

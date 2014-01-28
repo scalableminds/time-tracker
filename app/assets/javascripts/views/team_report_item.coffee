@@ -1,6 +1,7 @@
 ###  define
 backbone.marionette : Marionette
 underscore: _
+Utils: Utils
 ###
 
 class TeamReportItem extends Backbone.Marionette.ItemView
@@ -8,19 +9,19 @@ class TeamReportItem extends Backbone.Marionette.ItemView
   tagName : "tr"
   templateForUserHeader : _.template("""
     <td><%= userName %></td>
-    <td><%= sumTotal %></td>
+    <td><%= Utils.minutesToHours(sumTotal) %></td>
     <% _.each(sumDaily, function(day){ %>
-      <td><%= day %></td>
+      <td><%= Utils.minutesToHours(day) %></td>
     <% }) %>
-  """)
+  """, null, { 'imports': { 'Utils': Utils }})
 
   templateForTimeEntries : _.template("""
     <td><%= projectName %></td>
-    <td><%= sumCompleteProject %></td>
+    <td><%= Utils.minutesToHours(sumCompleteProject) %></td>
     <% _.each(timeEntry, function(day){ %>
-      <td><%= day %></td>
+      <td><%= Utils.minutesToHours(day) %></td>
     <% }) %>
-  """)
+  """, null, { 'imports': { 'Utils': Utils }})
 
   attributes: ->
 
@@ -36,4 +37,3 @@ class TeamReportItem extends Backbone.Marionette.ItemView
       @template = @templateForUserHeader
     else
       @template = @templateForTimeEntries
-

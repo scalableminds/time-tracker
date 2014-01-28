@@ -1,7 +1,6 @@
 ### define
 backbone.marionette : Marionette
 underscore: _
-moment: moment
 utils: Utils
 models/team_report_model: TeamReportModel
 views/team_report_item: TeamReportItem
@@ -10,7 +9,7 @@ views/team_report_item: TeamReportItem
 class TeamReport extends Backbone.Marionette.CompositeView
 
   modelEvents :
-    "change" : "synced"
+    "sync" : "synced"
 
   title : "Team Report"
   template : _.template("""
@@ -19,14 +18,23 @@ class TeamReport extends Backbone.Marionette.CompositeView
         <tr>
           <th>Issue</th>
           <th>&sum;</th>
-          <% _.each(_.range(0, endOfMonth), function(index){ %>
+          <% _.each(_.range(1, endOfMonth), function(index){ %>
             <th><%= index %></th>
           <% }) %>
         </tr>
       </thead>
       <tbody></tbody>
+      <tfoot>
+        <tr>
+          <td>&sum;</td>
+          <td><%= Utils.minutesToHours(monthlyTotalHours) %></td>
+          <% _.each(dailyTotalHours, function(day){ %>
+            <td><%= Utils.minutesToHours(day) %></td>
+          <% }) %>
+        </tr>
+      </tfoot>
     </table>
-  """)
+  """, null, { 'imports': { 'Utils': Utils }})
 
 
   itemView : TeamReportItem
@@ -53,7 +61,7 @@ class TeamReport extends Backbone.Marionette.CompositeView
       # Finally add the days of the month to every project...
       timeEntries = _.transform(timeEntries,
         (result, project, key) =>
-          result[key] = _.range(0, @model.get("endOfMonth")).map(
+          result[key] = _.range(1, @model.get("endOfMonth")).map(
             (day) -> return Utils.sum(
               project.filter(
                 (project) -> return moment(project.timestamp).date() == day
@@ -65,7 +73,7 @@ class TeamReport extends Backbone.Marionette.CompositeView
         )
 
       # Sum up the total amount of hours per day for every user
-      sumDaily = _.range(0, @model.get("endOfMonth")).map((i) -> return Utils.sum(_.values(timeEntries), i))
+      sumDaily = _.range(1, @model.get("endOfMonth")).map((i) -> return Utils.sum(_.values(timeEntries), i - 1)) #-1 because days start with 1 and arrays with 0
       sumTotal = Utils.sum(sumDaily)
 
       #Add that shit to the collection as a table 'header' for every user
@@ -87,3 +95,7 @@ class TeamReport extends Backbone.Marionette.CompositeView
         )
       )
     )
+
+    # Make sure we render everything again
+    # TODO does this cause 2x renders? one with this call and one because the collection changed?
+    @render()
