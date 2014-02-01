@@ -2,6 +2,7 @@
 backbone.marionette : Marionette
 underscore: _
 utils: Utils
+moment: moment
 models/team_report_model: TeamReportModel
 views/team_report_item: TeamReportItem
 ###
@@ -19,7 +20,7 @@ class TeamReport extends Backbone.Marionette.CompositeView
           <th>Issue</th>
           <th>&sum;</th>
           <% _.each(_.range(1, endOfMonth), function(index){ %>
-            <th><%= index %></th>
+            <th title="<%= currentDate.clone().add("days", index).format("dddd, LL") %>"><%= index %></th>
           <% }) %>
         </tr>
       </thead>
@@ -34,7 +35,7 @@ class TeamReport extends Backbone.Marionette.CompositeView
         </tr>
       </tfoot>
     </table>
-  """, null, { 'imports': { 'Utils': Utils }})
+  """, null, { imports : { Utils, moment }})
 
 
   itemView : TeamReportItem
