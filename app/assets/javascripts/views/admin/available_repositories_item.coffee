@@ -10,7 +10,5 @@ class AvailableRepositoriesItem extends Backbone.Marionette.ItemView
     <%= repository %>
   """)
 
-  initialize: ->
-
-    @attributes =
-      value: this.model.repository
+  attributes : ->
+    value: this.model.repository

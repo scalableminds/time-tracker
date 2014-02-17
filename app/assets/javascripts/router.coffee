@@ -7,32 +7,27 @@ controller/user_report_controller : UserReportController
 controller/project_report_controller : ProjectReportController
 controller/team_report_controller : TeamReportController
 views/admin/admin_panel : AdminPanelView
+views/team/team_report : TeamReportView
+views/log_time_view : LogTimeView
 views/time_report : TimeReportView
-views/team_report : TeamReportView
 ###
 
 class Router extends Backbone.Router
 
   routes:
-    ""        : "user"
-    "home/"   : "user"
-    "project/": "project"
-    "team/"   : "team"
-    "create/" : "timeEntry"
-    "admin/"  : "admin"
-    "team/:date" : "team"
+    ""            : "user"
+    "home/"       : "user"
+    "project/"    : "project"
+    "team/"       : "team"
+    "create/"     : "log"
+    "admin/"      : "admin"
+    "team/:date"  : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
-    "*url"  : "redirectWithSlash"
+    "*url"        : "redirectWithSlash"
 
   whitelist: [
     "/authenticate/github"
   ]
-
-
-
-  constructor: ->
-
-    super({pushState: true})
 
 
   user: ->
@@ -50,9 +45,9 @@ class Router extends Backbone.Router
     @changeView(new TimeReportView(TeamReportView, moment(date)))
 
 
-  timeEntry: ->
+  log: ->
 
-    TimeEntryCode()
+    @changeView(new LogTimeView())
 
 
   admin : ->
