@@ -13,7 +13,7 @@ class TeamReportItem extends Backbone.Marionette.ItemView
     <% _.each(sumDaily, function(day){ %>
       <td><%= Utils.minutesToHours(day) %></td>
     <% }) %>
-  """, null, { 'imports': { 'Utils': Utils }})
+  """)
 
   templateForTimeEntries : _.template("""
     <td><%= projectName %></td>
@@ -21,7 +21,10 @@ class TeamReportItem extends Backbone.Marionette.ItemView
     <% _.each(timeEntry, function(day){ %>
       <td><%= Utils.minutesToHours(day) %></td>
     <% }) %>
-  """, null, { 'imports': { 'Utils': Utils }})
+  """)
+
+  templateHelpers :
+    Utils : Utils
 
   attributes: ->
 

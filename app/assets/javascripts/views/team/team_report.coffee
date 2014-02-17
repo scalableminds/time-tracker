@@ -34,8 +34,10 @@ class TeamReport extends Backbone.Marionette.CompositeView
         </tr>
       </tfoot>
     </table>
-  """, null, { 'imports': { 'Utils': Utils }})
+  """)
 
+  templateHelpers :
+    Utils : Utils
 
   itemView : TeamReportItem
   itemViewContainer : "tbody"
