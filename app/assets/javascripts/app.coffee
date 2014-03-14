@@ -1,15 +1,6 @@
 ### define
-jquery : $
 backbone.marionette : Marionette
 ###
 
-class App extends Backbone.Marionette.Application
-
-  constructor:->
-
-    super()
-
-    window.app = @
-
-
-
+window.app = app = new Backbone.Marionette.Application()
+return app

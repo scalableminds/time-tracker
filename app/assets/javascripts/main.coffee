@@ -1,13 +1,12 @@
 ### define
 jquery : $
 backbone.marionette : Marionette
-app : App
+app : app
 router : Router
+navbar : navbar
 ###
 
 $ ->
-
-  app = new App()
 
   app.addInitializer ->
 

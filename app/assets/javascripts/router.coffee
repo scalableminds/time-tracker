@@ -1,91 +1,104 @@
 ### define
-jquery: $
-backbone: Backbone
-moment: moment
-time_entry : TimeEntryCode
-controller/user_report_controller : UserReportController
-controller/project_report_controller : ProjectReportController
-controller/team_report_controller : TeamReportController
-views/admin/admin_panel : AdminPanelView
-views/team/team_report : TeamReportView
-views/log_time_view : LogTimeView
-views/time_report : TimeReportView
+underscore : _
+backbone : Backbone
+views/admin/admin_panel  : AdminPanelView
+views/team/team_view  : TeamView
+models/team/team_model  : TeamModel
+views/month_picker_view : MonthPickerView
+views/log/log_time_view  : LogTimeView
 ###
 
 class Router extends Backbone.Router
 
-  routes:
-    ""            : "user"
-    "home/"       : "user"
-    "project/"    : "project"
-    "team/"       : "team"
-    "create/"     : "log"
-    "admin/"      : "admin"
-    "team/:date"  : "team"
+  routes :
+    ""                                          : "user"
+    "home"                                      : "user"
+    "project"                                   : "project"
+    "team"                                      : "team"
+    "log"                                       : "log"
+    "admin"                                     : "admin"
+    "team/:date"                                : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
-    "*url"        : "redirectWithSlash"
 
-  whitelist: [
+  whitelist : [
     "/authenticate/github"
   ]
 
+  initialize  : ->
 
-  user: ->
-
-    @changeView(new UserReportController())
-
-
-  project: ->
-
-    @changeView(new ProjectReportController())
+    @handlePageLinks()
+    @activeViews = null
+    @$mainContainer = $("#main-container .container")
 
 
-  team: (date) ->
+  user : ->
 
-    @changeView(new TimeReportView(TeamReportView, moment(date)))
+    #@changeView(new UserReportController())
 
 
-  log: ->
+  project : ->
+
+    #@changeView(new ProjectReportController())
+
+
+  team : (date) ->
+
+    teamModel = new TeamModel("date" : date)
+    monthPickerView = new MonthPickerView(model : teamModel)
+    teamView = new TeamView(model : teamModel)
+
+    @changeView(monthPickerView, teamView)
+
+
+  log : ->
 
     @changeView(new LogTimeView())
 
 
-  admin : ->
+  admin  : ->
 
     @changeView(new AdminPanelView())
 
 
-  redirectWithSlash : (url) ->
+  changeView : (views...) ->
 
-    urlWithSlash = "#{url}/"
-    if _.has(@routes, urlWithSlash)
-      @navigate(urlWithSlash, true)
+    if @activeViews == views
+      return
+
+    # Remove current views
+    if @activeViews
+      for view in @activeViews
+        # prefer Marionette's close() function to Backbone's remove()
+        if view.close
+          view.close()
+        else
+          view.remove()
     else
-      @user()
+      # we are probably coming from a URL that isn't a Backbone.View yet (or page reload)
+      @$mainContainer.empty()
+
+    # Add new views
+    @activeViews = views
+
+    for view in views
+      @$mainContainer.append(view.render().el)
+
+    return
 
 
-  changeView: (view) ->
+  handlePageLinks  : ->
 
-    view.render()
-    $("#main-container .container").html(view.el)
+    # handle all links and manage page changes (rather the reloading the whole site)
+     $("a").on "click", (evt) =>
 
-
-  handlePageLinks : ->
-
-    # Globally capture clicks and route them through Backbone's navigate method.
-    $(document).on "click", "a[href^='/']", (event) ->
-
-      url = $(event.currentTarget).attr('href')
-
-      # Check if url is whitelisted
-      if whitelist.contains(url)
+      url = $(evt.currentTarget).attr("href")
+      if url == "#"
         return
 
-      # Allow shift+click for new tabs, etc.
-      if !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
-        event.preventDefault()
+      if _.contains(@whitelist, url)
+        return
 
-        # Instruct Backbone to trigger routing events
-        app.router.navigate(url, { trigger: true })
-
-        return false
+      urlWithoutSlash = url.slice(1)
+      if @routes[urlWithoutSlash]
+        evt.preventDefault()
+        @navigate(url, { trigger: true })

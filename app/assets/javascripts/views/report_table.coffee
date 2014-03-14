@@ -4,7 +4,7 @@ underscore : _
 backbone : Backbone
 backgrid : Backgrid
 ./details_table : DetailsTable
-./month_picker : MonthPicker
+./month_picker_view : MonthPickerView
 ../utils : Utils
 ../backgrid_modifications : BackgridModifications
 ###
@@ -31,7 +31,7 @@ class ReportTable extends Backbone.View
 
     @groupByIterator = null
     @currentDate = moment()
-    @monthPicker = new MonthPicker()
+    @monthPicker = new MonthPickerView()
 
 
   createColumns : (ExtendedCell, MinimalHeaderCell) ->

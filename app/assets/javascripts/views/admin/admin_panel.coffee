@@ -33,10 +33,10 @@ class AdminPanel extends Backbone.Marionette.Layout
     @infoPanelView = new InfoPanelView()
     @repositoryPanelView = new RepositoryPanelView()
 
+    @listenTo(@, "render", @afterRender)
 
-  render: ->
 
-    @$el.html(@template())
+  afterRender: ->
 
     # subviews
     @billingRatesPanel.show(@billingRatesPanelView)
@@ -44,9 +44,3 @@ class AdminPanel extends Backbone.Marionette.Layout
     @repositoryPanel.show(@repositoryPanelView)
 
 
-  onClose: ->
-
-    #TODO check if this works
-    @billingRatesPanel.close()
-    @infoPanel.close()
-    @repositoryPanel.close()
