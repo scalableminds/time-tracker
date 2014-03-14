@@ -23,7 +23,7 @@ class MonthPickerView extends Backbone.Marionette.ItemView
   """)
 
   events :
-    "click .month-prev" : "monthPrev"
+    "click .month-prev" : "monthPrevious"
     "click .month-next" : "monthNext"
     "click .month-title" : "monthReset"
 
@@ -33,23 +33,25 @@ class MonthPickerView extends Backbone.Marionette.ItemView
      @listenTo(@, "render", @updateURL)
 
 
-  monthPrev : (evt) ->
+  monthPrevious : (evt) ->
 
     evt.preventDefault()
-
-    date = @model.get("currentDate")
-    @model.set(date.subtract("months", 1))
-    @render()
+    @changeDate("subtract")
     return
-
 
   monthNext : (evt) ->
 
     evt.preventDefault()
+    @changeDate("add")
+    return
+
+
+  changeDate : (operation) ->
 
     date = @model.get("currentDate")
-    @model.set(date.add("months", 1))
+    @model.set(date[operation]("months", 1))
     @render()
+    app.vent.trigger("MonthPickerView:changed")
     return
 
 

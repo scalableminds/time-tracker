@@ -22,7 +22,11 @@ class TeamReportModel extends Backbone.Model
       endOfMonth : date.endOf("month").date()
     )
 
-    @urlRoot = "/times/#{date.year()}/#{date.month() + 1}"
+
+  fetch : ->
+
+    @urlRoot = "/times/#{@get("currentDate").year()}/#{@get("currentDate").month() + 1}"
+    super()
 
 
   parse : (response) ->

@@ -2,12 +2,11 @@
 @import "_responsive.less";
 @import "_admin.less";
 @import "_log_time.less";
+@import "_month_picker.less";
 @import "datepicker.css";
 
-@media screen and (min-width: 768px) {
-  #main-container {
-    padding: 50px 0;
-  }
+.view-title {
+  margin-bottom: 35px;
 }
 
 #logo {
@@ -44,23 +43,13 @@
   margin: 0px 20px;
 }
 
-.month-picker {
-  float: right;
-  margin: 20px 0px;
 
-  @media screen and (min-width: 768px) {
-    .month-title {
-      width: 160px;
-    }
-  }
-
-}
 
 .form-control:invalid {
   background: #fee;
 }
 
-.report-table {
+.table {
   font-size: 12px;
 
   th, td {

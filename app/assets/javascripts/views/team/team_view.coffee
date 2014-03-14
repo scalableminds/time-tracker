@@ -2,16 +2,14 @@
 backbone.marionette : Marionette
 underscore: _
 utils: Utils
+app : app
 ./team_item_view: TeamItemView
 ###
 
 class TeamView extends Backbone.Marionette.CompositeView
 
-  modelEvents :
-    "sync" : "synced"
-
-  title : "Team Report"
   template : _.template("""
+    <h3 class="view-title">Team Report</h3>
     <table class="table table-hover table-bordered table-striped responsive">
       <thead>
         <tr>
@@ -43,11 +41,23 @@ class TeamView extends Backbone.Marionette.CompositeView
 
   initialize : (date) ->
 
-    @model.fetch()
+    @listenTo(@model, "sync", @formatData)
+    @listenTo(app.vent, "MonthPickerView:changed", @update)
+
+    @update()
+
+
+  update : ->
+
+    # reset the data storage as well
+    @model.set("rows", new Backbone.Collection())
     @collection = @model.get("rows")
 
+    @model.fetch(reset: true).done(
+      => @render()
+    )
 
-  synced : ->
+  formatData : ->
 
     # Call this after the model is initalized and format the data to fit this view
     users = @model.get("api")
@@ -96,6 +106,7 @@ class TeamView extends Backbone.Marionette.CompositeView
       )
     )
 
-    # Make sure we render everything again
-    # TODO does this cause 2x renders? one with this call and one because the collection changed?
-    @render()
+  render : ->
+
+    console.log "render"
+    super()
