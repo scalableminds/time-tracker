@@ -29,3 +29,8 @@ Utils =
   minutesToHours : (minutes) ->
 
     return @decimalPlaces(minutes / 60, 2)
+
+
+  dateToUrl : (date) ->
+
+    return "#{date.year()}/#{date.month() + 1}"

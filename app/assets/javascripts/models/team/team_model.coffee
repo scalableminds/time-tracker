@@ -25,7 +25,8 @@ class TeamReportModel extends Backbone.Model
 
   fetch : ->
 
-    @urlRoot = "/times/#{@get("currentDate").year()}/#{@get("currentDate").month() + 1}"
+    dateUrl = Utils.dateToUrl(@get("currentDate"))
+    @urlRoot = "/times/#{dateUrl}"
     super()
 
 
