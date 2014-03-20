@@ -18,9 +18,7 @@ bootstrap : bootstrap
     format : DATE_FORMAT
   )
 
-  datepicker.on "changeDate", (event) ->
-    currentDate = moment(event.date.valueOf())
-    datepicker.datepicker("hide")
+  datepicker.on( "changeDate", -> datepicker.datepicker("hide") )
 
   datepicker.datepicker("setValue", currentDate.toDate())
   datepicker.datepicker('update')
@@ -38,6 +36,7 @@ bootstrap : bootstrap
       return
 
     duration = $("#duration").val()
+    currentDate = moment(datepicker.val(), DATE_FORMAT)
     timestamp = 1000 * currentDate.unix()
     comment = $("#comment").val()
 
