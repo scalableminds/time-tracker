@@ -13,7 +13,7 @@ GET         /admin/repositories/:owner/:name/scan                 controllers.ad
 DELETE      /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
 
 # Add Issue time entry
-GET         /create                                      					controllers.TimeEntryController.createGenericForm
+GET         /create                                               controllers.TimeEntryController.createGenericForm
 GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int)
 POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
 POST        /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
@@ -26,7 +26,7 @@ POST        /user/accesskey                                       controllers.Us
 GET         /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
 
 #Request issues
-GET         /issues/:owner/:repo                            			controllers.TimeEntryController.showIssues(owner, repo)
+GET         /issues/:owner/:repo                                  controllers.TimeEntryController.showIssues(owner, repo)
 
 # Login page
 GET         /login                                                securesocial.controllers.LoginPage.login

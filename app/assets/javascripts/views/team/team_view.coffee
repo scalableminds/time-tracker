@@ -106,7 +106,3 @@ class TeamView extends Backbone.Marionette.CompositeView
       )
     )
 
-  render : ->
-
-    console.log "render"
-    super()

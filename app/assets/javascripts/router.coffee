@@ -6,6 +6,7 @@ views/team/team_view  : TeamView
 models/team/team_model  : TeamModel
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
+views/spinner_view  : SpinnerView
 ###
 
 class Router extends Backbone.Router
@@ -44,10 +45,11 @@ class Router extends Backbone.Router
   team : (date) ->
 
     teamModel = new TeamModel("date" : date)
+    spinnerView = new SpinnerView(model : teamModel)
     monthPickerView = new MonthPickerView(model : teamModel)
     teamView = new TeamView(model : teamModel)
 
-    @changeView(monthPickerView, teamView)
+    @changeView(spinnerView, monthPickerView, teamView)
 
 
   log : ->
