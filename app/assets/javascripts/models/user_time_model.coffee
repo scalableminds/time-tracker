@@ -7,12 +7,12 @@ Utils : Utils
 class UserTimeModel extends Backbone.Model
 
   defaults :
-    currentDate : moment().subtract("month", 2)
+    date : moment().subtract("month", 2)
 
 
   urlRoot : ->
 
-    dateUrl = Utils.dateToUrl(@get("currentDate"))
+    dateUrl = Utils.dateToUrl(@get("date"))
     return "/user/times/#{dateUrl}"
 
 

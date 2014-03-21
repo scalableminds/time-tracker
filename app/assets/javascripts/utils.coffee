@@ -34,3 +34,7 @@ Utils =
   dateToUrl : (date) ->
 
     return "#{date.year()}/#{date.month() + 1}"
+
+  endOfMonth : (date) ->
+
+    return date.endOf("month").date()

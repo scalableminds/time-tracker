@@ -3,7 +3,7 @@ underscore : _
 backbone : Backbone
 views/admin/admin_panel  : AdminPanelView
 views/team/team_view  : TeamView
-models/team/team_model  : TeamModel
+models/team/team_view_model  : TeamViewModel
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
@@ -44,7 +44,7 @@ class Router extends Backbone.Router
 
   team : (date) ->
 
-    teamModel = new TeamModel("date" : date)
+    teamModel = new TeamViewModel("date" : date)
     spinnerView = new SpinnerView(model : teamModel)
     monthPickerView = new MonthPickerView(model : teamModel)
     teamView = new TeamView(model : teamModel)
