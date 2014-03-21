@@ -11,8 +11,5 @@
     "font-awesome": "~4.0.3",
     "momentjs": "~2.5.0"
   },
-  "devDependencies": {},
-  "resolutions": {
-    "jquery": "2.1"
-  }
+  "devDependencies": {}
 }

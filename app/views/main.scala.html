@@ -29,7 +29,7 @@
       </div>
       <nav class="collapse navbar-collapse" id="navbar-header-collapse">
       @session.userOpt.map { user =>
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav" id="main-nav">
           <li @if(title=="Home"){class="active"}>
             <a href="/">Me</a>
           </li>
@@ -50,15 +50,15 @@
           <li class="divider-vertical"></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-user icon-white"></i> <strong>@user.nick</strong> @if(user.email){ <span>(@user.email)</span> }
+        <i class="fa fa-user fa-white"></i> <strong>@user.nick</strong> @if(user.email){ <span>(@user.email)</span> }
         <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
         <li>
-          <a href="@controllers.routes.UserController.showSettings()"><i class="icon-key"></i> Access-Key</a>
+          <a href="@controllers.routes.UserController.showSettings()"><i class="fa fa-key"></i> Access-Key</a>
         </li>
         <li>
-          <a href="@securesocial.controllers.routes.LoginPage.logout()"><i class="icon-off"></i> Logout</a>
+          <a href="@securesocial.controllers.routes.LoginPage.logout()"><i class="fa fa-off"></i> Logout</a>
         </li>
             </ul>
           </li>
@@ -66,7 +66,7 @@
       }.getOrElse {
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href="@securesocial.controllers.routes.ProviderController.authenticate("github")"><i class="icon-github"></i> Login with Github</a>
+            <a href="@securesocial.controllers.routes.ProviderController.authenticate("github")"><i class="fa fa-github"></i> Login with Github</a>
           </li>
         </ul>
       }

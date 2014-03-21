@@ -91,9 +91,9 @@ class Router extends Backbone.Router
   handlePageLinks  : ->
 
     # handle all links and manage page changes (rather the reloading the whole site)
-     $("a").on "click", (evt) =>
+    $(document).on("click", "a", (evt) =>
 
-      url = $(evt.currentTarget).attr("href")
+      url = evt.currentTarget.href
       if url == "#"
         return
 
@@ -103,4 +103,7 @@ class Router extends Backbone.Router
       urlWithoutSlash = url.slice(1)
       if @routes[urlWithoutSlash]
         evt.preventDefault()
-        @navigate(url, { trigger: true })
+        @navigate(url, trigger : true)
+
+      return
+    )

@@ -22,12 +22,18 @@ class TeamViewModel extends Backbone.Model
     dailyTotalHours : 0
 
 
-  initialize : (options) ->
+  initialize : (options = {}) ->
 
-    date = moment(options?.date) || moment()
+    if options.date
+      date = moment(options.date)
+    else
+      date = moment()
+
+    date = date.startOf("month")
+
     @set(
       currentDate : date
-      endOfMonth : Utils.endOfMonth(date)
+      endOfMonth : date.daysInMonth()
     )
 
     @teamTimeCollection = new TeamTimeCollection("date" : date)
