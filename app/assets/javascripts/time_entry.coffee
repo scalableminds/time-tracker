@@ -55,8 +55,6 @@ bootstrap : bootstrap
           if isUserComingFromGithub()
             # hacky hack hack
             open(location, '_self').close();
-          else
-            window.history.back()
         1000
       )
       showAlert("Yeah! Your time got logged.", "success")
