@@ -7,6 +7,7 @@ import models.RepositoryDAO
 import GithubApi.githubIssueFormat
 import braingames.reactivemongo.GlobalAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
+import net.liftweb.common.Full
 
 /**
  * Company: scalableminds
@@ -23,8 +24,8 @@ object RepositoryController extends Controller {
         if action == "opened"
         issue <- (request.body \ "issue").asOpt[GithubIssue]
       } {
-        RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repository))(GlobalAccessContext).map {
-          case Some(repo) =>
+        RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repository))(GlobalAccessContext).futureBox.map {
+          case Full(repo) =>
             GithubIssueActor.ensureIssueIsArchived(repo, issue)
             GithubIssueActor.ensureTimeTrackingLink(repo, issue)
           case _ =>

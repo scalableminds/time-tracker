@@ -50,7 +50,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
   def userFromRequestOrKey(accessKey: String)(implicit request: RequestWithUser[_]) = {
     for {
       u1 <- Future.successful(request.user.map(u => (u.asInstanceOf[User])))
-      u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext)
+      u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext).futureBox
     } yield {
       u1 orElse u2
     }
@@ -147,17 +147,15 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
   }
 
   def createUserTimesList(entries: List[TimeEntry])(implicit ctx: DBAccessContext) = {
-    Future.traverse(entries.groupBy(_.userGID)) {
+    import scala.collection.breakOut
+    val l: List[Fox[JsObject]] = entries.groupBy(_.userGID).map {
       case (userGID, entries) =>
-        UserDAO.findOneByGID(userGID).map {
-          case Some(user) =>
-            val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
-            userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
-          case _ =>
-            Logger.warn("No user found for gid: " + userGID)
-            Json.obj()
+        UserDAO.findOneByGID(userGID).map { user =>
+          val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
+          userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
         }
-    }.map(_.filterNot(_.fields.isEmpty).toSeq)
+    }(breakOut)
+    Fox.sequenceOfFulls(l).map(_.toSeq)
   }
 
   def showTimesForInterval(year: Int, month: Int) = SecuredAction.async {

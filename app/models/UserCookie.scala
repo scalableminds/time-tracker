@@ -22,7 +22,7 @@ object UserCookieDAO extends BasicReactiveDAO[Authenticator]{
   import UserDAO._
 
   def refreshCookie(a: Authenticator)(implicit ctx: DBAccessContext) = {
-    collectionUpdate(Json.obj("id" -> a.id), formatter.writes(a), upsert = true, multi = false)
+    update(Json.obj("id" -> a.id), formatter.writes(a), upsert = true, multi = false)
   }
 
   import UserDAO._

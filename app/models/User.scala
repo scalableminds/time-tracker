@@ -12,6 +12,8 @@ import securesocial.core.OAuth1Info
 import securesocial.core.PasswordInfo
 import play.api.libs.json.JsObject
 import play.api.Logger
+import braingames.util.Fox
+import reactivemongo.core.commands.LastError
 
 /**
  * Company: scalableminds
@@ -54,40 +56,6 @@ object User {
 object UserDAO extends BasicReactiveDAO[User] {
   val collectionName = "users"
 
-  def findOneByEmail(email: String)(implicit ctx: DBAccessContext) = findHeadOption("email", email)
-
-  def findByUserIdQ(identityId: IdentityId) = Json.obj(
-    "identityId.userId" -> identityId.userId,
-    "identityId.providerId" -> identityId.providerId)
-
-  def findOneByUserId(identityId: IdentityId)(implicit ctx: DBAccessContext) = {
-    collectionFind(findByUserIdQ(identityId)).one[User]
-  }
-
-  def findByAccessKey(accessKey: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("accessKey" -> accessKey)).one[User]
-  }
-
-  def findOneByEmailAndProvider(email: String, provider: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("email" -> email, "identityId.providerId" -> provider)).one[User]
-  }
-
-  def update(i: Identity)(implicit ctx: DBAccessContext) = {
-    collectionUpdate(findByUserIdQ(i.identityId),
-      Json.obj("$set" -> Json.toJson(UserFactory(i))), upsert = true)
-  }
-
-  def setAccessKey(user: User, accessKey: String)(implicit ctx: DBAccessContext) = {
-    collectionUpdate(findByUserIdQ(user.identityId), Json.obj("$set" -> Json.obj("accessKey" -> accessKey)))
-  }
-
-  def fromIdentity(i: Identity) =
-    User(i.identityId, i.firstName, i.lastName, i.fullName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
-
-  def findOneByGID(gid: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(Json.obj("identityId.userId" -> gid)).one[User]
-  }
-
   implicit val AuthenticationMethodFormat: Format[AuthenticationMethod] =
     Format(Reads.StringReads.map(AuthenticationMethod.apply), Writes {
       am: AuthenticationMethod => Writes.StringWrites.writes(am.method)
@@ -105,5 +73,39 @@ object UserDAO extends BasicReactiveDAO[User] {
     val f: Reads[User] = Json.reads[User]
     val w: OWrites[User] = OWrites.apply(o => Json.writes[User].writes(o).as[JsObject])
     OFormat.apply[User](f, w)
+  }
+
+  def findOneByEmail(email: String)(implicit ctx: DBAccessContext) = findHeadOption("email", email)
+
+  def findByUserIdQ(identityId: IdentityId) = Json.obj(
+    "identityId.userId" -> identityId.userId,
+    "identityId.providerId" -> identityId.providerId)
+
+  def findOneByUserId(identityId: IdentityId)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(findByUserIdQ(identityId)).one[User]
+  }
+
+  def findByAccessKey(accessKey: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("accessKey" -> accessKey)).one[User]
+  }
+
+  def findOneByEmailAndProvider(email: String, provider: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("email" -> email, "identityId.providerId" -> provider)).one[User]
+  }
+
+  def update(i: Identity)(implicit ctx: DBAccessContext): Fox[LastError] = {
+    update(findByUserIdQ(i.identityId),
+      Json.obj("$set" -> Json.toJson(UserFactory(i))), upsert = true)
+  }
+
+  def setAccessKey(user: User, accessKey: String)(implicit ctx: DBAccessContext) = {
+    update(findByUserIdQ(user.identityId), Json.obj("$set" -> Json.obj("accessKey" -> accessKey)))
+  }
+
+  def fromIdentity(i: Identity) =
+    User(i.identityId, i.firstName, i.lastName, i.fullName, i.email, i.authMethod, i.oAuth1Info, i.oAuth2Info, i.passwordInfo)
+
+  def findOneByGID(gid: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("identityId.userId" -> gid)).one[User]
   }
 }
