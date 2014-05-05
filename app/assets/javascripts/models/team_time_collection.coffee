@@ -11,8 +11,7 @@ class TeamTimeCollection extends Backbone.Collection
 
   initialize : (options) ->
 
-    @date = moment(options?.date) || moment()
-
+    @date = options.date
 
   url : ->
 
@@ -35,15 +34,27 @@ class TeamTimeCollection extends Backbone.Collection
 
     return @reduce(
       (sumTotal, user) ->
-        return sumTotal + user.get("times").reduce( (sum, time) ->
-          return sum + time.get("duration")
-        , 0)
+        return sumTotal + user.get("times")
+          .reduce( (sum, time) ->
+            return sum + time.get("duration")
+          , 0)
     , 0)
 
 
   getDailyTotalHours : (data) ->
 
-    #TODO @normanrz
-    _.range(1, Utils.endOfMonth(@date)).map(
-      (day) -> return 0
+    _.range(1, @date.daysInMonth()).map(
+      (day) =>
+        momentDay = moment(@date).add("days", day - 1)
+        @reduce(
+          (sumTotal, user) ->
+            return sumTotal + user.get("times")
+              .filter((time) ->
+                moment(time.get("timestamp")).isSame(momentDay, "day")
+              )
+              .reduce(
+                (sum, time) ->
+                  return sum + time.get("duration")
+              , 0)
+        , 0)
     )

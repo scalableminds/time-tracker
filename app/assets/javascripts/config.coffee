@@ -9,12 +9,12 @@ requirejs
   baseUrl : "/assets/javascripts"
 
   paths :
-    "jquery"              : "../bower_components/jquery/dist/jquery.min"
-    "moment"              : "../bower_components/momentjs/min/moment.min"
-    "underscore"          : "../bower_components/lodash/dist/lodash.min"
+    "jquery"              : "../bower_components/jquery/dist/jquery"
+    "moment"              : "../bower_components/momentjs/moment"
+    "underscore"          : "../bower_components/lodash/dist/lodash"
     "backbone"            : "../bower_components/backbone/backbone"
     "backbone.marionette" : "../bower_components/backbone.marionette/lib/backbone.marionette"
-    "bootstrap"           : "../bower_components/bootstrap/dist/js/bootstrap.min"
+    "bootstrap"           : "../bower_components/bootstrap/dist/js/bootstrap"
     "backgrid"            : "backgrid"
     "datepicker"          : "bootstrap-datepicker"
 

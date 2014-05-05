@@ -37,4 +37,4 @@ Utils =
 
   endOfMonth : (date) ->
 
-    return date.endOf("month").date()
+    return date.daysInMonth()
