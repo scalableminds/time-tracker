@@ -2,7 +2,6 @@
 backbone.marionette : Marionette
 underscore: _
 utils: Utils
-app : app
 ./team_item_view: TeamItemView
 ###
 
@@ -15,7 +14,7 @@ class TeamView extends Backbone.Marionette.CompositeView
         <tr>
           <th>Issue</th>
           <th>&sum;</th>
-          <% _.each(_.range(1, endOfMonth), function(index){ %>
+          <% _.each(Utils.range(1, date.daysInMonth()), function(index){ %>
             <th><%= index %></th>
           <% }) %>
         </tr>
@@ -39,23 +38,19 @@ class TeamView extends Backbone.Marionette.CompositeView
   itemView : TeamItemView
   itemViewContainer : "tbody"
 
-  initialize : (date) ->
+  initialize : ->
 
-    @listenTo(@model, "sync", @formatData)
-    @listenTo(app.vent, "MonthPickerView:changed", @update)
-
-    @update()
-
-
-  update : ->
-
-    # reset the data storage as well
-    @model.set("rows", new Backbone.Collection())
     @collection = @model.get("rows")
+
+    @listenTo(app.vent, "MonthPickerView:changed", @update)
+    @listenTo(@model, "sync", @render)
+    @listenTo(@collection, "add", -> console.log arguments)
+
 
     @model.fetch(
       reset : true
-    ).done(
-      => @render()
     )
 
+  render : ->
+
+    super()

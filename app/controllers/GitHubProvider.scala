@@ -2,7 +2,7 @@ package controllers
 
 import securesocial.core.providers.{GitHubProvider => OriginalGithubProvider}
 import play.api.libs.ws.Response
-import play.api.{Logger}
+import play.api.Logger
 import play.api.{Application => PlayApplication}
 import securesocial.core.{AuthenticationException, OAuth2Info}
 

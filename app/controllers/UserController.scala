@@ -19,17 +19,15 @@ object UserController extends Controller with securesocial.core.SecureSocial {
       Ok(views.html.user.settings(request.user.asInstanceOf[User]))
   }
 
-  def createAccessKey() = SecuredAction {
+  def createAccessKey() = SecuredAction.async {
     implicit request =>
-      Async {
-        val a = User.generateAccessKey
-        val user = request.user.asInstanceOf[User]
-        for {
-          _ <- UserDAO.setAccessKey(user, a)
-        } yield {
-          UserCache.removeUserFromCache(user.identityId)
-          JsonOk("A new access key was created.")
-        }
+      val a = User.generateAccessKey
+      val user = request.user.asInstanceOf[User]
+      for {
+        _ <- UserDAO.setAccessKey(user, a)
+      } yield {
+        UserCache.removeUserFromCache(user.identityId)
+        JsonOk("A new access key was created.")
       }
   }
 }

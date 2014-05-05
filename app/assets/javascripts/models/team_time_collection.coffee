@@ -13,6 +13,7 @@ class TeamTimeCollection extends Backbone.Collection
 
     @date = options.date
 
+
   url : ->
 
     dateUrl = Utils.dateToUrl(@date)
@@ -43,7 +44,7 @@ class TeamTimeCollection extends Backbone.Collection
 
   getDailyTotalHours : (data) ->
 
-    _.range(1, @date.daysInMonth()).map(
+    Utils.range(1, @date.daysInMonth()).map(
       (day) =>
         momentDay = moment(@date).add("days", day - 1)
         @reduce(

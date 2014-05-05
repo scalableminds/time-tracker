@@ -14,7 +14,7 @@ DELETE      /admin/repositories/:owner/:name                      controllers.ad
 
 # Add Issue time entry
 GET         /create                                               controllers.TimeEntryController.createGenericForm
-GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int)
+GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int, referer: Option[String])
 POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
 POST        /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
 

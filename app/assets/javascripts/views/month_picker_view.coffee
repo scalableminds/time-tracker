@@ -15,7 +15,7 @@ class MonthPickerView extends Backbone.Marionette.ItemView
       <a href="#" class="btn btn-default month-prev">
         <i class="fa fa-chevron-left"></i>
       </a>
-      <button class="btn btn-default month-title"><%= currentDate.format("MMMM YYYY") %></button>
+      <button class="btn btn-default month-title"><%= date.format("MMMM YYYY") %></button>
       <a href="#" class="btn btn-default month-next">
         <i class="fa fa-chevron-right"></i>
       </a>
@@ -48,23 +48,23 @@ class MonthPickerView extends Backbone.Marionette.ItemView
 
   changeDate : (operation) ->
 
-    date = @model.get("currentDate")
-    @model.set(date[operation]("months", 1))
+    date = @model.get("date")
+    @model.set("date", date[operation]("months", 1))
     @render()
-    app.vent.trigger("MonthPickerView:changed")
+    @model.fetch(reset : true)
     return
 
 
   monthReset : ->
 
-    @model.set("currentDate", moment())
+    @model.set("date", moment())
     @render()
     return
 
 
   updateURL : ->
 
-    url = "team/#{@model.get("currentDate").year()}-#{@model.get("currentDate").month() + 1}"
+    url = "team/#{@model.get("date").year()}-#{@model.get("date").month() + 1}"
     app.router.navigate(
       url,
       replace : true

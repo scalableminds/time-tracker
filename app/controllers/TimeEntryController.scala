@@ -1,19 +1,14 @@
 package controllers
 
-import play.api.mvc.{Action}
 import models._
 import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
-import play.api.data.Form
-import play.api.data.Forms._
 import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.util.ExtendedTypes._
 import scala.concurrent.Future
-import play.api.libs.json.{JsObject, JsString, JsArray, Json}
+import play.api.libs.json._
 import models.TimeEntry._
-import play.api.libs.json.JsArray
 import models.User
-import play.api.libs.json.JsObject
 import braingames.util.Fox
 import play.api.Logger
 import securesocial.core.RequestWithUser
@@ -89,7 +84,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
-  def createForm(owner: String, repo: String, issueNumber: Int) = SecuredAction.async {
+  def createForm(owner: String, repo: String, issueNumber: Int, referer: Option[String]) = SecuredAction.async {
     implicit request =>
       val user = request.user.asInstanceOf[User]
       (for {
@@ -124,8 +119,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     Json.obj(
       "userGID" -> user.githubId,
       "name" -> user.fullName,
-      "email" -> user.email,
-      "nick" -> user.nick)
+      "email" -> user.email)
 
   def showTimeForAUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsObject] = {
     for {

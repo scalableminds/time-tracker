@@ -15,8 +15,7 @@ utils: Utils
 class TeamViewModel extends Backbone.Model
 
   defaults :
-    currentDate : null
-    endOfMonth : null
+    date : moment()
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
     dailyTotalHours : 0
@@ -25,24 +24,15 @@ class TeamViewModel extends Backbone.Model
   initialize : (options = {}) ->
 
     if options.date
-      date = moment(options.date)
-    else
-      date = moment()
+      @set("date", moment(options.date).startOf("month"))
 
-    date = date.startOf("month")
-
-    @set(
-      currentDate : date
-      endOfMonth : date.daysInMonth()
-    )
-
-    @teamTimeCollection = new TeamTimeCollection("date" : date)
+    @teamTimeCollection = new TeamTimeCollection(date : @get("date"))
     @listenTo(@teamTimeCollection, "sync", @synced)
 
 
   fetch : =>
 
-    @teamTimeCollection.date = @get("currentDate")
+    @teamTimeCollection.date = @get("date")
     return @teamTimeCollection.fetch().done(
       =>
         @trigger("sync", @)
@@ -61,6 +51,10 @@ class TeamViewModel extends Backbone.Model
 
 
   transformData : ->
+
+    # reset
+    @get("rows").reset([])
+
     # Call this after the model is initalized and format the data to fit this view
     # Iterate of every user...
     @teamTimeCollection.forEach((user) =>
@@ -72,7 +66,7 @@ class TeamViewModel extends Backbone.Model
       # Finally add the days of the month to every project...
       timeEntries = _.transform(timeEntries,
         (result, project, key) =>
-          result[key] = _.range(1, @get("endOfMonth")).map(
+          result[key] = Utils.range(1, @get("date").daysInMonth()).map(
             (day) -> return Utils.sum(
               project.filter(
                 (project) -> return moment(project.get("timestamp")).date() == day
@@ -84,7 +78,7 @@ class TeamViewModel extends Backbone.Model
         )
 
       # Sum up the total amount of hours per day for every user
-      sumDaily = _.range(1, @get("endOfMonth")).map((i) -> return Utils.sum(_.values(timeEntries), i - 1)) #-1 because days start with 1 and arrays with 0
+      sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(_.values(timeEntries), i - 1)) #-1 because days start with 1 and arrays with 0
       sumTotal = Utils.sum(sumDaily)
 
       #Add that shit to the collection as a table 'header' for every user

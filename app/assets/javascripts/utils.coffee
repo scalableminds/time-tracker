@@ -35,6 +35,8 @@ Utils =
 
     return "#{date.year()}/#{date.month() + 1}"
 
-  endOfMonth : (date) ->
 
-    return date.daysInMonth()
+  range : (start, end) ->
+
+    return (i for i in [start..end])
+
