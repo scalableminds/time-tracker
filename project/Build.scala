@@ -13,7 +13,6 @@ trait Dependencies{
   val reactivePlay = "org.reactivemongo" %% "play2-reactivemongo" % reactivePlayVersion
   val reactiveBson = "org.reactivemongo" %% "reactivemongo-bson-macros" % reactiveVersion
   val braingamesUtil = "com.scalableminds" %% "braingames-util" % braingamesVersion
-  val securesocial = "securesocial" %%  "securesocial" % "2.1.2" withSources()
   val joda = "joda-time" % "joda-time" % "2.2"
   val akkaAgent = "com.typesafe.akka" %% "akka-agent" % akkaVersion
   val typesafeMailer = "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
@@ -54,8 +53,7 @@ object ApplicationBuild extends Build with Dependencies with Resolvers{
     akkaAgent,
     joda,
     braingamesUtil,
-    typesafeMailer,
-    securesocial)
+    typesafeMailer)
 
   val dependencyResolvers = Seq(
     novusRel,

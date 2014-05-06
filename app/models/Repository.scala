@@ -11,7 +11,7 @@ import braingames.reactivemongo.AccessRestrictions._
  * Date: 22.07.13
  * Time: 01:54
  */
-case class Repository(fullName: String, accessToken: String, admins: List[String], collaborators: List[String]) {
+case class Repository(fullName: String, accessToken: String, admins: List[Int], collaborators: List[Int]) {
   def owner = fullName.split("/").head
 
   def name = fullName.split("/").last

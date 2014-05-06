@@ -5,8 +5,7 @@ package models.auth
 
 import play.api.libs.json.{Json, Format}
 
-case class OAuth2Info(accessToken: String, tokenType: Option[String] = None,
-                      expiresIn: Option[Int] = None, refreshToken: Option[String] = None)
+case class OAuth2Info(accessToken: String)
 
 object OAuth2Info{
   implicit val OAuth2InfoFormat: Format[OAuth2Info] = Json.format[OAuth2Info]

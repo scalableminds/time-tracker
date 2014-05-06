@@ -1,10 +1,8 @@
 package models.auth
 
-import models.{UserDAO, User}
+import models.{UserProfile, UserDAO, User}
 import braingames.reactivemongo.GlobalDBAccess
 import play.api.Application
-import securesocial.core.{IdentityId, Identity, UserServicePlugin}
-import securesocial.core.providers.Token
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import braingames.util.Fox
@@ -17,7 +15,7 @@ import braingames.util.Fox
  */
 object UserService extends GlobalDBAccess{
 
-  def find(userId: String): Fox[User] = {
+  def find(userId: Int): Fox[User] = {
     UserCache.findUser(userId)
   }
 
@@ -25,26 +23,17 @@ object UserService extends GlobalDBAccess{
     UserDAO.findOneByEmail(email)
   }
 
-  def save(userId: String): Unit = {
+  def save(userId: Int, profile: UserProfile, authInfo: AccessToken): Fox[User] = {
     UserCache.removeUserFromCache(userId)
-    //UserDAO.update(identity)
-    //UserDAO.fromIdentity(identity)
+    UserDAO.update(userId, profile, authInfo)
   }
 
-
-  def save(token: Token) = {
-
-  }
-
-  def findToken(token: String): Option[Token] = {
-    None
-  }
-
-  def deleteToken(uuid: String) = {
-
-  }
-
-  def deleteExpiredTokens() {
-    // implement me
+  def extractName(s: String) = {
+    s.split(" ") match{
+      case Array(first, last@_*) =>
+        (first, last.mkString(" "))
+      case _ =>
+        ("", "")
+    }
   }
 }

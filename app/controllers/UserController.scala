@@ -11,22 +11,22 @@ import models.auth.UserCache
  * Date: 18.08.13
  * Time: 16:43
  */
-object UserController extends Controller with securesocial.core.SecureSocial {
+object UserController extends Controller {
   val DefaultAccessRole = None
 
-  def showSettings() = SecuredAction {
+  def showSettings() = Authenticated {
     implicit request =>
       Ok(views.html.user.settings(request.user.asInstanceOf[User]))
   }
 
-  def createAccessKey() = SecuredAction.async {
+  def createAccessKey() = Authenticated.async {
     implicit request =>
       val a = User.generateAccessKey
-      val user = request.user.asInstanceOf[User]
+      val user = request.user
       for {
         _ <- UserDAO.setAccessKey(user, a)
       } yield {
-        UserCache.removeUserFromCache(user.identityId)
+        UserCache.removeUserFromCache(user.userId)
         JsonOk("A new access key was created.")
       }
   }

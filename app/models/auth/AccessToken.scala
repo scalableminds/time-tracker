@@ -10,8 +10,10 @@ object AccessToken {
   import play.api.libs.json._
   import play.api.libs.functional.syntax._
 
-  implicit val accessTokenReads: Reads[AccessToken] =
+  implicit val accessTokenFormat = Json.format[AccessToken]
+
+  val accessTokenGithubReads: Reads[AccessToken] =
     ((__ \ 'access_token).read[String] and
       (__ \ 'scope).read[String] and
-      (__ \ 'tokenType).read[String])(AccessToken.apply _)
+      (__ \ 'token_type).read[String])(AccessToken.apply _)
 }

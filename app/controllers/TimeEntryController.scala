@@ -11,7 +11,7 @@ import models.TimeEntry._
 import models.User
 import braingames.util.Fox
 import play.api.Logger
-import securesocial.core.RequestWithUser
+import controllers.auth.UserAwareRequest
 
 /**
  * Company: scalableminds
@@ -36,7 +36,7 @@ object DurationParser {
   }
 }
 
-object TimeEntryController extends Controller with securesocial.core.SecureSocial {
+object TimeEntryController extends Controller {
   val DefaultAccessRole = None
 
   case class TimeEntryPost(duration: String, comment: Option[String], timestamp: Long = System.currentTimeMillis())
@@ -47,9 +47,9 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     DurationParser.parse(s)
   }
 
-  def userFromRequestOrKey(accessKey: String)(implicit request: RequestWithUser[_]) = {
+  def userFromRequestOrKey(accessKey: String)(implicit request: UserAwareRequest[_]) = {
     for {
-      u1 <- Future.successful(request.user.map(u => (u.asInstanceOf[User])))
+      u1 <- Future.successful(request.userOpt.map(u => (u.asInstanceOf[User])))
       u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext).futureBox
     } yield {
       u1 orElse u2
@@ -68,15 +68,15 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       } yield {
 
         val issue = Issue(fullName, issueNumber)
-        val timeEntry = TimeEntry(issue, duration, user.githubId, timeEntryPost.comment, timeEntryPost.timestamp)
+        val timeEntry = TimeEntry(issue, duration, user.userId, timeEntryPost.comment, timeEntryPost.timestamp)
         TimeEntryDAO.createTimeEntry(timeEntry)(user)
         JsonOk("OK")
       }) ?~> "Not allowed."
   }
 
-  def createGenericForm() = SecuredAction.async {
+  def createGenericForm() = Authenticated.async {
     implicit request =>
-      val user = request.user.asInstanceOf[User]
+      val user = request.user
       for {
         usedRepos <- RepositoryDAO.findAll(GlobalAccessContext) ?~> "Not allowed."
       } yield {
@@ -84,7 +84,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
-  def createForm(owner: String, repo: String, issueNumber: Int, referer: Option[String]) = SecuredAction.async {
+  def createForm(owner: String, repo: String, issueNumber: Int, referer: Option[String]) = Authenticated.async {
     implicit request =>
       val user = request.user.asInstanceOf[User]
       (for {
@@ -95,7 +95,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }) ?~> "Not allowed."
   }
 
-  def showIssues(owner: String, repo: String) = SecuredAction.async {
+  def showIssues(owner: String, repo: String) = Authenticated.async {
     implicit request =>
       for {
         entries <- IssueDAO.findByRepo(owner + "/" + repo)
@@ -104,7 +104,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
-  def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = SecuredAction.async {
+  def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = Authenticated.async {
     implicit request =>
       val fullName = RepositoryDAO.createFullName(owner, repo)
       for {
@@ -117,14 +117,14 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
 
   def userInfo(user: User) =
     Json.obj(
-      "userGID" -> user.githubId,
-      "name" -> user.fullName,
-      "email" -> user.email)
+      "userId" -> user.userId,
+      "name" -> user.profile.fullName,
+      "email" -> user.profile.email)
 
-  def showTimeForAUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsObject] = {
+  def showTimeForAUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsObject] = {
     for {
-      user <- UserDAO.findOneByGID(userGID) ?~> "User not found"
-      entries <- TimeEntryDAO.loggedTimeForUser(userGID, year, month)
+      user <- UserDAO.findOneByUserId(userId) ?~> "User not found"
+      entries <- TimeEntryDAO.loggedTimeForUser(userId, year, month)
     } yield {
       val jsonProjectsTimesList =
         entries.groupBy(_.issue.project).map {
@@ -137,10 +137,10 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     }
   }
 
-  def showTimeForUser(year: Int, month: Int) = SecuredAction.async {
+  def showTimeForUser(year: Int, month: Int) = Authenticated.async {
     implicit request =>
       for {
-        times <- showTimeForAUser(request.user.identityId.userId, year, month)
+        times <- showTimeForAUser(request.user.userId, year, month)
       } yield {
         Ok(times)
       }
@@ -148,9 +148,9 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
 
   def createUserTimesList(entries: List[TimeEntry])(implicit ctx: DBAccessContext) = {
     import scala.collection.breakOut
-    val l: List[Fox[JsObject]] = entries.groupBy(_.userGID).map {
+    val l: List[Fox[JsObject]] = entries.groupBy(_.userId).map {
       case (userGID, entries) =>
-        UserDAO.findOneByGID(userGID).map { user =>
+        UserDAO.findOneByUserId(userGID).map { user =>
           val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
           userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
         }
@@ -158,7 +158,7 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
     Fox.sequenceOfFulls(l).map(_.toSeq)
   }
 
-  def showTimesForInterval(year: Int, month: Int) = SecuredAction.async {
+  def showTimesForInterval(year: Int, month: Int) = Authenticated.async {
     implicit request =>
       for {
         entries <- TimeEntryDAO.loggedTimeForInterval(year, month)

@@ -8,10 +8,10 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
-import securesocial.core.Identity
 import play.api.libs.ws.WS.WSRequestHolder
 import scala.concurrent.Future
 import play.api.http.Status
+import models.User
 
 /**
  * Company: scalableminds
@@ -24,11 +24,14 @@ object GithubApi
   with GithubRepositoryRequester
   with GithubCollaboratorRequester
   with GithuIssueRequester
-  with GithubHooksRequester {
+  with GithubHooksRequester
+  with GithuUserDetailRequester{
 
   def hooksUrl(repo: String) = s"/repos/$repo/hooks"
 
   val orgsUrl = "/user/orgs"
+
+  val userUrl = "/user"
 
   val userReposUrl = "/user/repos"
 
@@ -157,8 +160,8 @@ trait GithubCollaboratorRequester extends GithubRequester {
 
   def repoCollaboratorsUrl(repo: String): String
 
-  def isCollaborator(user: Identity, token: String, repo: String) =
-    listCollaborators(token, repo).map(_.map(_.toString).contains(user.identityId.userId))
+  def isCollaborator(user: User, token: String, repo: String) =
+    listCollaborators(token, repo).map(_.map(_.toString).contains(user.userId))
 
   def listCollaborators(token: String, repo: String) =
     githubRequest(repoCollaboratorsUrl(repo))(token).get().map {
@@ -226,4 +229,31 @@ trait GithuIssueRequester extends GithubRequester{
   }
 
   val extractIssues = (__).read(list[GithubIssue])
+}
+
+case class GithubUserDetails(id: Int, login: String, email: String, name: String)
+
+trait GithuUserDetailRequester extends GithubRequester{
+
+  implicit val githubUserDetailFormat = Json.format[GithubUserDetails]
+
+  val userUrl: String
+
+  def userDetails(token: String): Future[Option[GithubUserDetails]] = {
+    Logger.info("Requesting user details.")
+    githubRequest(userUrl)(token).get().map {
+      response =>
+        Logger.info("User details response status: " + response.status)
+        response.json.validate(githubUserDetailFormat).fold(
+          invalid => {
+            Logger.warn("An error occurred while trying to decode user details: " + invalid)
+            None
+          },
+          valid => {
+            Logger.info("Successfuly requested user details.")
+            Some(valid)
+          }
+        )
+    }
+  }
 }

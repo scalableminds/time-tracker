@@ -1,6 +1,1 @@
 400:play.modules.reactivemongo.ReactiveMongoPlugin
-9994:models.services.MongoAuthenticatorStore
-9995:securesocial.core.DefaultIdGenerator
-9997:securesocial.controllers.DefaultTemplatesPlugin
-9998:models.services.UserService
-10005:controllers.GitHubProvider

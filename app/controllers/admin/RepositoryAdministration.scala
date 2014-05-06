@@ -1,7 +1,6 @@
 package controllers.admin
 
 import controllers.{Application, Controller, GithubApi}
-import securesocial.core.SecureSocial
 import models.{Repository, RepositoryDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import views.html
@@ -19,13 +18,13 @@ import net.liftweb.common.Empty
  * Date: 21.07.13
  * Time: 16:14
  */
-object RepositoryAdministration extends Controller with SecureSocial {
+object RepositoryAdministration extends Controller {
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
   lazy val collaboratorActor = Akka.system.actorFor("/user/" + GithubCollaboratorActor.name)
 
-  def list = SecuredAction.async {
+  def list = Authenticated.async {
     implicit request =>
-      val user = request.user.asInstanceOf[User]
+      val user = request.user
       for {
         orgas <- GithubApi.listOrgs(user.githubAccessToken)
         orgaRepos <- Future.traverse(orgas)(orga => GithubApi.listOrgaRepositories(user.githubAccessToken, orga))
@@ -37,7 +36,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
       }
   }
 
-  def add = SecuredAction(ajaxCall = false).async(parse.urlFormEncoded) {
+  def add = Authenticated.async(parse.urlFormEncoded) {
     implicit request =>
       val user = request.user.asInstanceOf[User]
       for {
@@ -47,7 +46,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
       } yield {
         r match {
           case Empty =>
-            val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
+            val repo = Repository(repositoryName, accessToken, List(user.userId), List(user.userId))
             RepositoryDAO.insert(repo)
             GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
             issueActor ! FullScan(repo)
@@ -59,7 +58,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
       }
   }
 
-  def delete(owner: String, name: String) = SecuredAction.async {
+  def delete(owner: String, name: String) = Authenticated.async {
     implicit request =>
       val user = request.user.asInstanceOf[User]
       val repositoryName = RepositoryDAO.createFullName(owner, name)
@@ -75,7 +74,7 @@ object RepositoryAdministration extends Controller with SecureSocial {
       }
   }
 
-  def scan(owner: String, name: String) = SecuredAction.async {
+  def scan(owner: String, name: String) = Authenticated.async {
     implicit request =>
       val repositoryName = RepositoryDAO.createFullName(owner, name)
       for {

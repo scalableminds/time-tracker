@@ -30,28 +30,9 @@ GET           /repos/:owner/:repo/issues/:issueNumber               controllers.
 #Request issues
 GET           /issues/:owner/:repo                                  controllers.TimeEntryController.showIssues(owner, repo)
 
-# Login page
-GET           /login                                                securesocial.controllers.LoginPage.login
-GET           /logout                                               securesocial.controllers.LoginPage.logout
-
-# User Registration and password handling
-GET           /signup                                               securesocial.controllers.Registration.startSignUp
-POST          /signup                                               securesocial.controllers.Registration.handleStartSignUp
-GET           /signup/:token                                        securesocial.controllers.Registration.signUp(token)
-POST          /signup/:token                                        securesocial.controllers.Registration.handleSignUp(token)
-GET           /reset                                                securesocial.controllers.Registration.startResetPassword
-POST          /reset                                                securesocial.controllers.Registration.handleStartResetPassword
-GET           /reset/:token                                         securesocial.controllers.Registration.resetPassword(token)
-POST          /reset/:token                                         securesocial.controllers.Registration.handleResetPassword(token)
-GET           /password                                             securesocial.controllers.PasswordChange.page
-POST          /password                                             securesocial.controllers.PasswordChange.handlePasswordChange
-
 # Providers entry points
-GET           /authenticate/complete                                controllers.Authentication.complete(state: String, code: String)
-GET           /authenticate                                         controllers.Authentication.authenticate(redirectUri: Option[String])
-POST          /authenticate/:provider                               securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET           /not-authorized                                       securesocial.controllers.ProviderController.notAuthorized
-
+GET           /authenticate/complete                                controllers.auth.Authentication.complete(state: String, code: String)
+GET           /authenticate                                         controllers.auth.Authentication.authenticate(redirectUri: Option[String])
 # Javascript routing
 GET           /assets/javascripts/routes.js                         controllers.Application.javascriptRoutes
 

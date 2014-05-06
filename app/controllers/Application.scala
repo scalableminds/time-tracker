@@ -2,31 +2,29 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import securesocial.core.java.SecureSocial.SecuredAction
-import securesocial.core.SecureSocial
 import views.html
 
-object Application extends Controller with SecureSocial {
+object Application extends Controller {
   val hostUrl = Play.current.configuration.getString("host.url").get
 
-  def index = UserAwareAction{ implicit request =>
-    if(request.user.isDefined)
+  def index = UserAwareAction { implicit request =>
+    if (request.userOpt.isDefined)
       Redirect(controllers.routes.Application.home)
     else
       Ok(views.html.index("Your new application is ready."))
   }
 
-  def home = SecuredAction {
+  def home = Authenticated {
     implicit request =>
       Ok(html.home())
   }
 
-  def team = SecuredAction {
+  def team = Authenticated {
     implicit request =>
       Ok(html.team())
   }
 
-  def project = SecuredAction {
+  def project = Authenticated {
     implicit request =>
       Ok(html.project())
   }

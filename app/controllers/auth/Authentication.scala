@@ -1,44 +1,57 @@
 /*
  * Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
  */
-package controllers
+package controllers.auth
 
 import play.api.mvc.Action
 import play.api.libs.ws.WS
-import play.api.Play
+import play.api.{Logger, Play}
 import play.api.http.Status._
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes
 import play.api.libs.json.{JsError, JsSuccess}
 import net.liftweb.common.{Failure, Full}
 import braingames.util.{FoxImplicits, Fox}
-import models.auth.AccessToken
+import models.auth.{SessionService, UserService, AccessToken}
 import java.util.UUID
 import play.api.cache.Cache
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
+import models.UserProfile
+import controllers.{GithubApi, Controller}
+import braingames.reactivemongo.GlobalAccessContext
 
 object Authentication extends Controller {
 
   val config = Play.current.configuration
 
-  val host = config.getString("host.url").get
+  val defaultRedirectUri = host + controllers.routes.Application.index().url
 
-  val defaultRedirectUri = host + "/" + controllers.routes.Application.index().url
-
-  val authCompleteUrl = "http://localhost:9000/authorization/complete"
+  val authCompleteUrl = "http://localhost:9000/authenticate/complete"
 
   val minScope = List("user")
 
   val normalScope = List("user")
 
-  def complete(state: String, code: String) = Action {
+  def complete(state: String, code: String) = Action.async {
     implicit request =>
-      GithubOauth.requestAccessToken(code, Nil).map{ token =>
-
+      GithubOauth.requestAccessToken(code, Nil).flatMap { token =>
+        GithubApi.userDetails(token.accessToken).toFox.flatMap { userDetails =>
+          val (first, last) = UserService.extractName(userDetails.name)
+          val profile = UserProfile(userDetails.login, first, last, userDetails.name, Option(userDetails.email))
+          Logger.info("About to save user. " + token)
+          UserService.save(userDetails.id, profile, token)
+        }
+      }.futureBox.map{
+        case Full(user) =>
+          Logger.info("Saved user. " + user)
+          val redirectUri = RedirectionCache.retrieve(state) getOrElse defaultRedirectUri
+          val token = SessionService.createSession(user.userId)(GlobalAccessContext)
+          Redirect(redirectUri).withSession(Secured.SessionInformationKey -> token)
+        case x =>
+          Logger.info("Saving user failed. " + x)
+          BadRequest("Failed to complete github auth.")
       }
-
-      Ok
   }
 
   def authenticate(redirectUri: Option[String]) = Action{ implicit request =>
@@ -46,10 +59,6 @@ object Authentication extends Controller {
     val authWithPrivateScope = GithubOauth.authorizeUrl(cacheId, minScope, authCompleteUrl)
     val authWithPublicScope = GithubOauth.authorizeUrl(cacheId, normalScope, authCompleteUrl)
     Ok(views.html.login(authWithPrivateScope, authWithPublicScope))
-  }
-
-  def redirectToLogin = Action { implicit request =>
-    Redirect(controllers.routes.Authentication.authenticate(Some(host + "/" + request.uri)))
   }
 }
 
@@ -85,11 +94,14 @@ object GithubOauth extends FoxImplicits {
       )
     .post("")
     .map { response =>
+      Logger.info("Response code from accesstoken request: " + response.status + " Body: " + response.body)
       if (response.status == OK) {
-        response.json.validate(AccessToken.accessTokenReads) match {
+        response.json.validate(AccessToken.accessTokenGithubReads) match {
           case JsSuccess(token, _) =>
+            Logger.info("Got a response token.")
             Full(token)
           case f: JsError =>
+            Logger.warn("Failed to parse response token. " + f)
             Failure("Requesting access token resulted in invalid json returned. " + f)
         }
       } else
@@ -98,5 +110,5 @@ object GithubOauth extends FoxImplicits {
   }
 
   def authorizeUrl(state: String, scopes: List[String], redirectUri: String) =
-    s"https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&scope=${scopes.mkString(",")}state=$state"
+    s"https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&scope=${scopes.mkString(",")}&state=$state"
 }

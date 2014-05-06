@@ -22,18 +22,18 @@ object Issue {
   implicit val issueFormatter = Json.format[Issue]
 }
 
-case class TimeEntry(issue: Issue, duration: Int, userGID: String, comment: Option[String], timestamp: Long = System.currentTimeMillis)
+case class TimeEntry(issue: Issue, duration: Int, userId: Int, comment: Option[String], timestamp: Long = System.currentTimeMillis)
 
 object TimeEntry extends{
   import Issue.issueFormatter
 
   implicit val timeEntryFormatter = Json.format[TimeEntry]
 
-  def fromForm(issue: Issue, duration: Int, userGID: String, comment: Option[String]) =
+  def fromForm(issue: Issue, duration: Int, userGID: Int, comment: Option[String]) =
   TimeEntry(issue, duration, userGID, comment)
 
   def toForm(t: TimeEntry) =
-  Some((t.issue, t.duration, t.userGID, t.comment))
+  Some((t.issue, t.duration, t.userId, t.comment))
 }
 
 object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
@@ -48,7 +48,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
           val repositories = Await.result(RepositoryDAO.findAllWhereUserIsAdmin(user) getOrElse Nil, 5 seconds)
           AllowIf(Json.obj("$or" -> Json.arr(
             Json.obj("issue.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.fullName))))),
-            Json.obj("userGID" -> user.githubId)
+            Json.obj("userId" -> user.userId)
           )))
       }
     }
@@ -77,10 +77,10 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     )
   }
 
-  def loggedTimeForUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
+  def loggedTimeForUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
     val interval = toInterval(year, month)
     find(
-      Json.obj("userGID" -> userGID) ++ timeStampQuery(interval)).cursor[TimeEntry].collect[List]()
+      Json.obj("userId" -> userId) ++ timeStampQuery(interval)).cursor[TimeEntry].collect[List]()
   }
 
   def loggedTimeForInterval(year: Int, month: Int)(implicit ctx: DBAccessContext) = {

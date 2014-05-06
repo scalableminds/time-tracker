@@ -3,11 +3,11 @@ package controllers
 import play.api.mvc.{Controller => PlayController, Request}
 import braingames.mvc.ExtendedController
 import braingames.reactivemongo.{AuthorizedAccessContext, DBAccessContext}
-import securesocial.core.{RequestWithUser, SecuredRequest}
 import models.User
 import play.api.mvc.Flash
 import play.api.mvc.Request
 import play.api.mvc.RequestHeader
+import controllers.auth.{UserAwareRequest, AuthenticatedRequest, Secured}
 
 /**
  * Company: scalableminds
@@ -15,12 +15,12 @@ import play.api.mvc.RequestHeader
  * Date: 19.07.13
  * Time: 14:39
  */
-trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData
+trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData with Secured
 
 
 trait ProvidesAccessContext{
-  implicit def securedRequestToDBAccess(implicit request: SecuredRequest[_]): DBAccessContext = {
-    AuthorizedAccessContext(request.user.asInstanceOf[User])
+  implicit def securedRequestToDBAccess(implicit request: AuthenticatedRequest[_]): DBAccessContext = {
+    AuthorizedAccessContext(request.user)
   }
 
   implicit def userToDBAccess(user: User): DBAccessContext = {
@@ -46,17 +46,16 @@ trait SessionData {
 
 trait ProvidesSessionData {
 
-  implicit def sessionDataAuthenticated[A](implicit request: SecuredRequest[A]): AuthedSessionData = {
-    AuthedSessionData(request.user.asInstanceOf[User], request)
+  implicit def sessionDataAuthenticated[A](implicit request: AuthenticatedRequest[A]): AuthedSessionData = {
+    AuthedSessionData(request.user, request)
   }
 
   implicit def sessionData[A](implicit request: Request[A]): SessionData = {
     request match {
-      case r: SecuredRequest[A] =>
+      case r: AuthenticatedRequest[A] =>
         UserAwareSessionData(Some(r.user.asInstanceOf[User]), request)
-      case r: RequestWithUser[A] =>
-        UserAwareSessionData(r.user.map(_.asInstanceOf[User]), request)
-
+      case r: UserAwareRequest[A] =>
+        UserAwareSessionData(r.userOpt, request)
       case _ =>
         UnAuthedSessionData(request)
     }
