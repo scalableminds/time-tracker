@@ -109,9 +109,9 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       val fullName = RepositoryDAO.createFullName(owner, repo)
       for {
         entries <- TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber))
-        jsonUserTimesList <- createUserTimesList(entries)
+        //jsonUserTimesList <- createUserTimesList(entries)
       } yield {
-        Ok(JsArray(jsonUserTimesList))
+        Ok(Json.toJson(entries))
       }
   }
 
@@ -146,25 +146,24 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       }
   }
 
-  def createUserTimesList(entries: List[TimeEntry])(implicit ctx: DBAccessContext) = {
-    import scala.collection.breakOut
-    val l: List[Fox[JsObject]] = entries.groupBy(_.userGID).map {
-      case (userGID, entries) =>
-        UserDAO.findOneByGID(userGID).map { user =>
-          val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
-          userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
-        }
-    }(breakOut)
-    Fox.sequenceOfFulls(l).map(_.toSeq)
-  }
+//  def createUserTimesList(entries: List[TimeEntry])(implicit ctx: DBAccessContext) = {
+//    import scala.collection.breakOut
+//    val l: List[Fox[JsObject]] = entries.groupBy(_.userGID).map {
+//      case (userGID, entries) =>
+//        UserDAO.findOneByGID(userGID).map { user =>
+//          val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
+//          userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
+//        }
+//    }(breakOut)
+//    Fox.sequenceOfFulls(l).map(_.toSeq)
+//  }
 
   def showTimesForInterval(year: Int, month: Int) = SecuredAction.async {
     implicit request =>
       for {
         entries <- TimeEntryDAO.loggedTimeForInterval(year, month)
-        jsonUserTimesList <- createUserTimesList(entries)
       } yield {
-        Ok(JsArray(jsonUserTimesList))
+        Ok(Json.toJson(entries))
       }
   }
 }

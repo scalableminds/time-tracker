@@ -12,6 +12,7 @@ import securesocial.core.OAuth1Info
 import securesocial.core.PasswordInfo
 import play.api.libs.json.JsObject
 import play.api.Logger
+import play.api.libs.functional.syntax._
 import braingames.util.Fox
 import reactivemongo.core.commands.LastError
 
@@ -51,6 +52,10 @@ case class User(identityId: IdentityId,
 
 object User {
   def generateAccessKey = UUID.randomUUID().toString.replace("-", "")
+
+  val publicUserWrites: Writes[User] =
+    ((__ \ 'identityId).write[String] and
+      (__ \ 'firstName).write[String])(u => (u.identityId.userId, u.firstName))
 }
 
 object UserDAO extends BasicReactiveDAO[User] {
