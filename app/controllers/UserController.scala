@@ -3,7 +3,7 @@ package controllers
 import scala.None
 import models.{UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
-import models.services.UserCache
+import models.auth.UserCache
 
 /**
  * Company: scalableminds

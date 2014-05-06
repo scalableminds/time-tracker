@@ -20,11 +20,11 @@ import play.api.http.Status
  * Time: 23:49
  */
 object GithubApi
-  extends GithubOrgRequestor
-  with GithubRepositoryRequestor
-  with GithubCollaboratorRequestor
-  with GithuIssueRequestor
-  with GithubHooksRequestor {
+  extends GithubOrgRequester
+  with GithubRepositoryRequester
+  with GithubCollaboratorRequester
+  with GithuIssueRequester
+  with GithubHooksRequester {
 
   def hooksUrl(repo: String) = s"/repos/$repo/hooks"
 
@@ -39,7 +39,7 @@ object GithubApi
   def issuesUrl(repo: String) = s"/repos/$repo/issues"
 }
 
-trait GithubRequestor {
+trait GithubRequester {
   val GH = "https://api.github.com"
 
   def githubRequest(sub: String, prependHost: Boolean = true)(implicit token: String) = {
@@ -54,7 +54,7 @@ trait GithubRequestor {
   }
 }
 
-class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) extends GithubRequestor {
+class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) extends GithubRequester {
 
   case class LinkHeader(value: String, params: Map[String, String])
 
@@ -107,7 +107,7 @@ class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) ex
   }
 }
 
-trait GithubOrgRequestor extends GithubRequestor {
+trait GithubOrgRequester extends GithubRequester {
 
   case class GithubOrga(login: String)
 
@@ -123,7 +123,7 @@ trait GithubOrgRequestor extends GithubRequestor {
   val extractOrgs = (__).read(list[GithubOrga])
 }
 
-trait GithubRepositoryRequestor extends GithubRequestor {
+trait GithubRepositoryRequester extends GithubRequester {
 
   case class GithubRepo(full_name: String)
 
@@ -149,7 +149,7 @@ trait GithubRepositoryRequestor extends GithubRequestor {
   val extractRepos = (__).read(list[GithubRepo])
 }
 
-trait GithubCollaboratorRequestor extends GithubRequestor {
+trait GithubCollaboratorRequester extends GithubRequester {
 
   case class GithubCollaborator(id: Int)
 
@@ -175,7 +175,7 @@ trait GithubCollaboratorRequestor extends GithubRequestor {
   val extractCollabs = (__).read(list[GithubCollaborator])
 }
 
-trait GithubHooksRequestor extends GithubRequestor {
+trait GithubHooksRequester extends GithubRequester {
 
   def hooksUrl(repo: String): String
 
@@ -201,7 +201,7 @@ trait GithubHooksRequestor extends GithubRequestor {
 
 case class GithubIssue(url: String, title: String, body: String, number: Int)
 
-trait GithuIssueRequestor extends GithubRequestor{
+trait GithuIssueRequester extends GithubRequester{
 
 
   implicit val githubIssueFormat = Json.format[GithubIssue]

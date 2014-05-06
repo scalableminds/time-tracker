@@ -1,0 +1,8 @@
+@(authWithPrivateScope: String, authWithPublicScope: String)(implicit session: controllers.SessionData)
+
+@main("Login"){
+  <div class="container wide">
+    <a href="@authWithPrivateScope"><i class="icon-github"></i> Login with Github, including Private repos</a>
+    <a href="@authWithPublicScope"><i class="icon-github"></i> Login with Github, public repos only</a>
+  </div>
+}
