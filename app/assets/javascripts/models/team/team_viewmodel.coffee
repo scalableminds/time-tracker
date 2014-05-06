@@ -20,6 +20,7 @@ class TeamViewModel extends Backbone.Model
     monthlyTotalHours : 0
     dailyTotalHours : 0
     urlRoot : "team"
+    viewTitle : "Team Report"
 
 
   initialize : (options = {}) ->
@@ -85,20 +86,20 @@ class TeamViewModel extends Backbone.Model
 
       #Add that shit to the collection as a table 'header' for every user
       @get("rows").add(
-        isUserHeader : true
-        userName : user
-        sumTotal : sumTotal
-        sumDaily : sumDaily
+        isHeader : true
+        name : user
+        sum : sumTotal
+        dailyTimeEntries : sumDaily
       )
 
       # Add the daily individual time logs to the collection
       _.each(timeEntries, (timeEntry, projectName) =>
         sumCompleteProject = Utils.sum(timeEntry)
         @get("rows").add(
-          isUserHeader : false
-          projectName : projectName
-          sumCompleteProject : sumCompleteProject
-          timeEntry : timeEntry
+          isHeader : false
+          name : projectName
+          sum : sumCompleteProject
+          dailyTimeEntries : timeEntry
         )
       )
     )

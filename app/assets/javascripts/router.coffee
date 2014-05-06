@@ -2,12 +2,12 @@
 underscore : _
 backbone : Backbone
 views/admin/admin_panel  : AdminPanelView
-views/team/team_view  : TeamView
-models/team/team_viewmodel : TeamViewModel
-models/project/project_viewmodel : ProjectViewModel
+views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
+models/team/team_viewmodel : TeamViewModel
+models/project/project_viewmodel : ProjectViewModel
 ###
 
 class Router extends Backbone.Router
@@ -44,9 +44,9 @@ class Router extends Backbone.Router
     projectModel = new ProjectViewModel("date" : date)
     spinnerView = new SpinnerView(model : projectModel)
     monthPickerView = new MonthPickerView(model : projectModel)
-    teamView = new TeamView(model : projectModel)
+    reportView = new ReportView(model : projectModel)
 
-    @changeView(spinnerView, monthPickerView, teamView)
+    @changeView(spinnerView, monthPickerView, reportView)
 
 
   team : (date) ->
@@ -54,9 +54,9 @@ class Router extends Backbone.Router
     teamModel = new TeamViewModel("date" : date)
     spinnerView = new SpinnerView(model : teamModel)
     monthPickerView = new MonthPickerView(model : teamModel)
-    teamView = new TeamView(model : teamModel)
+    reportView = new ReportView(model : teamModel)
 
-    @changeView(spinnerView, monthPickerView, teamView)
+    @changeView(spinnerView, monthPickerView, reportView)
 
 
   log : ->

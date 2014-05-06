@@ -20,6 +20,7 @@ class ProjectViewModel extends Backbone.Model
     monthlyTotalHours : 0
     dailyTotalHours : 0
     urlRoot : "project"
+    viewTitle : "Project View"
 
 
   initialize : (options = {}) ->
@@ -92,19 +93,19 @@ class ProjectViewModel extends Backbone.Model
 
       #Add that shit to the collection as a table 'header' for every user
       @get("rows").add(
-        isUserHeader : true
-        userName : repositoryName
-        sumTotal : sumTotal
-        sumDaily : sumDaily
+        isHeader : true
+        name : repositoryName
+        sum : sumTotal
+        dailyTimeEntries : sumDaily
       )
 
       # Add the daily individual time logs to the collection
       _.each(userProjects, (dailyEntries, userID) =>
         @get("rows").add(
-          isUserHeader : false
-          projectName : userID
-          sumCompleteProject : Utils.sum(dailyEntries)
-          timeEntry : dailyEntries
+          isHeader : false
+          name : userID
+          sum : Utils.sum(dailyEntries)
+          dailyTimeEntries : dailyEntries
         )
       )
     )

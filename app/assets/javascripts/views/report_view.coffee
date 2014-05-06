@@ -2,13 +2,13 @@
 backbone.marionette : Marionette
 underscore: _
 utils: Utils
-./team_item_view: TeamItemView
+./report_item_view: ReportItemView
 ###
 
-class TeamView extends Backbone.Marionette.CompositeView
+class ReportView extends Backbone.Marionette.CompositeView
 
   template : _.template("""
-    <h3 class="view-title">Team Report</h3>
+    <h3 class="view-title"><%= viewTitle %></h3>
     <table class="table table-hover table-bordered table-striped responsive">
       <thead>
         <tr>
@@ -35,7 +35,7 @@ class TeamView extends Backbone.Marionette.CompositeView
   templateHelpers :
     Utils : Utils
 
-  itemView : TeamItemView
+  itemView : ReportItemView
   itemViewContainer : "tbody"
 
   initialize : ->

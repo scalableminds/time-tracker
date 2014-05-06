@@ -17,17 +17,6 @@ class TeamTimeCollection extends Backbone.Collection
     return "/times/#{dateUrl}"
 
 
-  getIssuesByUser : (userName) ->
-
-    user = @findWhere(name : userName)
-
-    if user
-      return user
-
-    else
-      throw new Error("There is no user called '#{userName}'")
-
-
   getMonthlyTotalHours : ->
 
     return @reduce(
