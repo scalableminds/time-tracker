@@ -56,34 +56,38 @@ class ProjectViewModel extends Backbone.Model
     # reset
     @get("rows").reset([])
 
-    allTimeEntries= [].concat(@teamTimeCollection.pluck("times")...)
-    allTimeEntries = _.groupBy(allTimeEntries, (timeEntry) ->
-      return timeEntry.issue.project
+    projectIssues = @teamTimeCollection.groupBy((timeEntry) ->
+      return timeEntry.get("issue").project
     )
 
-    _.each(allTimeEntries, (timings, repositoryName) =>
+    _.each(projectIssues, (timings, repositoryName) =>
 
-      dailyEntriesPerUser = @teamTimeCollection.map((user) =>
-
-        # and group his issue by his repositories (aka projects)
-        userIssues = _.filter(user.get("times"), (timeEntry) ->
-          timeEntry.issue.project == repositoryName
-        )
-        return Utils.range(1, @get("date").daysInMonth()).map(
-          (day) -> return Utils.sum(
-            _.map(userIssues, (issue) ->
-              if moment(issue.timestamp).date() == day
-                return issue.duration
-              else
-                return 0
-            )
-          )
-        )
+      userProjects = _.groupBy(timings, (timing) ->
+        return timing.get("userGID")
       )
 
+      # Finally add the days of the month to every project...
+      userProjects = _.transform(userProjects,
+        (result, project, key) =>
+          result[key] = Utils.range(1, @get("date").daysInMonth()).map(
+            (day) -> return Utils.sum(
+              _.filter(project,
+                (project) -> return moment(project.get("timestamp")).date() == day
+              ).map(
+                (projectFilterdByDay) -> return projectFilterdByDay.get("duration")
+              )
+            )
+          )
+      )
 
       # Sum up the total amount of hours per day for every issue
-      sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(dailyEntriesPerUser, i - 1)) #-1 because days start with 1 and arrays with 0
+      # sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) ->
+      #   return _.foldl(userProjects, (sum, project) ->
+      #     sum + project[i]
+      #   , i )
+      # ) #-1 because days start with 1 and arrays with 0
+      sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(_.values(userProjects), i - 1)) #-1 because days start with 1 and arrays with 0
+
       sumTotal = Utils.sum(sumDaily)
 
       #Add that shit to the collection as a table 'header' for every user
@@ -95,12 +99,12 @@ class ProjectViewModel extends Backbone.Model
       )
 
       # Add the daily individual time logs to the collection
-      @teamTimeCollection.forEach((user, i) =>
+      _.each(userProjects, (dailyEntries, userID) =>
         @get("rows").add(
           isUserHeader : false
-          projectName : user.get("name")
-          sumCompleteProject : Utils.sum(dailyEntriesPerUser[i])
-          timeEntry : dailyEntriesPerUser[i]
+          projectName : userID
+          sumCompleteProject : Utils.sum(dailyEntries)
+          timeEntry : dailyEntries
         )
       )
     )
