@@ -44,13 +44,9 @@ class TeamView extends Backbone.Marionette.CompositeView
 
     @listenTo(app.vent, "MonthPickerView:changed", @update)
     @listenTo(@model, "sync", @render)
-    @listenTo(@collection, "add", -> console.log arguments)
 
 
     @model.fetch(
       reset : true
     )
 
-  render : ->
-
-    super()

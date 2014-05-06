@@ -3,56 +3,57 @@
 # ~~~~
 
 # Home page
-GET         /                                                     controllers.Application.index
-GET         /home                                                 controllers.Application.home
+GET           /                                                     controllers.Application.index
+GET           /home                                                 controllers.Application.home
 
 # Admin
-GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
-POST        /admin/repositories                                   controllers.admin.RepositoryAdministration.add
-GET         /admin/repositories/:owner/:name/scan                 controllers.admin.RepositoryAdministration.scan(owner: String, name: String)
-DELETE      /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
+GET           /admin/repositories                                   controllers.admin.RepositoryAdministration.list
+POST          /admin/repositories                                   controllers.admin.RepositoryAdministration.add
+GET           /admin/repositories/:owner/:name/scan                 controllers.admin.RepositoryAdministration.scan(owner: String, name: String)
+DELETE        /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
 
 # Add Issue time entry
-GET         /create                                               controllers.TimeEntryController.createGenericForm
-GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int, referer: Option[String])
-POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
-POST        /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
+GET           /create                                               controllers.TimeEntryController.createGenericForm
+GET           /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int, referer: Option[String])
+POST          /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
+POST          /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
 
 # Request times
-GET         /times/:year/:month                                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
-GET         /user/times/:year/:month                              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
-GET         /user/settings                                        controllers.UserController.showSettings()
-POST        /user/accesskey                                       controllers.UserController.createAccessKey()
-GET         /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
+GET           /times/:year/:month                                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
+GET           /user/times/:year/:month                              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
+GET           /users                                                controllers.UserController.list
+GET           /users/:id                                            controllers.UserController.read(id: String)
+GET           /user/settings                                        controllers.UserController.showSettings()
+POST          /user/accesskey                                       controllers.UserController.createAccessKey()
+GET           /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
 
 #Request issues
-GET         /issues/:owner/:repo                                  controllers.TimeEntryController.showIssues(owner, repo)
+GET           /issues/:owner/:repo                                  controllers.TimeEntryController.showIssues(owner, repo)
 
 # Login page
-GET         /login                                                securesocial.controllers.LoginPage.login
-GET         /logout                                               securesocial.controllers.LoginPage.logout
+GET           /login                                                securesocial.controllers.LoginPage.login
+GET           /logout                                               securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling
-GET         /signup                                               securesocial.controllers.Registration.startSignUp
-POST        /signup                                               securesocial.controllers.Registration.handleStartSignUp
-GET         /signup/:token                                        securesocial.controllers.Registration.signUp(token)
-POST        /signup/:token                                        securesocial.controllers.Registration.handleSignUp(token)
-GET         /reset                                                securesocial.controllers.Registration.startResetPassword
-POST        /reset                                                securesocial.controllers.Registration.handleStartResetPassword
-GET         /reset/:token                                         securesocial.controllers.Registration.resetPassword(token)
-POST        /reset/:token                                         securesocial.controllers.Registration.handleResetPassword(token)
-GET         /password                                             securesocial.controllers.PasswordChange.page
-POST        /password                                             securesocial.controllers.PasswordChange.handlePasswordChange
+GET           /signup                                               securesocial.controllers.Registration.startSignUp
+POST          /signup                                               securesocial.controllers.Registration.handleStartSignUp
+GET           /signup/:token                                        securesocial.controllers.Registration.signUp(token)
+POST          /signup/:token                                        securesocial.controllers.Registration.handleSignUp(token)
+GET           /reset                                                securesocial.controllers.Registration.startResetPassword
+POST          /reset                                                securesocial.controllers.Registration.handleStartResetPassword
+GET           /reset/:token                                         securesocial.controllers.Registration.resetPassword(token)
+POST          /reset/:token                                         securesocial.controllers.Registration.handleResetPassword(token)
+GET           /password                                             securesocial.controllers.PasswordChange.page
+POST          /password                                             securesocial.controllers.PasswordChange.handlePasswordChange
 
 # Providers entry points
-GET         /authenticate/:provider                               securesocial.controllers.ProviderController.authenticate(provider)
-POST        /authenticate/:provider                               securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET         /not-authorized                                       securesocial.controllers.ProviderController.notAuthorized
+GET           /authenticate/:provider                               securesocial.controllers.ProviderController.authenticate(provider)
+POST          /authenticate/:provider                               securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET           /not-authorized                                       securesocial.controllers.ProviderController.notAuthorized
 
 # Javascript routing
-GET         /assets/javascripts/routes.js                       controllers.Application.javascriptRoutes
+GET           /assets/javascripts/routes.js                         controllers.Application.javascriptRoutes
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                                         controllers.Assets.at(path="/public", file)
-
-GET         /*any                                                    controllers.Application.team(any: String)
+GET           /assets/*file                                         controllers.Assets.at(path="/public", file)
+GET           /*any                                                    controllers.Application.team(any: String)

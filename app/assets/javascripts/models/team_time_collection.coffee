@@ -2,12 +2,9 @@
 backbone : backbone
 moment : moment
 Utils : Utils
-./team_time_model : TeamTimeModel
 ###
 
 class TeamTimeCollection extends Backbone.Collection
-
-  model : TeamTimeModel
 
   initialize : (options) ->
 
@@ -35,10 +32,7 @@ class TeamTimeCollection extends Backbone.Collection
 
     return @reduce(
       (sumTotal, user) ->
-        return sumTotal + user.get("times")
-          .reduce( (sum, time) ->
-            return sum + time.get("duration")
-          , 0)
+        return sumTotal + user.get("duration")
     , 0)
 
 
@@ -49,13 +43,9 @@ class TeamTimeCollection extends Backbone.Collection
         momentDay = moment(@date).add("days", day - 1)
         @reduce(
           (sumTotal, user) ->
-            return sumTotal + user.get("times")
-              .filter((time) ->
-                moment(time.get("timestamp")).isSame(momentDay, "day")
-              )
-              .reduce(
-                (sum, time) ->
-                  return sum + time.get("duration")
-              , 0)
+            if moment(user.get("timestamp")).isSame(momentDay, "day")
+              return sumTotal + user.get("duration")
+            else
+              return sumTotal
         , 0)
     )

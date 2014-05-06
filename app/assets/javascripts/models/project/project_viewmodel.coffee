@@ -6,19 +6,20 @@ utils: Utils
 ###
 
 # #############
-# Team ViewModel
+# Project ViewModel
 #
 # Handles the transformation of the general TeamTimeCollection data for the
-# 'team' view and serves common view models attributes for this view.
+# 'project' view and serves common view models attributes for this view.
 # #############
 
-class TeamViewModel extends Backbone.Model
+class ProjectViewModel extends Backbone.Model
 
   defaults :
     date : moment()
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
     dailyTotalHours : 0
+    urlRoot : "project"
 
 
   initialize : (options = {}) ->
@@ -55,53 +56,53 @@ class TeamViewModel extends Backbone.Model
     # reset
     @get("rows").reset([])
 
-    # Call this after the model is initalized and format the data to fit this view
-    # Iterate of every user...
-    @teamTimeCollection.forEach((user) =>
+    allTimeEntries= [].concat(@teamTimeCollection.pluck("times")...)
+    allTimeEntries = _.groupBy(allTimeEntries, (timeEntry) ->
+      return timeEntry.issue.project
+    )
 
-      # and group his issue by his repositories (aka projects)
-      timeEntries = user.get("times")
-        .groupBy((timeEntry) -> timeEntry.get("issue").project)
+    _.each(allTimeEntries, (timings, repositoryName) =>
 
-      # Finally add the days of the month to every project...
-      timeEntries = _.transform(timeEntries,
-        (result, project, key) =>
-          result[key] = Utils.range(1, @get("date").daysInMonth()).map(
-            (day) -> return Utils.sum(
-              project.filter(
-                (project) -> return moment(project.get("timestamp")).date() == day
-              ).map(
-                (projectFilterdByDay) -> return projectFilterdByDay.get("duration")
-              )
+      dailyEntriesPerUser = @teamTimeCollection.map((user) =>
+
+        # and group his issue by his repositories (aka projects)
+        userIssues = _.filter(user.get("times"), (timeEntry) ->
+          timeEntry.issue.project == repositoryName
+        )
+        return Utils.range(1, @get("date").daysInMonth()).map(
+          (day) -> return Utils.sum(
+            _.map(userIssues, (issue) ->
+              if moment(issue.timestamp).date() == day
+                return issue.duration
+              else
+                return 0
             )
           )
         )
+      )
 
-      # Sum up the total amount of hours per day for every user
-      sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(_.values(timeEntries), i - 1)) #-1 because days start with 1 and arrays with 0
+
+      # Sum up the total amount of hours per day for every issue
+      sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(dailyEntriesPerUser, i - 1)) #-1 because days start with 1 and arrays with 0
       sumTotal = Utils.sum(sumDaily)
 
       #Add that shit to the collection as a table 'header' for every user
       @get("rows").add(
         isUserHeader : true
-        userName : user.get("name")
+        userName : repositoryName
         sumTotal : sumTotal
         sumDaily : sumDaily
       )
 
       # Add the daily individual time logs to the collection
-      _.each(timeEntries, (timeEntry, projectName) =>
-        sumCompleteProject = Utils.sum(timeEntry)
+      @teamTimeCollection.forEach((user, i) =>
         @get("rows").add(
           isUserHeader : false
-          projectName : projectName
-          sumCompleteProject : sumCompleteProject
-          timeEntry : timeEntry
+          projectName : user.get("name")
+          sumCompleteProject : Utils.sum(dailyEntriesPerUser[i])
+          timeEntry : dailyEntriesPerUser[i]
         )
       )
     )
-
-
-
 
 

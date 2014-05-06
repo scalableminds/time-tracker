@@ -6,7 +6,7 @@ trait Dependencies{
   val akkaVersion = "2.2.0"
   val reactiveVersion = "0.10.0"
   val reactivePlayVersion = "0.10.2"
-  val braingamesVersion = "1.3.0"
+  val braingamesVersion = "5.5.4"
 
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val commonsEmail = "org.apache.commons" % "commons-email" % "1.3.1"
@@ -28,8 +28,8 @@ trait Resolvers {
   val manSnaps = "mandubian" at "https://github.com/mandubian/mandubian-mvn/raw/master/snapshots/"
   val typesafeRel = "typesafe" at "http://repo.typesafe.com/typesafe/releases"
   val scmRel = Resolver.url("Scalableminds REL Repo", url("http://scalableminds.github.com/releases/"))(Resolver.ivyStylePatterns)
-  val scmIntRel = Resolver.sftp("scm.io intern releases repo", "scm.io", 44144, "/srv/maven/releases/") as("maven", "5MwEuHWH6tRPL6yfNadQ")
-  val scmIntSnaps = Resolver.sftp("scm.io intern snapshots repo", "scm.io", 44144, "/srv/maven/snapshots/") as("maven", "5MwEuHWH6tRPL6yfNadQ")
+  val scmIntRel = "scm.io intern releases repo" at "http://maven.scm.io/releases/"
+  val scmIntSnaps = "scm.io intern snapshots repo" at "http://maven.scm.io/snapshots/"
   val sbPlugins = Resolver.url("sbt-plugin-releases", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
 }
 

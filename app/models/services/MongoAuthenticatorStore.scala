@@ -23,7 +23,7 @@ class MongoAuthenticatorStore(app: play.api.Application) extends AuthenticatorSt
   }
 
   def find(id: String): Either[Error, Option[Authenticator]] = {
-    Right(Await.result(UserCookieDAO.findHeadOption("id", id), 5 seconds))
+    Right(Await.result(UserCookieDAO.findHeadOption("id", id).futureBox, 5 seconds).toOption)
   }
 
   def delete(id: String): Either[Error, Unit] = {

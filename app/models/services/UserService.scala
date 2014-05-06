@@ -18,11 +18,11 @@ class UserService(application: Application) extends UserServicePlugin(applicatio
   val timeout = 5 seconds
 
   def find(id: IdentityId): Option[User] = {
-    Await.result(UserCache.findUser(id), timeout)
+    Await.result(UserCache.findUser(id).futureBox, timeout).toOption
   }
 
   def findByEmailAndProvider(email: String, providerId: String): Option[User] = {
-    Await.result(UserCache.findUser(email, providerId), timeout)
+    Await.result(UserCache.findUser(email, providerId).futureBox, timeout).toOption
   }
 
   def save(identity: Identity): User = {

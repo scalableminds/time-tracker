@@ -3,7 +3,8 @@ underscore : _
 backbone : Backbone
 views/admin/admin_panel  : AdminPanelView
 views/team/team_view  : TeamView
-models/team/team_view_model  : TeamViewModel
+models/team/team_viewmodel : TeamViewModel
+models/project/project_viewmodel : ProjectViewModel
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
@@ -14,10 +15,11 @@ class Router extends Backbone.Router
   routes :
     ""                                          : "user"
     "home"                                      : "user"
-    "project"                                   : "project"
-    "team"                                      : "team"
     "log"                                       : "log"
+    "project"                                   : "project"
+    "project/:date"                             : "project"
     "admin"                                     : "admin"
+    "team"                                      : "team"
     "team/:date"                                : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
 
@@ -37,9 +39,14 @@ class Router extends Backbone.Router
     #@changeView(new UserReportController())
 
 
-  project : ->
+  project : (date) ->
 
-    #@changeView(new ProjectReportController())
+    projectModel = new ProjectViewModel("date" : date)
+    spinnerView = new SpinnerView(model : projectModel)
+    monthPickerView = new MonthPickerView(model : projectModel)
+    teamView = new TeamView(model : projectModel)
+
+    @changeView(spinnerView, monthPickerView, teamView)
 
 
   team : (date) ->

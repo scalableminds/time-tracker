@@ -11,6 +11,7 @@ import play.api.libs.concurrent.Akka
 import models.services.{CollectCollaborators, GithubCollaboratorActor, FullScan, GithubIssueActor}
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
+import net.liftweb.common.Empty
 
 /**
  * Company: scalableminds
@@ -42,17 +43,17 @@ object RepositoryAdministration extends Controller with SecureSocial {
       for {
         repositoryName <- postParameter("repository")(request.request) ?~> "No repository name supplied"
         accessToken <- postParameter("accessToken")(request.request) ?~> "No access token supplied"
-        r <- RepositoryDAO.findByName(repositoryName)(GlobalAccessContext)
+        r <- RepositoryDAO.findByName(repositoryName)(GlobalAccessContext).futureBox
       } yield {
         r match {
-          case None =>
+          case Empty =>
             val repo = Repository(repositoryName, accessToken, List(user.githubId), List(user.githubId))
             RepositoryDAO.insert(repo)
             GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
             issueActor ! FullScan(repo)
             collaboratorActor ! CollectCollaborators(repositoryName)
             Redirect(controllers.admin.routes.RepositoryAdministration.list)
-          case Some(_) =>
+          case _ =>
             BadRequest("Repository allready added")
         }
       }

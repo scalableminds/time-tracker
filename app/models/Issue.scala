@@ -26,23 +26,23 @@ object IssueDAO extends BasicReactiveDAO[ArchivedIssue] {
 
   implicit val formatter = Json.format[ArchivedIssue]
 
-  def findByNumberAndRepo(number: Int, fullRepoName: String)(implicit ctx: DBAccessContext) = {
-    collectionFind(
+  def findByNumberAndRepo(number: Int, fullRepoName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(
       Json.obj("number" -> number, "fullRepoName" -> fullRepoName)
     ).one[ArchivedIssue]
   }
 
   def findByRepo(fullRepoName: String)(implicit ctx: DBAccessContext) = {
-    val archivedIssueList = collectionFind(
+    val archivedIssueList = withExceptionCatcher(find(
       Json.obj("fullRepoName" -> fullRepoName)
-    ).cursor[ArchivedIssue].collect[List]()
+    ).cursor[ArchivedIssue].collect[List]())
 
     archivedIssueList.map { l => l.map { i => new CondensedIssue(i) } }
   }
 
   def archiveIssue(issue: ArchivedIssue)(implicit ctx: DBAccessContext) = {
     val jsIssue = Json.obj("number" -> issue.number, "fullRepoName" -> issue.fullRepoName)
-    collectionUpdate(jsIssue, Json.obj("$set" -> Json.toJson(issue) ), upsert = true)
+    update(jsIssue, Json.obj("$set" -> Json.toJson(issue) ), upsert = true)
   }
 
 }

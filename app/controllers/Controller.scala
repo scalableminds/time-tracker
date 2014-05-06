@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc.{Controller => PlayController, Request}
 import braingames.mvc.ExtendedController
-import braingames.reactivemongo.{AuthedAccessContext, DBAccessContext}
+import braingames.reactivemongo.{AuthorizedAccessContext, DBAccessContext}
 import securesocial.core.{RequestWithUser, SecuredRequest}
 import models.User
 import play.api.mvc.Flash
@@ -20,11 +20,11 @@ trait Controller extends PlayController with ExtendedController with ProvidesAcc
 
 trait ProvidesAccessContext{
   implicit def securedRequestToDBAccess(implicit request: SecuredRequest[_]): DBAccessContext = {
-    AuthedAccessContext(request.user.asInstanceOf[User])
+    AuthorizedAccessContext(request.user.asInstanceOf[User])
   }
 
   implicit def userToDBAccess(user: User): DBAccessContext = {
-    AuthedAccessContext(user)
+    AuthorizedAccessContext(user)
   }
 }
 

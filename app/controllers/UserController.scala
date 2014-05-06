@@ -4,6 +4,7 @@ import scala.None
 import models.{UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import models.services.UserCache
+import play.api.libs.json.Writes
 
 /**
  * Company: scalableminds
@@ -13,6 +14,24 @@ import models.services.UserCache
  */
 object UserController extends Controller with securesocial.core.SecureSocial {
   val DefaultAccessRole = None
+
+  def list = SecuredAction.async {
+    implicit request =>
+      for {
+        users <- UserDAO.findAll
+      } yield {
+        Ok(Writes.list(User.publicUserWrites).writes(users))
+      }
+  }
+
+  def read(id: String) = SecuredAction.async {
+    implicit request =>
+      for {
+        user <- UserDAO.findOneByGID(id)
+      } yield {
+        Ok(User.publicUserWrites.writes(user))
+      }
+  }
 
   def showSettings() = SecuredAction {
     implicit request =>

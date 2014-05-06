@@ -64,7 +64,7 @@ class MonthPickerView extends Backbone.Marionette.ItemView
 
   updateURL : ->
 
-    url = "team/#{@model.get("date").year()}-#{@model.get("date").month() + 1}"
+    url = "#{@model.get("urlRoot")}/#{@model.get("date").year()}-#{@model.get("date").month() + 1}"
     app.router.navigate(
       url,
       replace : true
