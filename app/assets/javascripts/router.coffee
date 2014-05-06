@@ -100,7 +100,7 @@ class Router extends Backbone.Router
     # handle all links and manage page changes (rather the reloading the whole site)
     $(document).on("click", "a", (evt) =>
 
-      url = evt.currentTarget.href
+      url = $(evt.currentTarget).attr("href")
       if url == "#"
         return
 
