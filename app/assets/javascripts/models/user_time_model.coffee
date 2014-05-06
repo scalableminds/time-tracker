@@ -6,38 +6,41 @@ Utils : Utils
 
 class UserTimeModel extends Backbone.Model
 
-  defaults :
-    date : moment().subtract("month", 2)
-
-
   urlRoot : ->
 
     dateUrl = Utils.dateToUrl(@get("date"))
     return "/user/times/#{dateUrl}"
 
 
-  initialize : ->
+  initialize : (options) ->
 
-    @listenTo(@, "sync", @projectsToCollections)
-
-
-  # after syncing to the server wrap all the issues/timings as collections
-  projectsToCollections : ->
-
-    projects = @get("projects")
-
-    for name, issues of projects
-      projects[name] = new Backbone.Collection(issues)
-
-    @set("projects", projects)
+    @set("date", options.date)
+    @listenTo(@, "sync", @afterSync)
 
 
-  getIssuesByProject : (projectName) ->
+  afterSync : ->
 
-    project = @get("projects")[projectName]
+    @set("projects", new Backbone.Collection(_.flatten(_.toArray(@get("projects")))))
 
-    if project
-      return project
 
-    else
-      throw new Error("There is no project called '#{projectName}'")
+  getMonthlyTotalHours : ->
+
+      return @get("projects").reduce(
+        (sumTotal, project) ->
+          return sumTotal + project.get("duration")
+      , 0)
+
+
+  getDailyTotalHours : (data) ->
+
+    Utils.range(1, @get("date").daysInMonth()).map(
+      (day) =>
+        momentDay = moment(@get("date")).add("days", day - 1)
+        @get("projects").reduce(
+          (sumTotal, project) ->
+            if moment(project.get("timestamp")).isSame(momentDay, "day")
+              return sumTotal + project.get("duration")
+            else
+              return sumTotal
+        , 0)
+    )

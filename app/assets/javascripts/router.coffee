@@ -8,14 +8,16 @@ views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
+models/user/user_viewmodel : UserViewModel
 ###
 
 class Router extends Backbone.Router
 
   routes :
     ""                                          : "user"
-    "home"                                      : "user"
     "log"                                       : "log"
+    "home"                                      : "user"
+    "home/:date"                                : "user"
     "project"                                   : "project"
     "project/:date"                             : "project"
     "admin"                                     : "admin"
@@ -34,29 +36,22 @@ class Router extends Backbone.Router
     @$mainContainer = $("#main-container .container")
 
 
-  user : ->
+  user : (date) ->
 
-    #@changeView(new UserReportController())
+    userModel = new UserViewModel(date : date)
+    @showReport(userModel)
 
 
   project : (date) ->
 
-    projectModel = new ProjectViewModel("date" : date)
-    spinnerView = new SpinnerView(model : projectModel)
-    monthPickerView = new MonthPickerView(model : projectModel)
-    reportView = new ReportView(model : projectModel)
-
-    @changeView(spinnerView, monthPickerView, reportView)
+    projectModel = new ProjectViewModel(date : date)
+    @showReport(projectModel)
 
 
   team : (date) ->
 
-    teamModel = new TeamViewModel("date" : date)
-    spinnerView = new SpinnerView(model : teamModel)
-    monthPickerView = new MonthPickerView(model : teamModel)
-    reportView = new ReportView(model : teamModel)
-
-    @changeView(spinnerView, monthPickerView, reportView)
+    teamModel = new TeamViewModel(date : date)
+    @showReport(teamModel)
 
 
   log : ->
@@ -68,6 +63,14 @@ class Router extends Backbone.Router
 
     @changeView(new AdminPanelView())
 
+
+  showReport : (model) ->
+
+    spinnerView = new SpinnerView(model : model)
+    monthPickerView = new MonthPickerView(model : model)
+    reportView = new ReportView(model : model)
+
+    @changeView(spinnerView, monthPickerView, reportView)
 
   changeView : (views...) ->
 

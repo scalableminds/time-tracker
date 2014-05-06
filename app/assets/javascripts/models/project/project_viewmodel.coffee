@@ -82,13 +82,7 @@ class ProjectViewModel extends Backbone.Model
       )
 
       # Sum up the total amount of hours per day for every issue
-      # sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) ->
-      #   return _.foldl(userProjects, (sum, project) ->
-      #     sum + project[i]
-      #   , i )
-      # ) #-1 because days start with 1 and arrays with 0
       sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(_.values(userProjects), i - 1)) #-1 because days start with 1 and arrays with 0
-
       sumTotal = Utils.sum(sumDaily)
 
       #Add that shit to the collection as a table 'header' for every user

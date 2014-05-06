@@ -6,11 +6,6 @@ Utils : Utils
 
 class TeamTimeCollection extends Backbone.Collection
 
-  initialize : (options) ->
-
-    @date = options.date
-
-
   url : ->
 
     dateUrl = Utils.dateToUrl(@date)
