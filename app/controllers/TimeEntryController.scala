@@ -121,19 +121,12 @@ object TimeEntryController extends Controller with securesocial.core.SecureSocia
       "name" -> user.fullName,
       "email" -> user.email)
 
-  def showTimeForAUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsObject] = {
+  def showTimeForAUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsValue] = {
     for {
       user <- UserDAO.findOneByGID(userGID) ?~> "User not found"
       entries <- TimeEntryDAO.loggedTimeForUser(userGID, year, month)
     } yield {
-      val jsonProjectsTimesList =
-        entries.groupBy(_.issue.project).map {
-          case (project, entries) =>
-            val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
-            project -> JsArray(jsonTimeEntries)
-        }.toList
-
-      userInfo(user) ++ Json.obj("projects" -> JsObject(jsonProjectsTimesList))
+      Json.toJson(entries)
     }
   }
 

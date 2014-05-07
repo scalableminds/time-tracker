@@ -22,34 +22,33 @@ class TeamViewModel extends Backbone.Model
     urlRoot : "team"
     viewTitle : "Team Report"
 
+  dataSource : TeamTimeCollection
+
 
   initialize : (options = {}) ->
 
     if options.date
       @set("date", moment(options.date).startOf("month"))
 
-    @teamTimeCollection = new TeamTimeCollection(date : @get("date"))
-    @listenTo(@teamTimeCollection, "sync", @synced)
+    @dataSource = new @dataSource()
 
 
   fetch : =>
 
-    @teamTimeCollection.date = @get("date")
-    return @teamTimeCollection.fetch().done(
+    @dataSource.date = @get("date")
+    return @dataSource.fetch().done(
       =>
+        @set {
+          monthlyTotalHours: @dataSource.getMonthlyTotalHours()
+          dailyTotalHours: @dataSource.getDailyTotalHours()
+        }
+        @transformData()
         @trigger("sync", @)
     )
 
 
   synced : ->
 
-    # Make sure we save the server data under a meaningful attribute
-    @set {
-      monthlyTotalHours: @teamTimeCollection.getMonthlyTotalHours()
-      dailyTotalHours: @teamTimeCollection.getDailyTotalHours()
-    }
-
-    @transformData()
 
 
   transformData : ->
@@ -59,7 +58,7 @@ class TeamViewModel extends Backbone.Model
 
     # Call this after the model is initalized and format the data to fit this view
     # Iterate of every user...
-    userIssues = @teamTimeCollection.groupBy("userGID")
+    userIssues = @dataSource.groupBy("userGID")
     _.each(userIssues, (timings, user) =>
 
       # and group his issue by his repositories (aka projects)
@@ -103,8 +102,6 @@ class TeamViewModel extends Backbone.Model
         )
       )
     )
-
-
 
 
 

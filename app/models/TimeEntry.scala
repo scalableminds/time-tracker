@@ -77,7 +77,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     )
   }
 
-  def loggedTimeForUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
+  def loggedTimeForUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = withExceptionCatcher{
     val interval = toInterval(year, month)
     find(
       Json.obj("userGID" -> userGID) ++ timeStampQuery(interval)).cursor[TimeEntry].collect[List]()

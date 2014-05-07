@@ -4,14 +4,14 @@ moment : moment
 Utils : Utils
 ###
 
-class TeamTimeCollection extends Backbone.Collection
+class UserTimeCollection extends Backbone.Collection
 
   date : moment().startOf("month")
 
   url : ->
 
     dateUrl = Utils.dateToUrl(@date)
-    return "/times/#{dateUrl}"
+    return "/user/times/#{dateUrl}"
 
 
   getMonthlyTotalHours : ->
