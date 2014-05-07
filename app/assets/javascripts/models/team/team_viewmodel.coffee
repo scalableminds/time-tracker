@@ -2,7 +2,7 @@
 backbone : Backbone
 moment : moment
 utils: Utils
-../team_time_collection : TeamTimeCollection
+models/team_time_collection : TeamTimeCollection
 ###
 
 # #############

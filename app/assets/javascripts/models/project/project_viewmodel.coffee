@@ -2,7 +2,8 @@
 backbone : Backbone
 moment : moment
 utils: Utils
-../team_time_collection : TeamTimeCollection
+models/team_time_collection : TeamTimeCollection
+models/team/team_viewmodel : TeamViewModel
 ###
 
 # #############
@@ -12,7 +13,7 @@ utils: Utils
 # 'project' view and serves common view models attributes for this view.
 # #############
 
-class ProjectViewModel extends Backbone.Model
+class ProjectViewModel extends TeamViewModel
 
   defaults :
     date : moment()
@@ -23,41 +24,12 @@ class ProjectViewModel extends Backbone.Model
     viewTitle : "Project View"
 
 
-  initialize : (options = {}) ->
-
-    if options.date
-      @set("date", moment(options.date).startOf("month"))
-
-    @teamTimeCollection = new TeamTimeCollection(date : @get("date"))
-    @listenTo(@teamTimeCollection, "sync", @synced)
-
-
-  fetch : =>
-
-    @teamTimeCollection.date = @get("date")
-    return @teamTimeCollection.fetch().done(
-      =>
-        @trigger("sync", @)
-    )
-
-
-  synced : ->
-
-    # Make sure we save the server data under a meaningful attribute
-    @set {
-      monthlyTotalHours: @teamTimeCollection.getMonthlyTotalHours()
-      dailyTotalHours: @teamTimeCollection.getDailyTotalHours()
-    }
-
-    @transformData()
-
-
   transformData : ->
 
     # reset
     @get("rows").reset([])
 
-    projectIssues = @teamTimeCollection.groupBy((timeEntry) ->
+    projectIssues = @dataSource.groupBy((timeEntry) ->
       return timeEntry.get("issue").project
     )
 
