@@ -1,0 +1,53 @@
+@colorReadOn: #7cc45c;
+@colorWriteOn: #CF6486;
+@colorOff: #dddddd;
+
+.permissions {
+
+  padding-top: 20px;
+
+  .group {
+    margin-bottom: 10px;
+  }
+
+  .well h5 {
+    color: #999;
+    margin: -19px;
+    margin-bottom: 10px;
+    padding: 19px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .label {
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+    padding: 6px 16px;
+    margin-right: 4px;
+    border-radius: 3px;
+    border: 2px solid;
+    text-shadow: 0 1px 0 #fff;
+  }
+
+  .labelColor(@color) {
+    color: @color;
+    border: solid 2px @color;
+    background: rgba(red(@color), green(@color), blue(@color), .2);
+  }
+
+  .off {
+    .labelColor(@colorOff)
+  }
+
+  .read.on {
+    .labelColor(@colorReadOn)
+  }
+
+  .write.on {
+    .labelColor(@colorWriteOn)
+  }
+  .permission {
+    padding: 3px 0;
+  }
+}

@@ -1,0 +1,129 @@
+@(authWithPrivateScope: String, authWithPublicScope: String)(implicit session: controllers.SessionData)
+
+@main("Login"){
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h2>Please choose which permissions you want to allow TimeTracker </h2>
+    </div>
+    <div class="permissions">
+      <div class="col-sm-6">
+        <div class="well">
+          <h5> Public access </h5>
+          <div class="body">
+          <div class="group">
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write off">Write</span>
+              <strong> Your user profile </strong>
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write off">Write</span>
+              Your followers
+
+            </div>
+          </div>
+          <div class="group">
+            <div class="permission">
+              <span class="label read off">Read</span>
+              <span class="label write off">Write</span>
+              <strong> Your private repositories and organizations </strong>
+            </div>
+            <div class="permission">
+              <span class="label read off">Read</span>
+              <span class="label write off">Write</span>
+              Commit status
+            </div>
+            <div class="permission">
+              <span class="label read off">Read</span>
+              <span class="label write off">Write</span>
+              Notifications
+            </div>
+          </div>
+          <div class="group">
+
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              <strong> Your public repositories and organizations </strong>
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              Commit status
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              Notifications
+            </div>
+          </div>
+          <div class="group">
+            <a class="btn btn-default btn-block" href="@authWithPublicScope"><i class="fa fa-github"></i> btn-blockAllow public access</a>
+          </div>
+
+        </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="well">
+          <h5> Private access </h5>
+          <div class="body">
+          <div class="group">
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write off">Write</span>
+              <strong> Your user profile </strong>
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write off">Write</span>
+              Your followers
+
+            </div>
+          </div>
+          <div class="group">
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              <strong> Your private repositories and organizations </strong>
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              Commit status
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              Notifications
+            </div>
+          </div>
+          <div class="group">
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              <strong> Your public repositories and organizations </strong>
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              Commit status
+            </div>
+            <div class="permission">
+              <span class="label read on">Read</span>
+              <span class="label write on">Write</span>
+              Notifications
+            </div>
+          </div>
+          <div class="group">
+            <a class="btn btn-default btn-block" href="@authWithPrivateScope"><i class="fa fa-github"></i>Allow private access</a>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

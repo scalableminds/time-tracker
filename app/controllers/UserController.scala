@@ -3,8 +3,8 @@ package controllers
 import scala.None
 import models.{UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
-import models.services.UserCache
 import play.api.libs.json.Writes
+import models.auth.UserCache
 
 /**
  * Company: scalableminds
@@ -12,10 +12,10 @@ import play.api.libs.json.Writes
  * Date: 18.08.13
  * Time: 16:43
  */
-object UserController extends Controller with securesocial.core.SecureSocial {
+object UserController extends Controller {
   val DefaultAccessRole = None
 
-  def list = SecuredAction.async {
+  def list = Authenticated.async {
     implicit request =>
       for {
         users <- UserDAO.findAll
@@ -24,28 +24,28 @@ object UserController extends Controller with securesocial.core.SecureSocial {
       }
   }
 
-  def read(id: String) = SecuredAction.async {
+  def read(id: Int) = Authenticated.async {
     implicit request =>
       for {
-        user <- UserDAO.findOneByGID(id)
+        user <- UserDAO.findOneByUserId(id)
       } yield {
         Ok(User.publicUserWrites.writes(user))
       }
   }
 
-  def showSettings() = SecuredAction {
+  def showSettings() = Authenticated {
     implicit request =>
       Ok(views.html.user.settings(request.user.asInstanceOf[User]))
   }
 
-  def createAccessKey() = SecuredAction.async {
+  def createAccessKey() = Authenticated.async {
     implicit request =>
       val a = User.generateAccessKey
-      val user = request.user.asInstanceOf[User]
+      val user = request.user
       for {
         _ <- UserDAO.setAccessKey(user, a)
       } yield {
-        UserCache.removeUserFromCache(user.identityId)
+        UserCache.removeUserFromCache(user.userId)
         JsonOk("A new access key was created.")
       }
   }

@@ -50,7 +50,7 @@
           <li class="divider-vertical"></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-user fa-white"></i> <strong>@user.fullName</strong> @if(user.email){ <span>(@user.email)</span> }
+              <i class="fa fa-user fa-white"></i> <strong>@user.profile.fullName</strong> @if(user.profile.email){ <span>(@user.profile.email)</span> }
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
@@ -58,7 +58,7 @@
                 <a href="@controllers.routes.UserController.showSettings()"><i class="fa fa-key"></i>Access-Key</a>
               </li>
               <li>
-                <a href="@securesocial.controllers.routes.LoginPage.logout()"><i class="fa fa-off"></i>Logout</a>
+                <a href="@controllers.auth.routes.Authentication.logout"><i class="fa fa-off"></i>Logout</a>
               </li>
             </ul>
           </li>
@@ -66,7 +66,11 @@
       }.getOrElse {
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href="@securesocial.controllers.routes.ProviderController.authenticate("github")"><i class="fa fa-github"></i> Login with Github</a>
+            <a href="@controllers.auth.routes.Authentication.authenticate(None)">
+              <button class="btn btn-default">
+                <i class="fa fa-github"></i> Login with Github
+              </button>
+            </a>
           </li>
         </ul>
       }

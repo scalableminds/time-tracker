@@ -11,17 +11,17 @@ import braingames.reactivemongo.AccessRestrictions._
  * Date: 22.07.13
  * Time: 01:54
  */
-case class Repository(fullName: String, accessToken: String, admins: List[String], collaborators: List[String]) {
+case class Repository(fullName: String, accessToken: String, admins: List[Int], collaborators: List[Int]) {
   def owner = fullName.split("/").head
 
   def name = fullName.split("/").last
 
   def isAdmin(user: User) = {
-    admins.contains(user.githubId)
+    admins.contains(user.userId)
   }
 
   def isCollaborator(user: User) = {
-    collaborators.contains(user.githubId)
+    collaborators.contains(user.userId)
   }
 }
 
@@ -33,8 +33,8 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
       ctx.data match {
         case Some(user: User) =>
           AllowIf(Json.obj("$or" -> List(
-            Json.obj("collaborators" -> user.githubId),
-            Json.obj("admins" -> user.githubId))))
+            Json.obj("collaborators" -> user.userId),
+            Json.obj("admins" -> user.userId))))
         case _ if ctx.globalAccess =>
           AllowEveryone
         case _ =>
@@ -60,7 +60,7 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
   }
 
   def findAllWhereUserIsAdmin(user: User)(implicit ctx: DBAccessContext) = withExceptionCatcher{
-    find(Json.obj("admins" -> user.githubId)).cursor[Repository].collect[List]()
+    find(Json.obj("admins" -> user.userId)).cursor[Repository].collect[List]()
   }
 
   def updateCollaborators(fullName: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {
