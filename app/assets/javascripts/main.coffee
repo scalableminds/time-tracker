@@ -4,6 +4,7 @@ backbone.marionette : Marionette
 app : app
 router : Router
 navbar : navbar
+bootstrap : bootstrap
 ###
 
 $ ->
