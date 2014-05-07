@@ -2,7 +2,6 @@
 backbone : Backbone
 moment : moment
 utils: Utils
-models/team_time_collection : TeamTimeCollection
 models/team/team_viewmodel : TeamViewModel
 ###
 
@@ -29,12 +28,15 @@ class ProjectViewModel extends TeamViewModel
     # reset
     @get("rows").reset([])
 
+    # First group all issues by their repository (aka Project)
     projectIssues = @dataSource.groupBy((timeEntry) ->
       return timeEntry.get("issue").project
     )
 
+    # Iterate over all issues ...
     _.each(projectIssues, (timings, repositoryName) =>
 
+      # ... and group by their users
       userProjects = _.groupBy(timings, (timing) ->
         return timing.get("userGID")
       )
@@ -69,7 +71,7 @@ class ProjectViewModel extends TeamViewModel
       _.each(userProjects, (dailyEntries, userID) =>
         @get("rows").add(
           isHeader : false
-          name : userID
+          name : @usersCollection.getNameById(userID)
           sum : Utils.sum(dailyEntries)
           dailyTimeEntries : dailyEntries
         )

@@ -1,8 +1,11 @@
 ### define
+underscore : _
 backbone : Backbone
+jquery : $
 moment : moment
 utils: Utils
 models/team_time_collection : TeamTimeCollection
+models/users_collection : UsersCollection
 ###
 
 # #############
@@ -31,12 +34,16 @@ class TeamViewModel extends Backbone.Model
       @set("date", moment(options.date).startOf("month"))
 
     @dataSource = new @dataSource()
+    @usersCollection = new UsersCollection()
 
 
   fetch : =>
 
     @dataSource.date = @get("date")
-    return @dataSource.fetch().done(
+    userPromise = @usersCollection.fetch()
+    dataPromise = @dataSource.fetch()
+
+    return $.when(userPromise, dataPromise).done(
       =>
         @set {
           monthlyTotalHours: @dataSource.getMonthlyTotalHours()
@@ -45,10 +52,6 @@ class TeamViewModel extends Backbone.Model
         @transformData()
         @trigger("sync", @)
     )
-
-
-  synced : ->
-
 
 
   transformData : ->
@@ -86,7 +89,7 @@ class TeamViewModel extends Backbone.Model
       #Add that shit to the collection as a table 'header' for every user
       @get("rows").add(
         isHeader : true
-        name : user
+        name : @usersCollection.getNameById(user)
         sum : sumTotal
         dailyTimeEntries : sumDaily
       )
