@@ -23,6 +23,10 @@ object SessionService{
     sessionId
   }
 
+  def removeSessions(userId: Int)(implicit ctx: DBAccessContext) = {
+    SessionDAO.removeAllOf(userId)
+  }
+
   def resolve(token: String)(implicit ctx: DBAccessContext) = {
     SessionDAO.findByToken(token).flatMap{ session =>
       UserService.find(session.userId)
@@ -37,5 +41,9 @@ object SessionDAO extends BasicReactiveDAO[Session] {
 
   def findByToken(t: String)(implicit ctx: DBAccessContext) = {
     findOne("token", t)
+  }
+
+  def removeAllOf(userId: Int)(implicit ctx: DBAccessContext) = {
+    remove("userId", userId)
   }
 }

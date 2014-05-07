@@ -19,7 +19,6 @@ import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
 import models.UserProfile
 import controllers.{GithubApi, Controller}
-import braingames.reactivemongo.GlobalAccessContext
 
 object Authentication extends Controller {
 
@@ -46,8 +45,7 @@ object Authentication extends Controller {
         case Full(user) =>
           Logger.info("Saved user. " + user)
           val redirectUri = RedirectionCache.retrieve(state) getOrElse defaultRedirectUri
-          val token = SessionService.createSession(user.userId)(GlobalAccessContext)
-          Redirect(redirectUri).withSession(Secured.SessionInformationKey -> token)
+          Redirect(redirectUri).withSession(Secured.createSession(user))
         case x =>
           Logger.info("Saving user failed. " + x)
           BadRequest("Failed to complete github auth.")
@@ -59,6 +57,14 @@ object Authentication extends Controller {
     val authWithPrivateScope = GithubOauth.authorizeUrl(cacheId, minScope, authCompleteUrl)
     val authWithPublicScope = GithubOauth.authorizeUrl(cacheId, normalScope, authCompleteUrl)
     Ok(views.html.login(authWithPrivateScope, authWithPublicScope))
+  }
+
+  def logout = Authenticated.async{ implicit request =>
+    for {
+      _ <- SessionService.removeSessions(request.user.userId)
+    } yield {
+        Redirect(controllers.routes.Application.index())
+    }
   }
 }
 

@@ -33,6 +33,7 @@ GET           /issues/:owner/:repo                                  controllers.
 # Providers entry points
 GET           /authenticate/complete                                controllers.auth.Authentication.complete(state: String, code: String)
 GET           /authenticate                                         controllers.auth.Authentication.authenticate(redirectUri: Option[String])
+GET           /authenticate/logout                                  controllers.auth.Authentication.logout
 # Javascript routing
 GET           /assets/javascripts/routes.js                         controllers.Application.javascriptRoutes
 
