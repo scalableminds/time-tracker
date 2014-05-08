@@ -1,16 +1,21 @@
 @colorReadOn: #7cc45c;
 @colorWriteOn: #CF6486;
 @colorOff: #dddddd;
+.authenticate {
 
-.permissions {
+  h2 {
+    margin: 25px 0;
+  }
 
-  padding-top: 20px;
+  .well {
+    background-color: white;
+  }
 
   .group {
     margin-bottom: 10px;
   }
 
-  .well h5 {
+  .well h4 {
     color: #999;
     margin: -19px;
     margin-bottom: 10px;
@@ -18,36 +23,38 @@
     border-bottom: 1px solid #ccc;
   }
 
-  .label {
+  .permission {
     display: inline-block;
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
     font-size: 14px;
     padding: 6px 16px;
     margin-right: 4px;
-    border-radius: 3px;
-    border: 2px solid;
-    text-shadow: 0 1px 0 #fff;
   }
 
   .labelColor(@color) {
     color: @color;
-    border: solid 2px @color;
-    background: rgba(red(@color), green(@color), blue(@color), .2);
+    //border: solid 2px @color;
+    //background: rgba(red(@color), green(@color), blue(@color), .2);
   }
 
-  .off {
-    .labelColor(@colorOff)
+  .read.off, .write.off {
+    .labelColor(@colorOff);
   }
 
-  .read.on {
-    .labelColor(@colorReadOn)
+  .read {
+    .labelColor(@colorReadOn);
   }
 
-  .write.on {
-    .labelColor(@colorWriteOn)
+  .write {
+    .labelColor(@colorWriteOn);
   }
-  .permission {
+
+  .spacer {
     padding: 3px 0;
+  }
+
+  .btn {
+    margin-top: 20px;
   }
 }
