@@ -1,7 +1,7 @@
 ### define
 underscore : _
 backbone : Backbone
-views/admin/admin_panel  : AdminPanelView
+views/admin/admin_panel_view  : AdminPanelView
 views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView

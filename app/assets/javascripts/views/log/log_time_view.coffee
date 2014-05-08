@@ -2,7 +2,7 @@
 underscore : _
 backbone : backbone
 backbone.marionette : Marionette
-views/admin/available_repositories_item : AvailableRepositoriesItem
+views/admin/available_repositories_item_view : AvailableRepositoriesItem
 models/admin/active_repositories_collection : ActiveRepositoriesCollection
 models/log/log_time_model : LogTimeModel
 datepicker : Datepicker

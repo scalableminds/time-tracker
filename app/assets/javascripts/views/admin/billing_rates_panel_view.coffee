@@ -1,11 +1,11 @@
 ### define
 underscore : _
 backbone.marionette : Marionette
-./billing_rates_item : BillingRatesItemView
+./billing_rates_item_view : BillingRatesItemView
 models/admin/billing_rates_collection : BillingRatesCollection
 ###
 
-class BillingRatesPanel extends Backbone.Marionette.CompositeView
+class BillingRatesPanelView extends Backbone.Marionette.CompositeView
 
   template: _.template("""
     <header class="row">

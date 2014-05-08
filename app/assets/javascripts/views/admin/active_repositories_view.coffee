@@ -1,23 +1,21 @@
 ### define
 underscore : _
 backbone.marionette : Marionette
-./active_repositories_item : ActiveRepositoriesItem
+./active_repositories_item_view : ActiveRepositoriesItemView
 models/admin/active_repositories_collection : ActiveRepositoriesCollection
 ###
 
-class ActiveRepositories extends Backbone.Marionette.CompositeView
+class ActiveRepositoriesView extends Backbone.Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
-      <h3 class="col-lg-12">Used Repositories</h3>
+      <h3 class="col-lg-12">Tracking-enabled Repositories</h3>
     </header>
     <div class="table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>#</th>
             <th>Name</th>
-            <th>Access-Token</th>
             <th>Admin Ids</th>
             <th></th>
           </tr>
@@ -28,7 +26,7 @@ class ActiveRepositories extends Backbone.Marionette.CompositeView
     </div>
   """)
 
-  itemView: ActiveRepositoriesItem
+  itemView: ActiveRepositoriesItemView
   itemViewContainer: "tbody"
 
   initialize: ->

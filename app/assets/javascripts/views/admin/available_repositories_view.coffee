@@ -1,11 +1,11 @@
 ### define
 underscore : _
 backbone.marionette : Marionette
-./available_repositories_item : AvailableRepositoriesItem
+./available_repositories_item_view : AvailableRepositoriesItemView
 models/admin/available_repositories_collection : AvailableRepositoriesCollection
 ###
 
-class AvailableRepositories extends Backbone.Marionette.CompositeView
+class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
@@ -27,7 +27,7 @@ class AvailableRepositories extends Backbone.Marionette.CompositeView
     </div>
   """)
 
-  itemView: AvailableRepositoriesItem
+  itemView: AvailableRepositoriesItemView
   itemViewContainer: "select"
   events:
     "click button": "addItem"

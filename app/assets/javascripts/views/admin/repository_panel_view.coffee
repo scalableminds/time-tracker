@@ -1,11 +1,11 @@
 ### define
 underscore : _
 backbone.marionette : Marionette
-./available_repositories : AvailableRepositoriesView
-./active_repositories : ActiveRepositoriesView
+./available_repositories_view : AvailableRepositoriesView
+./active_repositories_view : ActiveRepositoriesView
 ###
 
-class RepositoryPanel extends Backbone.Marionette.Layout
+class RepositoryPanelView extends Backbone.Marionette.Layout
 
   template: _.template("""
     <section id="available_repositories">

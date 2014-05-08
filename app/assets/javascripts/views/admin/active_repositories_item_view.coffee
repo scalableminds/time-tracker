@@ -3,18 +3,12 @@ underscore : _
 backbone.marionette: Marionette
 ###
 
-class ActiveRepositoriesItem extends Backbone.Marionette.ItemView
+class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
 
   tagName: "tr"
   template: _.template("""
     <td>
-      <%= id %>
-    </td>
-    <td>
-      <%= repository %>
-    </td>
-    <td>
-      <%= accessToken %>
+      <%= name %>
     </td>
     <td>
       <%= adminId %>
@@ -27,6 +21,7 @@ class ActiveRepositoriesItem extends Backbone.Marionette.ItemView
 
   events:
     "click a#remove": "removeItem"
+
 
   removeItem: ->
 

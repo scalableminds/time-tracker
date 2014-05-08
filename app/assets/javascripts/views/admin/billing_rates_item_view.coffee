@@ -3,7 +3,7 @@ underscore : _
 backbone.marionette : Marionette
 ###
 
-class BillingRatesItem extends Backbone.Marionette.ItemView
+class BillingRatesItemView extends Backbone.Marionette.ItemView
 
   tagName: "tr",
   template: _.template("""
