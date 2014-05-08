@@ -32,4 +32,5 @@ class ActiveRepositoriesView extends Backbone.Marionette.CompositeView
   initialize: ->
 
     @collection = new ActiveRepositoriesCollection()
+    @collection.fetch()
 

@@ -8,13 +8,13 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
   tagName: "tr"
   template: _.template("""
     <td>
-      <%= name %>
+      <%= fullName %>
     </td>
     <td>
-      <%= adminId %>
+      someone
     </td>
     <td>
-      <a id="scan" href="/admin/repositories/<%= repository %>/scan"><i class="glyphicon glyphicon-refresh"></i> scan</a>
+      <a id="scan" href="/admin/repositories/<%= fullName %>/scan"><i class="glyphicon glyphicon-refresh"></i> scan</a>
       <a id="remove" href="#"><i class="glyphicon glyphicon-trash"></i> remove</a>
     </td>
   """)
