@@ -126,9 +126,13 @@ trait GithubOrgRequester extends GithubRequester {
   val extractOrgs = (__).read(list[GithubOrga])
 }
 
-trait GithubRepositoryRequester extends GithubRequester {
+case class GithubRepoPermissions(admin: Boolean, push: Boolean, pull: Boolean)
 
-  case class GithubRepo(full_name: String)
+case class GithubRepo(full_name: String, permissions: GithubRepoPermissions)
+
+trait GithubRepositoryRequester extends GithubOrgRequester {
+
+  implicit val githubRepoPermissionsFormat = Json.format[GithubRepoPermissions]
 
   implicit val githubRepoFormat = Json.format[GithubRepo]
 
@@ -136,16 +140,24 @@ trait GithubRepositoryRequester extends GithubRequester {
 
   def orgaReposUrl(orga: String): String
 
+  def listAllUserRepositories(token: String) = {
+    for{
+      orgas <- listOrgs(token)
+      orgaRepos <- Future.traverse(orgas)(orga => listOrgaRepositories(token, orga))
+      userRepos <- listUserRepositories(token)
+    } yield (userRepos :: orgaRepos).flatten
+  }
+
   def listUserRepositories(token: String) =
     new ResultSet(userReposUrl, extractRepos, token).results.map {
       results =>
-        results.flatten.map(_.full_name)
+        results.flatten
     }
 
   def listOrgaRepositories(token: String, orga: String) = {
     new ResultSet(orgaReposUrl(orga), extractRepos, token).results.map {
       results =>
-        results.flatten.map(_.full_name)
+        results.flatten
     }
   }
 
@@ -220,11 +232,12 @@ trait GithuIssueRequester extends GithubRequester{
   def issueBodyUpdate(body: String) =
     Json.obj("body" -> body)
 
-  def updateIssueBody(token: String, issue: GithubIssue, body: String) = {
+  def updateIssueBody(token: String, issue: GithubIssue, body: String): Future[Boolean] = {
     githubRequest(issue.url, prependHost = false)(token).post(issueBodyUpdate(body)).map{ response =>
       Logger.info("Update returned: " + response.status)
       if(response.status != 200)
         Logger.warn(response.body)
+      response.status == 200
     }
   }
 

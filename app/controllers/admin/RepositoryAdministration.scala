@@ -7,10 +7,10 @@ import views.html
 import scala.concurrent.Future
 import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess}
 import play.api.libs.concurrent.Akka
-import models.services.{CollectCollaborators, GithubCollaboratorActor, FullScan, GithubIssueActor}
+import models.services.{FullScan, GithubIssueActor}
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
-import net.liftweb.common.Empty
+import net.liftweb.common.{Full, Failure, Empty}
 
 /**
  * Company: scalableminds
@@ -20,37 +20,41 @@ import net.liftweb.common.Empty
  */
 object RepositoryAdministration extends Controller {
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
-  lazy val collaboratorActor = Akka.system.actorFor("/user/" + GithubCollaboratorActor.name)
+
+  def hookUrl(repositoryName: String) =
+    s"${Application.hostUrl}/repos/$repositoryName/hook"
 
   def list = Authenticated.async {
     implicit request =>
       val user = request.user
       for {
-        orgas <- GithubApi.listOrgs(user.githubAccessToken)
-        orgaRepos <- Future.traverse(orgas)(orga => GithubApi.listOrgaRepositories(user.githubAccessToken, orga))
-        userRepos <- GithubApi.listUserRepositories(user.githubAccessToken)
-        usedRepos <- RepositoryDAO.findAll(GlobalAccessContext)
+        usedRepositories <- RepositoryDAO.findAll
       } yield {
-        val available = (orgaRepos.flatten ::: userRepos).diff(usedRepos.map(_.fullName))
-        Ok(html.admin.repositoryAdmin(available, usedRepos, request.user.asInstanceOf[User]))
+        val available = user.adminRepositories.map(_.name).diff(usedRepositories.map(_.fullName))
+        Ok(html.admin.repositoryAdmin(available, usedRepositories, request.user))
       }
+  }
+
+  def ensureAdminRights(user: User, repositoryName: String) = {
+    user.namesOfAdminRepositories.contains(repositoryName) match {
+      case true => Full(true)
+      case _ => Failure("You are not allowed to access this repository")
+    }
   }
 
   def add = Authenticated.async(parse.urlFormEncoded) {
     implicit request =>
-      val user = request.user.asInstanceOf[User]
       for {
         repositoryName <- postParameter("repository")(request.request) ?~> "No repository name supplied"
-        accessToken <- postParameter("accessToken")(request.request) ?~> "No access token supplied"
-        r <- RepositoryDAO.findByName(repositoryName)(GlobalAccessContext).futureBox
+        _ <- ensureAdminRights(request.user, repositoryName).toFox
+        r <- RepositoryDAO.findByName(repositoryName).futureBox
       } yield {
         r match {
           case Empty =>
-            val repo = Repository(repositoryName, accessToken, List(user.userId), List(user.userId))
+            val repo = Repository(repositoryName)
             RepositoryDAO.insert(repo)
-            GithubApi.createWebHook(user.githubAccessToken, repositoryName, s"${Application.hostUrl}/repos/$repositoryName/hook")
-            issueActor ! FullScan(repo)
-            collaboratorActor ! CollectCollaborators(repositoryName)
+            GithubApi.createWebHook(request.user.githubAccessToken, repositoryName, hookUrl(repositoryName))
+            issueActor ! FullScan(repo, request.user.githubAccessToken)
             Redirect(controllers.admin.routes.RepositoryAdministration.list)
           case _ =>
             BadRequest("Repository allready added")
@@ -60,27 +64,24 @@ object RepositoryAdministration extends Controller {
 
   def delete(owner: String, name: String) = Authenticated.async {
     implicit request =>
-      val user = request.user.asInstanceOf[User]
-      val repositoryName = RepositoryDAO.createFullName(owner, name)
+      val repositoryName = Repository.createFullName(owner, name)
       for {
         repository <- RepositoryDAO.findByName(repositoryName) ?~> "Repository not found"
+        _ <- ensureAdminRights(request.user, repository.fullName)
       } yield {
-        if (repository.isAdmin(user)) {
-          RepositoryDAO.removeByName(repository.fullName)
-          JsonOk("Repository deleted")
-        } else {
-          JsonBadRequest("You are not allowed to delete the repository")
-        }
+        RepositoryDAO.removeByName(repository.fullName)
+        JsonOk("Repository deleted")
       }
   }
 
   def scan(owner: String, name: String) = Authenticated.async {
     implicit request =>
-      val repositoryName = RepositoryDAO.createFullName(owner, name)
+      val repositoryName = Repository.createFullName(owner, name)
       for {
         repository <- RepositoryDAO.findByName(repositoryName) ?~> "Repository not found"
+        _ <- ensureAdminRights(request.user, repository.fullName)
       } yield {
-        issueActor ! FullScan(repository)
+        issueActor ! FullScan(repository, request.user.githubAccessToken)
         JsonOk("Scan is in progress")
       }
   }

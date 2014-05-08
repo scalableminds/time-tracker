@@ -16,12 +16,6 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-2 control-label" for="inputAccess">Access-Token</label>
-                    <div class="col-lg-10">
-                        <input class="form-control" type="text" id="inputAccess" name="accessToken" required value="@user.accessKey.getOrElse("")">
-                    </div>
-                </div>
-                <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-10">
                         <input type="submit" value="Add" class="btn btn-primary">
                     </div>
@@ -35,7 +29,6 @@
                 <thead>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Access-Token</th>
                     <th>Admin Ids</th>
                 </thead>
                 <tbody>
@@ -48,10 +41,7 @@
                         @repository.fullName
                         </td>
                         <td>
-                        @repository.accessToken
-                        </td>
-                        <td>
-                            @repository.admins.mkString(", ")
+
                         </td>
                         <td>
                             <a href="@controllers.admin.routes.RepositoryAdministration.scan(repository.owner, repository.name)"><i class="icon-glass"></i> scan</a>
