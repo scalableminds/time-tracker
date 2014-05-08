@@ -15,20 +15,20 @@ import scala.concurrent.Future
  * Date: 25.07.13
  * Time: 02:23
  */
-case class FullScan(repo: Repository)
+case class FullScan(repo: Repository, accesssToken: String)
 
 class GithubIssueActor extends Actor {
   implicit val ec = context.system.dispatcher
 
   def receive = {
-    case FullScan(repo) =>
+    case FullScan(repo, accessToken) =>
       Logger.debug("Starting repo full scan.")
-      GithubApi.listRepositoryIssues(repo.accessToken, repo.fullName).map {
+      GithubApi.listRepositoryIssues(accessToken, repo.fullName).map {
         issues =>
           issues.map {
             issue =>
               GithubIssueActor.ensureIssueIsArchived(repo, issue)
-              GithubIssueActor.ensureTimeTrackingLink(repo, issue)
+              GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
           }
       }
   }
@@ -48,18 +48,18 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
 
   def containsLinkHeuristic(s: String) = linkRx.r.findFirstIn(s)
 
-  def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue) = {
+  def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue, accessToken: String) = {
     val link = timeTrackingLinkFor(repo, issue)
     containsLinkHeuristic(issue.body) match {
       case Some(currentLink) if currentLink == link =>
         // there is nothing to do here
-        Future.successful(false)
+        Future.successful(true)
       case Some(currentLink) =>
         val body = issue.body.replaceAll(linkRx, link)
-        GithubApi.updateIssueBody(repo.accessToken, issue, body)
+        GithubApi.updateIssueBody(accessToken, issue, body)
       case _ =>
         val body = issue.body + "\n\n" + link
-        GithubApi.updateIssueBody(repo.accessToken, issue, body)
+        GithubApi.updateIssueBody(accessToken, issue, body)
     }
   }
 

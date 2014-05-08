@@ -1,17 +1,17 @@
 package controllers
 
 import models._
-import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
+import braingames.reactivemongo.{GlobalAccessContext, DBAccessContext}
 import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.util.ExtendedTypes._
 import scala.concurrent.Future
 import play.api.libs.json._
-import models.TimeEntry._
 import models.User
 import braingames.util.Fox
 import play.api.Logger
 import controllers.auth.UserAwareRequest
+import net.liftweb.common.{Full, Failure}
 
 /**
  * Company: scalableminds
@@ -56,43 +56,47 @@ object TimeEntryController extends Controller {
     }
   }
 
+  def ensureCollaboration(user: User, repository: Repository) = {
+    user.isCollaboratorOf(repository) match {
+      case true => Full(true)
+      case _ => Failure("Not allowed")
+    }
+  }
+
   def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction.async(parse.json) {
     implicit request =>
-      val fullName = RepositoryDAO.createFullName(owner, repo)
-      (for {
+      val fullName = Repository.createFullName(owner, repo)
+      for {
         user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
-        repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
-        if (repository.isCollaborator(user) || repository.isAdmin(user))
+        repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
+        _ <- ensureCollaboration(user, repository).toFox
         timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
         duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
       } yield {
-
         val issue = Issue(fullName, issueNumber)
         val timeEntry = TimeEntry(issue, duration, user.userId, timeEntryPost.comment, timeEntryPost.timestamp)
         TimeEntryDAO.createTimeEntry(timeEntry)(user)
         JsonOk("OK")
-      }) ?~> "Not allowed."
+      }
   }
 
   def createGenericForm() = Authenticated.async {
     implicit request =>
-      val user = request.user
       for {
-        usedRepos <- RepositoryDAO.findAll(GlobalAccessContext) ?~> "Not allowed."
+        usedRepositories <- RepositoryDAO.findAll
       } yield {
-        Ok(html.genericTimeEntry(usedRepos))
+        Ok(html.genericTimeEntry(usedRepositories))
       }
   }
 
   def createForm(owner: String, repo: String, issueNumber: Int, referer: Option[String]) = Authenticated.async {
     implicit request =>
-      val user = request.user.asInstanceOf[User]
-      (for {
-        repository <- RepositoryDAO.findByName(RepositoryDAO.createFullName(owner, repo)) ?~> "Repository couldn't be found"
-        if (repository.isCollaborator(user) || repository.isAdmin(user))
+      for {
+        repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo)) ?~> "Repository couldn't be found"
+        _ <- ensureCollaboration(request.user, repository).toFox
       } yield {
         Ok(html.timeEntry(owner, repo, issueNumber))
-      }) ?~> "Not allowed."
+      }
   }
 
   def showIssues(owner: String, repo: String) = Authenticated.async {
@@ -106,7 +110,7 @@ object TimeEntryController extends Controller {
 
   def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = Authenticated.async {
     implicit request =>
-      val fullName = RepositoryDAO.createFullName(owner, repo)
+      val fullName = Repository.createFullName(owner, repo)
       for {
         entries <- TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber))
         jsonUserTimesList <- createUserTimesList(entries)

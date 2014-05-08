@@ -26,14 +26,41 @@ object UserProfile {
   implicit val userProfileFormat = Json.format[UserProfile]
 }
 
+case class RepositoryAccess(name: String, isAdmin: Boolean, isPusher: Boolean)
+
+object RepositoryAccess{
+  implicit val repositoryAccessFormat = Json.format[RepositoryAccess]
+}
+
 case class User(userId: Int,
   profile: UserProfile,
   authInfo: AccessToken,
+  repositories: List[RepositoryAccess],
   accessKey: Option[String]) extends DBAccessContextPayload {
 
   val avatarUrl = None
 
   def githubAccessToken = authInfo.accessToken
+
+  def adminRepositories = repositories.filter(_.isAdmin)
+
+  def pushRepositories = repositories.filter(_.isPusher)
+
+  def namesOfPushRepositories = pushRepositories.map(_.name)
+
+  def namesOfAdminRepositories = adminRepositories.map(_.name)
+
+  def isAdminOf(repo: Repository): Boolean =
+    isAdminOf(repo.name)
+
+  def isAdminOf(repoName: String): Boolean =
+    adminRepositories.exists(_.name == repoName)
+
+  def isCollaboratorOf(repo: Repository): Boolean =
+    isCollaboratorOf(repo.name)
+
+  def isCollaboratorOf(repoName: String): Boolean =
+    pushRepositories.exists(_.name == repoName)
 }
 
 object User {
@@ -59,13 +86,26 @@ object UserDAO extends BasicReactiveDAO[User] {
     find(Json.obj("accessKey" -> accessKey)).one[User]
   }
 
+  def findConnectedTo(repositoryName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("repositories.name" -> repositoryName))
+    .cursor[User]
+    .collect[List]()
+  }
+
+  def updateRepositories(userId: Int, repositories: List[RepositoryAccess])(implicit ctx: DBAccessContext) = {
+    findAndModify(findByUserIdQ(userId),
+      Json.obj(
+        "$set" -> Json.obj("repositories" -> repositories)), returnNew = true)
+  }
+
   def update(userId: Int, profile: UserProfile, authInfo: AccessToken)(implicit ctx: DBAccessContext): Fox[User] = {
     findAndModify(findByUserIdQ(userId),
       Json.obj(
         "$set" -> Json.obj(
           "profile" -> profile, "authInfo" -> authInfo),
         "$setOnInsert" -> Json.obj(
-          "userId" -> userId
+          "userId" -> userId,
+          "repositories" -> Json.arr()
         )), upsert = true, returnNew = true)
   }
 

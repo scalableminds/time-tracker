@@ -11,43 +11,35 @@ import braingames.reactivemongo.AccessRestrictions._
  * Date: 22.07.13
  * Time: 01:54
  */
-case class Repository(fullName: String, accessToken: String, admins: List[Int], collaborators: List[Int]) {
+case class Repository(fullName: String) {
   def owner = fullName.split("/").head
 
   def name = fullName.split("/").last
+}
 
-  def isAdmin(user: User) = {
-    admins.contains(user.userId)
-  }
+object Repository{
 
-  def isCollaborator(user: User) = {
-    collaborators.contains(user.userId)
-  }
+  implicit val repositoryFormat = Json.format[Repository]
+
+  def createFullName(owner: String, repo: String) =
+    owner + "/" + repo
 }
 
 object RepositoryDAO extends BasicReactiveDAO[Repository] {
   val collectionName = "repositories"
 
+  implicit val formatter = Repository.repositoryFormat
+
   override val AccessDefinitions = new DefaultAccessDefinitions {
     override def findQueryFilter(implicit ctx: DBAccessContext) = {
       ctx.data match {
         case Some(user: User) =>
-          AllowIf(Json.obj("$or" -> List(
-            Json.obj("collaborators" -> user.userId),
-            Json.obj("admins" -> user.userId))))
-        case _ if ctx.globalAccess =>
-          AllowEveryone
+          AllowIf(Json.obj("fullName" -> Json.obj("$in" -> user.namesOfPushRepositories)))
         case _ =>
           DenyEveryone()
-
       }
     }
   }
-
-  def createFullName(owner: String, repo: String) =
-    owner + "/" + repo
-
-  implicit val formatter = Json.format[Repository]
 
   def findByName(fullName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
     find(Json.obj("fullName" -> fullName)).one[Repository]

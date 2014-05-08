@@ -4,6 +4,7 @@ import scala.None
 import models.{UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import models.auth.UserCache
+import play.api.libs.json.Json
 
 /**
  * Company: scalableminds
@@ -17,6 +18,10 @@ object UserController extends Controller {
   def showSettings() = Authenticated {
     implicit request =>
       Ok(views.html.user.settings(request.user.asInstanceOf[User]))
+  }
+
+  def listRepositories = Authenticated{ implicit request =>
+    Ok(Json.toJson(request.user.repositories))
   }
 
   def createAccessKey() = Authenticated.async {
