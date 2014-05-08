@@ -7,8 +7,9 @@ class AvailableRepositoriesItem extends Backbone.Marionette.ItemView
 
   tagName: "option"
   template: _.template("""
-    <%= repository %>
+    <%= name %>
   """)
 
   attributes : ->
-    value: this.model.repository
+
+    value: @model.get("name")

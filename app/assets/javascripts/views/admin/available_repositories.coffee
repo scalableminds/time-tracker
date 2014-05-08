@@ -36,6 +36,7 @@ class AvailableRepositories extends Backbone.Marionette.CompositeView
   initialize: ->
 
     @collection = new AvailableRepositoriesCollection()
+    @collection.fetch()
 
 
   addItem: ->
