@@ -1,6 +1,6 @@
 ### define
 backbone : Backbone
-Utils : Utils
+utils : Utils
 ###
 
 class UserSettingsModel extends Backbone.Model
