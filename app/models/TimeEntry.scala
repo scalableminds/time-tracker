@@ -22,7 +22,8 @@ object Issue {
   implicit val issueFormatter = Json.format[Issue]
 }
 
-case class TimeEntry(issue: Issue, duration: Int, userId: Int, comment: Option[String], timestamp: Long = System.currentTimeMillis)
+case class
+TimeEntry(issue: Issue, duration: Int, userId: Int, comment: Option[String], timestamp: Long = System.currentTimeMillis)
 
 object TimeEntry extends{
   import Issue.issueFormatter
@@ -45,7 +46,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
         case Some(user: User) =>
           val repositories = Await.result(RepositoryDAO.findAllWhereUserIsAdmin(user) getOrElse Nil, 5 seconds)
           AllowIf(Json.obj("$or" -> Json.arr(
-            Json.obj("issue.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.fullName))))),
+            Json.obj("issue.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.name))))),
             Json.obj("userId" -> user.userId)
           )))
         case _ =>

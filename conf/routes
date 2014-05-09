@@ -9,27 +9,27 @@ GET           /team                                                 controllers.
 GET           /project                                              controllers.Application.project
 
 # Admin
-GET           /admin/repositories                                   controllers.admin.RepositoryAdministration.list
-POST          /admin/repositories                                   controllers.admin.RepositoryAdministration.add
-GET           /admin/repositories/:owner/:name/scan                 controllers.admin.RepositoryAdministration.scan(owner: String, name: String)
-DELETE        /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
+GET           /api/repos                                            controllers.RepositoryController.list
+POST          /api/repos                                            controllers.RepositoryController.add
+GET           /api/repos/:owner/:name/scan                          controllers.RepositoryController.scan(owner: String, name: String)
+DELETE        /api/repos/:owner/:name                               controllers.RepositoryController.delete(owner: String, name: String)
+POST          /api/repos/:owner/:repo/hook                          controllers.RepositoryController.issueHook(owner: String, repo: String)
 
 # Add Issue time entry
 GET           /create                                               controllers.TimeEntryController.createGenericForm
 GET           /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int, referer: Option[String])
-POST          /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
-POST          /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
-GET           /repos                                                controllers.RepositoryController.list
+POST          /api/repos/:owner/:repo/issues/:issueNumber           controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
+
 # Request times
-GET           /times/:year/:month                                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
-GET           /user/times/:year/:month                              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
+GET           /api/times/:year/:month                               controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
+GET           /api/user/times/:year/:month                          controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
 GET           /user/settings                                        controllers.UserController.showSettings()
-POST          /user/accesskey                                       controllers.UserController.createAccessKey()
-GET           /user/repos                                           controllers.UserController.listRepositories
-GET           /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
+POST          /api/user/accesskey                                   controllers.UserController.createAccessKey()
+GET           /api/user/repos                                       controllers.UserController.listRepositories
+GET           /api/repos/:owner/:repo/issues/:issueNumber           controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
 
 #Request issues
-GET           /issues/:owner/:repo                                  controllers.TimeEntryController.showIssues(owner, repo)
+GET           /api/issues/:owner/:repo                              controllers.TimeEntryController.showIssues(owner, repo)
 
 # Providers entry points
 GET           /authenticate/complete                                controllers.auth.Authentication.complete(state: String, code: String)

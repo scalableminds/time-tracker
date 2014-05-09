@@ -23,7 +23,7 @@ class GithubIssueActor extends Actor {
   def receive = {
     case FullScan(repo, accessToken) =>
       Logger.debug("Starting repo full scan.")
-      GithubApi.listRepositoryIssues(accessToken, repo.fullName).map {
+      GithubApi.listRepositoryIssues(accessToken, repo.name).map {
         issues =>
           issues.map {
             issue =>
@@ -42,7 +42,7 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
 
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
     val link =
-      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number, Some("github")).url
+      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.shortName, issue.number, Some("github")).url
     s"""<a href="$link" target="_blank">Log Time</a>"""
   }
 
@@ -64,6 +64,6 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
   }
 
   def ensureIssueIsArchived(repo: Repository, issue: GithubIssue) = {
-    IssueDAO.archiveIssue(ArchivedIssue(repo.fullName, issue.number, issue.title))(GlobalAccessContext)
+    IssueDAO.archiveIssue(ArchivedIssue(repo.name, issue.number, issue.title))(GlobalAccessContext)
   }
 }

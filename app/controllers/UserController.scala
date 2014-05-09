@@ -1,10 +1,12 @@
 package controllers
 
 import scala.None
-import models.{UserDAO, User}
+import models.{RepositoryAccess, UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import models.auth.UserCache
 import play.api.libs.json.Json
+import braingames.mvc.Filter
+import braingames.util.DefaultConverters._
 
 /**
  * Company: scalableminds
@@ -21,7 +23,11 @@ object UserController extends Controller {
   }
 
   def listRepositories = Authenticated{ implicit request =>
-    Ok(Json.toJson(request.user.repositories))
+    UsingFilters[RepositoryAccess](
+      Filter("isAdmin", (isAdmin: Boolean, repoAccess) => repoAccess == isAdmin)
+    ){ filter =>
+      Ok(Json.toJson(filter.applyOn(request.user.repositories)))
+    }
   }
 
   def createAccessKey() = Authenticated.async {

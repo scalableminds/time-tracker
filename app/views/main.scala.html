@@ -34,7 +34,7 @@
 	    <li @if(title=="Home"){class="active"}><a href="@controllers.routes.Application.home">Me</a></li>
 	    <li @if(title=="Project"){class="active"}><a href="@controllers.routes.Application.project">Project</a></li>
 	    <li @if(title=="Team"){class="active"}><a href="@controllers.routes.Application.team">Team</a></li>
-	    <li @if(title=="Repository Administration"){class="active"}><a href="@controllers.admin.routes.RepositoryAdministration.list">Admin</a></li>
+	    <li @if(title=="Repository Administration"){class="active"}><a href="/repos">Repositories</a></li>
 	    <li @if(title=="Log now"){class="active"}><a href="@controllers.routes.TimeEntryController.createGenericForm">Log now</a></li>
 	  </ul>
 	  <ul class="nav navbar-nav navbar-right">
