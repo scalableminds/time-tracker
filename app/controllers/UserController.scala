@@ -43,7 +43,7 @@ object UserController extends Controller {
 
   def listRepositories = Authenticated{ implicit request =>
     UsingFilters[RepositoryAccess](
-      Filter("isAdmin", (isAdmin: Boolean, repoAccess) => repoAccess == isAdmin)
+      Filter("isAdmin", (isAdmin: Boolean, repoAccess) => repoAccess.isAdmin == isAdmin)
     ){ filter =>
       Ok(Json.toJson(filter.applyOn(request.user.repositories)))
     }
