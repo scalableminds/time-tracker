@@ -6,6 +6,7 @@ views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
+views/faq_view  : FAQView
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
 models/user/user_viewmodel : UserViewModel
@@ -24,6 +25,7 @@ class Router extends Backbone.Router
     "team"                                      : "team"
     "team/:date"                                : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
+    "faq"                                       : "faq"
 
   whitelist : [
     "/authenticate/github"
@@ -64,6 +66,11 @@ class Router extends Backbone.Router
     @changeView(new AdminPanelView())
 
 
+  faq  : ->
+
+    @changeView(new FAQView())
+
+
   showReport : (model) ->
 
     spinnerView = new SpinnerView(model : model)
@@ -71,6 +78,7 @@ class Router extends Backbone.Router
     reportView = new ReportView(model : model)
 
     @changeView(spinnerView, monthPickerView, reportView)
+
 
   changeView : (views...) ->
 

@@ -17,6 +17,15 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
       </div>
       <div class="col-sm-5">
         <div class="input-group">
+          <span class="input-group-addon">
+            <input type="checkbox" id="enableIssueLink">
+          </span>
+          <div class="form-control">
+            Would you like to add links to all your repositories pointing to the time tracker?
+             <a href="/faq" title="What is this?"><i class="fa fa-question-circle"></i></a>
+          </div>
+        </div>
+        <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-key"></i></span>
           <input class="form-control" type="text" id="inputAccess" name="accessToken" required="" value="" placeholder="Access Token">
         </div>
@@ -40,7 +49,10 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
   initialize: ->
 
     @collection = new AvailableRepositoriesCollection()
-    @collection.fetch()
+    @collection.fetch(
+      data :
+        isAdmin : true
+    )
 
 
   addItem: ->

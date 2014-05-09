@@ -30,20 +30,23 @@
       <nav class="collapse navbar-collapse" id="navbar-header-collapse">
       @session.userOpt.map { user =>
         <ul class="nav navbar-nav" id="main-nav">
-          <li @if(title=="Home"){class="active"}>
+          <li>
             <a href="/">Me</a>
           </li>
-          <li @if(title=="Project"){class="active"}>
+          <li>
             <a href="/project">Project</a>
           </li>
-          <li @if(title=="Team"){class="active"}>
+          <li>
             <a href="/team">Team</a>
           </li>
-          <li @if(title=="Admin Panel"){class="active"}>
+          <li>
             <a href="/admin">Admin</a>
           </li>
-          <li @if(title=="Log now"){class="active"}>
+          <li>
             <a href="/log">Log now</a>
+          </li>
+          <li>
+            <a href="/faq">FAQ</a>
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
