@@ -44,7 +44,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
           <label class="control-label" for="date">Date</label>
           <div class="input-group" >
             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-            <input class="form-control" type="text" name="date" pattern="^\\d{2}\\.\\d{2}\\.\\d{4}">
+            <input class="form-control" type="text" name="date" pattern="^\\d{4}\\-\\d{2}\\-\\d{2}">
           </div>
         </div>
         <div class="form-group">
@@ -84,8 +84,8 @@ class LogTimeView extends Backbone.Marionette.CompositeView
   afterRender : =>
 
     @ui.inputDate
-      .datepicker({format : "dd.mm.yyyy"})
-      .datepicker("setValue", @model.get("timestamp").toDate())
+      .datepicker({format : "yyyy-mm-dd"})
+      .datepicker("setValue", @model.get("dateTime").toDate())
       .on "changeDate", (evt) =>
         @ui.inputDate.datepicker("hide")
 
@@ -109,7 +109,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       issueNumber : @ui.issueNumber.val()
       comment : @ui.inputComment.val()
       duration : @ui.inputDuration.val()
-      timestamp : moment.utc(@ui.inputDate.val()).valueOf()
+      dateTime : moment.utc(@ui.inputDate.val()).toISOString()
     ).then(
       =>
         @showAlert("You time entry was successfully logged.", "success")

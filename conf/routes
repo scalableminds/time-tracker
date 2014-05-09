@@ -5,6 +5,7 @@
 # General
 GET           /                                               controllers.Application.index
 GET           /home                                           controllers.Application.home
+GET           /faq                                           controllers.Application.faq
 
 # Add time entry to issue
 GET           /create                                         controllers.TimeEntryController.createGenericForm

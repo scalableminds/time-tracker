@@ -6,11 +6,7 @@ views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
-<<<<<<< HEAD
-views/faq_view  : FAQView
-=======
 views/user_settings_view  : UserSettingsView
->>>>>>> 842fa55060541eea86f0c8acb10e822adb4dfe71
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
 models/user/user_viewmodel : UserViewModel
@@ -19,7 +15,6 @@ models/user/user_viewmodel : UserViewModel
 class Router extends Backbone.Router
 
   routes :
-    ""                                          : "user"
     "log"                                       : "log"
     "home"                                      : "user"
     "home/:date"                                : "user"
@@ -29,7 +24,6 @@ class Router extends Backbone.Router
     "team"                                      : "team"
     "team/:date"                                : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
-    "faq"                                       : "faq"
     "settings"                                  : "settings"
 
   whitelist : [
@@ -81,10 +75,6 @@ class Router extends Backbone.Router
     @changeView(new UserSettingsView())
     @changeActiveNavbarItem()
 
-
-  faq  : ->
-
-    @changeView(new FAQView())
 
 
   showReport : (model) ->

@@ -22,7 +22,7 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
           </span>
           <div class="form-control">
             Would you like to add links to this repository's issues pointing to the time tracker?
-             <a href="/faq#q1" title="What is this?"><i class="fa fa-question-circle"></i></a>
+             <a href="/faq#auto-link" title="What is this?"><i class="fa fa-question-circle"></i></a>
           </div>
         </div>
         <div class="input-group">

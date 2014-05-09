@@ -24,14 +24,9 @@ object Application extends Controller {
       Ok(html.team())
   }
 
-  def project = Authenticated {
+  def faq = UserAwareAction {
     implicit request =>
-      Ok(html.project())
-  }
-
-  def admin = Authenticated {
-    implicit request =>
-      Ok(html.admin.panelAdmin())
+      Ok(html.faq())
   }
 
   def javascriptRoutes = Action { implicit request =>

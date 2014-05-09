@@ -59,7 +59,7 @@ object RepositoryController extends Controller {
 
   def add = Authenticated.async(parse.json) {
     implicit request =>
-      request.body.validate(Repository.repositoryFormat) match {
+      request.body.validate(Repository.publicRepositoryReads) match {
         case JsSuccess(repo, _) =>
           if (repo.usesIssueLinks && repo.accessToken.isEmpty) {
             Future.successful(JsonBadRequest("repo.accessToken.missing"))
