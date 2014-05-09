@@ -71,7 +71,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
 
   def timeStampQuery(interval: Interval) = {
     Json.obj(
-      "timestamp" -> Json.obj(
+      "dateTime" -> Json.obj(
         "$gte" -> interval.getStart.getMillis,
         "$lte" -> interval.getEnd.getMillis
       )
