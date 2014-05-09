@@ -6,13 +6,15 @@ import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.util.ExtendedTypes._
 import scala.concurrent.Future
-import play.api.libs.json._
 import models.User
 import braingames.util.Fox
 import play.api.Logger
 import controllers.auth.UserAwareRequest
-import net.liftweb.common.{Full, Failure}
-import org.joda.time.DateTime
+import net.liftweb.common.Failure
+import org.joda.time.{LocalDateTime, DateTime}
+import play.api.libs.json._
+import net.liftweb.common.Full
+import org.joda.time.format.ISODateTimeFormat
 
 /**
  * Company: scalableminds
@@ -41,6 +43,9 @@ object TimeEntryController extends Controller {
   val DefaultAccessRole = None
 
   case class TimeEntryPost(duration: String, comment: Option[String], dateTime: DateTime)
+
+  implicit val jodaDateReads: Reads[DateTime] =
+    Reads.StringReads.map(x => LocalDateTime.parse(x, ISODateTimeFormat.dateTimeParser()).toDateTime)
 
   implicit val timeEntryPostFormat = Json.format[TimeEntryPost]
 
