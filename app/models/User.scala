@@ -38,6 +38,7 @@ case class User(userId: Int,
   profile: UserProfile,
   authInfo: AccessToken,
   repositories: List[RepositoryAccess],
+  settings: JsValue,
   accessKey: Option[String]) extends DBAccessContextPayload {
 
   val avatarUrl = None
@@ -104,6 +105,12 @@ object UserDAO extends BasicReactiveDAO[User] {
         "$set" -> Json.obj("repositories" -> repositories)), returnNew = true)
   }
 
+  def updateSettings(userId: Int, settings: JsValue)(implicit ctx: DBAccessContext) = {
+    findAndModify(findByUserIdQ(userId),
+      Json.obj(
+        "$set" -> Json.obj("settings" -> settings)), returnNew = true)
+  }
+
   def update(userId: Int, profile: UserProfile, authInfo: AccessToken)(implicit ctx: DBAccessContext): Fox[User] = {
     findAndModify(findByUserIdQ(userId),
       Json.obj(
@@ -111,7 +118,8 @@ object UserDAO extends BasicReactiveDAO[User] {
           "profile" -> profile, "authInfo" -> authInfo),
         "$setOnInsert" -> Json.obj(
           "userId" -> userId,
-          "repositories" -> Json.arr()
+          "repositories" -> Json.arr(),
+          "settings" -> Json.obj()
         )), upsert = true, returnNew = true)
   }
 
