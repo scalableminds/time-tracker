@@ -1,6 +1,6 @@
 package models
 
-import play.api.libs.json.{JsObject, Writes, Json}
+import play.api.libs.json._
 import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.reactivemongo.AccessRestrictions._
@@ -9,6 +9,7 @@ import models.auth.UserService
 import braingames.util.Fox
 import scala.concurrent.Future
 import play.modules.reactivemongo.json.BSONFormats._
+import play.api.libs.functional.syntax._
 
 /**
  * Company: scalableminds
@@ -27,6 +28,11 @@ case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option
 object Repository {
 
   implicit val repositoryFormat = Json.format[Repository]
+
+  def publicRepositoryReads =
+    ((__ \ 'name).read[String] and
+      (__ \ 'usesIssueLinks).read[Boolean] and
+      (__ \ 'accessToken).readNullable[String])(Repository(_,_,_))
 
   def publicRepositoryWrites(repository: Repository): Future[JsObject] = {
     for{
