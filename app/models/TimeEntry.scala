@@ -4,7 +4,7 @@ import play.api.libs.json.{JsString, JsArray, Json}
 import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import java.util.{Calendar, Date}
-import org.joda.time.{Interval, YearMonth}
+import org.joda.time.{DateTime, Interval, YearMonth}
 import play.api.Logger
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -23,7 +23,7 @@ object Issue {
 }
 
 case class
-TimeEntry(issue: Issue, duration: Int, userId: Int, comment: Option[String], timestamp: Long = System.currentTimeMillis)
+TimeEntry(issue: Issue, duration: Int, userId: Int, comment: Option[String], dateTime: DateTime = DateTime.now())
 
 object TimeEntry extends{
   import Issue.issueFormatter

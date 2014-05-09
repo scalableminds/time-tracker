@@ -12,6 +12,7 @@ import braingames.util.Fox
 import play.api.Logger
 import controllers.auth.UserAwareRequest
 import net.liftweb.common.{Full, Failure}
+import org.joda.time.DateTime
 
 /**
  * Company: scalableminds
@@ -39,7 +40,7 @@ object DurationParser {
 object TimeEntryController extends Controller {
   val DefaultAccessRole = None
 
-  case class TimeEntryPost(duration: String, comment: Option[String], timestamp: Long = System.currentTimeMillis())
+  case class TimeEntryPost(duration: String, comment: Option[String], dateTime: DateTime)
 
   implicit val timeEntryPostFormat = Json.format[TimeEntryPost]
 
@@ -49,7 +50,7 @@ object TimeEntryController extends Controller {
 
   def userFromRequestOrKey(accessKey: String)(implicit request: UserAwareRequest[_]) = {
     for {
-      u1 <- Future.successful(request.userOpt.map(u => (u.asInstanceOf[User])))
+      u1 <- Future.successful(request.userOpt)
       u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext).futureBox
     } yield {
       u1 orElse u2
@@ -74,7 +75,7 @@ object TimeEntryController extends Controller {
         duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
       } yield {
         val issue = Issue(fullName, issueNumber)
-        val timeEntry = TimeEntry(issue, duration, user.userId, timeEntryPost.comment, timeEntryPost.timestamp)
+        val timeEntry = TimeEntry(issue, duration, user.userId, timeEntryPost.comment, timeEntryPost.dateTime)
         TimeEntryDAO.createTimeEntry(timeEntry)(user)
         JsonOk("OK")
       }
