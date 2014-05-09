@@ -1,15 +1,11 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models
 
 import play.api.libs.json.Json
 import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
-
-/**
- * Company: scalableminds
- * User: philippotto
- * Date: 14.11.13
- * Time: 20:55
- */
 
 case class ArchivedIssue(fullRepoName: String, number: Int, title: String)
 

@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models
 
 import _root_.java.util.UUID
@@ -9,13 +12,6 @@ import play.api.libs.functional.syntax._
 
 import braingames.util.Fox
 import reactivemongo.core.commands.LastError
-
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 22:36
- */
 
 case class UserProfile(
   login: String,

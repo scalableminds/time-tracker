@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+ */
 package models
 
 import play.api.libs.json.{JsString, JsArray, Json}
@@ -10,12 +13,6 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import braingames.reactivemongo.AccessRestrictions._
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 13:15
- */
 case class Issue(project: String, number: Int)
 
 object Issue {

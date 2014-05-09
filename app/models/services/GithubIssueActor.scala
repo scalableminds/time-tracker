@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models.services
 
 import akka.actor.Actor
@@ -9,12 +12,6 @@ import play.api.Logger
 import models.{IssueDAO, ArchivedIssue}
 import scala.concurrent.Future
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 25.07.13
- * Time: 02:23
- */
 case class FullScan(repo: Repository, accesssToken: String)
 
 class GithubIssueActor extends Actor {
