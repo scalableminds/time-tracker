@@ -15,7 +15,7 @@ models/team/team_viewmodel : TeamViewModel
 
 class UserViewModel extends TeamViewModel
 
-  defaults :
+  defaults : ->
     date : moment()
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
@@ -23,5 +23,5 @@ class UserViewModel extends TeamViewModel
     urlRoot : "home"
     viewTitle : "User Report"
 
-  dataSource : UserTimeCollection
+  dataSourceClass : UserTimeCollection
 

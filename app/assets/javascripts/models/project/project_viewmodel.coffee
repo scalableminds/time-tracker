@@ -14,7 +14,7 @@ models/team/team_viewmodel : TeamViewModel
 
 class ProjectViewModel extends TeamViewModel
 
-  defaults :
+  defaults : ->
     date : moment()
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
