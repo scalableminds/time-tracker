@@ -26,19 +26,19 @@ class RepositoryPanelView extends Backbone.Marionette.Layout
     @activeRepositoriesView = new ActiveRepositoriesView()
 
     @listenTo(@availableRepositoriesView, "newItem", @addActiveRepository)
+    @listenTo(@, "render", @afterRender)
 
+  afterRender: ->
 
-  render: ->
-
-    @$el.html(@template())
-
-    # subviews
     @availableRepositories.show(@availableRepositoriesView)
     @activeRepositories.show(@activeRepositoriesView)
 
 
   addActiveRepository: ->
 
-    #TODO fetch the collection again from the server
-    @activeRepositoriesView.collection.add({id: Math.random(), repository: "scalableminds/auth-proxy", accessToken: 1234567, adminId: 123})
+    @activeRepositoriesView.collection.create(
+      repository : "scalableminds/auth-proxy"
+      accessToken : 1234567
+    , wait : true
+    )
 
