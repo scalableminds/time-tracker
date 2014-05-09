@@ -18,8 +18,4 @@ class LogTimeModel extends Backbone.Model
 
     @url = "/api/repos/#{attributes.repository}/issues/#{attributes.issueNumber}"
 
-    #make sure the timestamp gets synced as unix timestamp
-    unixTimestamp = moment(@get("timestamp")).unix() * 1000
-    @set("timestamp", unixTimestamp)
-
     super(attributes, {method : "POST"})

@@ -1,11 +1,10 @@
 ### define
 underscore : _
 backbone : Backbone
-jquery : $
 moment : moment
 utils: Utils
 models/team_time_collection : TeamTimeCollection
-models/users_collection : UsersCollection
+models/viewmodel : ViewModel
 ###
 
 # #############
@@ -15,7 +14,7 @@ models/users_collection : UsersCollection
 # 'team' view and serves common view models attributes for this view.
 # #############
 
-class TeamViewModel extends Backbone.Model
+class TeamViewModel extends ViewModel
 
   defaults : ->
     date : moment()
@@ -26,33 +25,6 @@ class TeamViewModel extends Backbone.Model
     viewTitle : "Team Report"
 
   dataSourceClass : TeamTimeCollection
-
-
-  initialize : (options = {}) ->
-
-    if options.date
-      @set("date", moment(options.date).startOf("month"))
-
-    @dataSource = new @dataSourceClass()
-    @usersCollection = new UsersCollection()
-
-
-  fetch : =>
-
-    @dataSource.date = @get("date")
-    userPromise = @usersCollection.fetch()
-    dataPromise = @dataSource.fetch()
-
-    return $.when(userPromise, dataPromise).done(
-      =>
-        @set {
-          monthlyTotalHours: @dataSource.getMonthlyTotalHours()
-          dailyTotalHours: @dataSource.getDailyTotalHours()
-        }
-        @transformData()
-        @trigger("sync", @)
-    )
-
 
   transformData : ->
 

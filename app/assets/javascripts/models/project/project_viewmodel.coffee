@@ -2,7 +2,8 @@
 backbone : Backbone
 moment : moment
 utils: Utils
-models/team/team_viewmodel : TeamViewModel
+models/team_time_collection : TeamTimeCollection
+models/viewmodel : ViewModel
 ###
 
 # #############
@@ -12,7 +13,7 @@ models/team/team_viewmodel : TeamViewModel
 # 'project' view and serves common view models attributes for this view.
 # #############
 
-class ProjectViewModel extends TeamViewModel
+class ProjectViewModel extends ViewModel
 
   defaults : ->
     date : moment()
@@ -21,6 +22,8 @@ class ProjectViewModel extends TeamViewModel
     dailyTotalHours : 0
     urlRoot : "project"
     viewTitle : "Project View"
+
+  dataSourceClass : TeamTimeCollection
 
 
   transformData : ->
