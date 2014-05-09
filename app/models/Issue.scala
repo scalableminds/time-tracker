@@ -7,36 +7,28 @@ import play.api.libs.json.Json
 import braingames.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
 
-case class ArchivedIssue(fullRepoName: String, number: Int, title: String)
+case class Issue(fullRepoName: String, number: Int, title: String)
 
-case class CondensedIssue(number: Int, title: String) {
-  def this(issue: ArchivedIssue) = this(issue.number, issue.title)
+object Issue{
+  implicit val issueFormat = Json.format[Issue]
 }
 
-object CondensedIssue {
-  implicit val formatter = Json.format[CondensedIssue]
-}
-
-object IssueDAO extends BasicReactiveDAO[ArchivedIssue] {
+object IssueDAO extends BasicReactiveDAO[Issue] {
   val collectionName = "issues"
 
-  implicit val formatter = Json.format[ArchivedIssue]
+  implicit val formatter = Issue.issueFormat
 
   def findByNumberAndRepo(number: Int, fullRepoName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
     find(
       Json.obj("number" -> number, "fullRepoName" -> fullRepoName)
-    ).one[ArchivedIssue]
+    ).one[Issue]
   }
 
-  def findByRepo(fullRepoName: String)(implicit ctx: DBAccessContext) = {
-    val archivedIssueList = withExceptionCatcher(find(
-      Json.obj("fullRepoName" -> fullRepoName)
-    ).cursor[ArchivedIssue].collect[List]())
-
-    archivedIssueList.map { l => l.map { i => new CondensedIssue(i) } }
+  def findByRepo(fullRepoName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("fullRepoName" -> fullRepoName)).cursor[Issue].collect[List]()
   }
 
-  def archiveIssue(issue: ArchivedIssue)(implicit ctx: DBAccessContext) = {
+  def archiveIssue(issue: Issue)(implicit ctx: DBAccessContext) = {
     val jsIssue = Json.obj("number" -> issue.number, "fullRepoName" -> issue.fullRepoName)
     update(jsIssue, Json.obj("$set" -> Json.toJson(issue) ), upsert = true)
   }

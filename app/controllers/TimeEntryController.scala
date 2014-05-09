@@ -82,8 +82,8 @@ object TimeEntryController extends Controller {
         timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
         duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
       } yield {
-        val issue = Issue(fullName, issueNumber)
-        val timeEntry = TimeEntry(issue, duration, user.userId, timeEntryPost.comment, timeEntryPost.dateTime)
+        val issueReference = IssueReference(fullName, issueNumber)
+        val timeEntry = TimeEntry(issueReference, duration, user.userId, timeEntryPost.comment, timeEntryPost.dateTime)
         TimeEntryDAO.createTimeEntry(timeEntry)(user)
         JsonOk("OK")
       }
@@ -108,21 +108,11 @@ object TimeEntryController extends Controller {
       }
   }
 
-  def showIssues(owner: String, repo: String) = Authenticated.async {
-    implicit request =>
-      for {
-        entries <- IssueDAO.findByRepo(owner + "/" + repo)
-      } yield {
-        Ok(Json.obj("issues" -> entries))
-      }
-  }
-
   def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = Authenticated.async {
     implicit request =>
-      val fullName = Repository.createFullName(owner, repo)
+      val repositoryName = Repository.createFullName(owner, repo)
       for {
-        entries <- TimeEntryDAO.loggedTimeForIssue(Issue(fullName, issueNumber))
-        //jsonUserTimesList <- createUserTimesList(entries)
+        entries <- TimeEntryDAO.loggedTimeForIssue(IssueReference(repositoryName, issueNumber))
       } yield {
         Ok(Json.toJson(entries))
       }
