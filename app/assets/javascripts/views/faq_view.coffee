@@ -18,6 +18,10 @@ class FAQView extends Backbone.Marionette.ItemView
     <p>Existing issues will benefit from this feature once you active a repository in TimeTrack and enable the 'automatic time-tracking link' option. Newly created issues will also be assigned a link instantly on creation, by means of the Github hooks API.</p>
 
     <a></a>
+    <h4>Where did you get this awesome Stopwatch Icon?</h4>
+    <p><a href="http://thenounproject.com/term/stopwatch/282/">The Stopwatch icon</a> was designed by <a href="http://thenounproject.com/edward">Edward Boatman</a> from <a href="http://thenounproject.com/">the Noun Project</a>. Go check it out if you're ever in need of an expressive icon.</p>
+
+    <a></a>
     <h4>What is an 'access token' and where can I get mine?</h4>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, accusamus, asperiores aliquam dignissimos quibusdam illo fuga veniam ipsa optio quia delectus tenetur rerum nisi ea labore. Esse, deleniti neque alias!</p>
 
