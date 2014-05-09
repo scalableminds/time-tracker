@@ -1,0 +1,29 @@
+### define
+underscore : _
+backbone.marionette : Marionette
+./selection_item_view : SelectionItemView
+###
+
+class SelectionView extends Backbone.Marionette.CollectionView
+
+  tagName : "select"
+  className: "form-control"
+
+  itemView : SelectionItemView
+
+  initialize : (options) ->
+
+    @name = options.name
+    @collection.fetch().done(@render.bind(this))
+    @listenTo(@, "render", @afterRender)
+
+
+  afterRender : ->
+
+    @$el.attr("name", @name)
+    return
+
+
+  getValue : ->
+
+    return @el.value

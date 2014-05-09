@@ -6,10 +6,11 @@ views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
-views/user_settings_view  : UserSettingsView
+views/settings/user_settings_view  : UserSettingsView
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
 models/user/user_viewmodel : UserViewModel
+models/settings/user_settings_model : UserSettingsModel
 ###
 
 class Router extends Backbone.Router
@@ -28,6 +29,7 @@ class Router extends Backbone.Router
 
   whitelist : [
     "/authenticate/github"
+    "/faq"
   ]
 
   initialize  : ->
@@ -72,9 +74,17 @@ class Router extends Backbone.Router
 
   settings : ->
 
-    @changeView(new UserSettingsView())
+    userSettingsModel = new UserSettingsModel()
+    userSettingsView = new UserSettingsView(model : userSettingsModel)
+    spinnerView = new SpinnerView(model : userSettingsModel)
+    @changeView(spinnerView, userSettingsView)
+    userSettingsModel.fetch()
     @changeActiveNavbarItem()
 
+
+  faq  : ->
+
+    @changeActiveNavbarItem("/faq")
 
 
   showReport : (model) ->

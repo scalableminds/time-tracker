@@ -53,7 +53,7 @@
           <li class="divider-vertical"></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-user fa-white"></i> <strong>@user.profile.fullName</strong> @if(user.profile.email){ <span>(@user.profile.email)</span> }
+              <i class="fa fa-user fa-white"></i> <strong>@user.profile.fullName</strong>
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
@@ -88,8 +88,7 @@
     @content
     </div>
     <footer>
-      <p>by <img src="@routes.Assets.at("images/scalableminds.png")" alt="scalable minds" /></p>
-      <p>with <a href="http://thenounproject.com/noun/stopwatch/#icon-No282" target="_blank">Stopwatch</a> from The Noun Project</p>
+      <p>by <a href="http://scm.io/"><img src="@routes.Assets.at("images/scalableminds.png")" alt="scalable minds" /></a></p>
     </footer>
   </body>
 </html>
