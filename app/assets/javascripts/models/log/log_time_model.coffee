@@ -9,7 +9,7 @@ class LogTimeModel extends Backbone.Model
   constructor : (repository = null, issueNumber = 0) ->
 
     super(
-      dateTime : moment()
+      dateTime : moment.utc()
       repository: repository
       issueNumber : issueNumber
     )
