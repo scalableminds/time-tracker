@@ -23,12 +23,13 @@ class GithubIssueActor extends Actor {
   def receive = {
     case FullScan(repo, accessToken) =>
       Logger.debug("Starting repo full scan.")
-      GithubApi.listRepositoryIssues(accessToken, repo.name).map {
+      GithubApi.listRepositoryIssues(accessToken, repo.name).foreach {
         issues =>
-          issues.map {
+          issues.foreach {
             issue =>
               GithubIssueActor.ensureIssueIsArchived(repo, issue)
-              GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
+              if(repo.usesIssueLinks)
+                GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
           }
       }
   }
