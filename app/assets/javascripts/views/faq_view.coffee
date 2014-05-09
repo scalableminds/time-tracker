@@ -5,7 +5,7 @@ backbone.marionette : Marionette
 
 class FAQView extends Backbone.Marionette.ItemView
 
-  template : """"
+  template : """
     <h2>Frequently Asked Questions</h2>
     <h3>What is an 'automatic time tracking link' for Github Issues?</h3>
     <p>The TimeTracker can be configured to automatically add a weblink pointing to your time tracker profile on every Github Issue in your repositories. Both existing issues and newly created issues will be affected. This feature is meant to provide you with an easy and convient way of tracking time within Github issue tracking.</p>
