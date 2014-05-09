@@ -5,5 +5,5 @@ backbone : Backbone
 
 class ActiveRepositoriesCollection extends Backbone.Collection
 
-  url : "/repos"
+  url : "/api/repos"
 

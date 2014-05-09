@@ -29,9 +29,13 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
 
   itemView: AvailableRepositoriesItemView
   itemViewContainer: "select"
+
   events:
     "click button": "addItem"
 
+  ui :
+    "repoName" : "select"
+    "repoAccessToken" : "input"
 
   initialize: ->
 
@@ -41,4 +45,8 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
 
   addItem: ->
 
-    @trigger("newItem")
+    @trigger("newItem",
+      name : @ui.repoName.val()
+      accessToken : @ui.repoAccessToken.val()
+      usesIssueLinks : false
+    )

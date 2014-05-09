@@ -4,7 +4,7 @@
     <div class="container">
         <section>
             <h3>Add a new repository</h3>
-            @helper.form(controllers.admin.routes.RepositoryAdministration.add, 'class -> "form-horizontal", 'role -> "form") {
+            @helper.form(controllers.routes.RepositoryController.add, 'class -> "form-horizontal", 'role -> "form") {
                 <div class="form-group">
                     <label class="col-lg-2 control-label" for="inputRepo">Repository</label>
                     <div class="col-lg-10">
@@ -38,14 +38,14 @@
                         @idx
                         </td>
                         <td>
-                        @repository.fullName
+                        @repository.name
                         </td>
                         <td>
 
                         </td>
                         <td>
-                            <a href="@controllers.admin.routes.RepositoryAdministration.scan(repository.owner, repository.name)"><i class="icon-glass"></i> scan</a>
-                            <a href="@controllers.admin.routes.RepositoryAdministration.delete(repository.owner, repository.name)"><i class="icon-trash"></i> delete</a>
+                            <a href="@controllers.routes.RepositoryController.scan(repository.owner, repository.shortName)"><i class="icon-glass"></i> scan</a>
+                            <a href="@controllers.routes.RepositoryController.delete(repository.owner, repository.shortName)"><i class="icon-trash"></i> delete</a>
                         </td>
                     </tr>
                 }

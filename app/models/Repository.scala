@@ -11,10 +11,10 @@ import braingames.reactivemongo.AccessRestrictions._
  * Date: 22.07.13
  * Time: 01:54
  */
-case class Repository(fullName: String) {
-  def owner = fullName.split("/").head
+case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String]) {
+  def owner = name.split("/").head
 
-  def name = fullName.split("/").last
+  def shortName = name.split("/").last
 }
 
 object Repository{
@@ -34,20 +34,20 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
     override def findQueryFilter(implicit ctx: DBAccessContext) = {
       ctx.data match {
         case Some(user: User) =>
-          AllowIf(Json.obj("fullName" -> Json.obj("$in" -> user.namesOfPushRepositories)))
+          AllowIf(Json.obj("name" -> Json.obj("$in" -> user.namesOfPushRepositories)))
         case _ =>
           DenyEveryone()
       }
     }
   }
 
-  def findByName(fullName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
-    find(Json.obj("fullName" -> fullName)).one[Repository]
+  def findByName(name: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("name" -> name)).one[Repository]
   }
 
-  def removeByName(fullName: String)(implicit ctx: DBAccessContext) = {
+  def removeByName(name: String)(implicit ctx: DBAccessContext) = {
     remove(Json.obj(
-      "fullName" -> fullName
+      "name" -> name
     ))
   }
 
@@ -55,9 +55,9 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
     find(Json.obj("admins" -> user.userId)).cursor[Repository].collect[List]()
   }
 
-  def updateCollaborators(fullName: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {
+  def updateCollaborators(name: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {
     update(
-      Json.obj("fullName" -> fullName),
+      Json.obj("name" -> name),
       Json.obj("$set" -> Json.obj("collaborators" -> collaborators))
     )
   }

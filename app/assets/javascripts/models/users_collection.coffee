@@ -5,7 +5,7 @@ backbone : backbone
 
 class UsersCollection extends Backbone.Collection
 
-  url : "/users"
+  url : "/api/users"
 
   getNameById : (id) ->
 

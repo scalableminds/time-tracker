@@ -11,7 +11,7 @@ class UserTimeCollection extends Backbone.Collection
   url : ->
 
     dateUrl = Utils.dateToUrl(@date)
-    return "/user/times/#{dateUrl}"
+    return "/api/user/times/#{dateUrl}"
 
 
   getMonthlyTotalHours : ->

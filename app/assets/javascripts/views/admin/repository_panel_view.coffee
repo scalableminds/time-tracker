@@ -34,11 +34,7 @@ class RepositoryPanelView extends Backbone.Marionette.Layout
     @activeRepositories.show(@activeRepositoriesView)
 
 
-  addActiveRepository: ->
+  addActiveRepository: (newRepository) ->
 
-    @activeRepositoriesView.collection.create(
-      repository : "scalableminds/auth-proxy"
-      accessToken : 1234567
-    , wait : true
-    )
+    @activeRepositoriesView.collection.create(newRepository, wait : true)
 
