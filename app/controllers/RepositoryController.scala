@@ -10,9 +10,11 @@ import play.api.libs.concurrent.Execution.Implicits._
 import net.liftweb.common.{Failure, Empty, Full}
 import models.auth.UserService
 import scala.concurrent.Future
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsArray, JsError, JsSuccess, Json}
 import play.api.libs.concurrent.Akka
 import play.api.Play.current
+import braingames.util.Fox
+
 /**
  * Company: scalableminds
  * User: tmbo
@@ -44,7 +46,8 @@ object RepositoryController extends Controller {
   def list = Authenticated.async{ implicit request =>
     for{
       repositories <- RepositoryDAO.findAll
-    } yield Ok(Json.toJson(repositories))
+      js <- Future.traverse(repositories)(Repository.publicRepositoryWrites)
+    } yield Ok(JsArray(js))
   }
 
   def ensureAdminRights(user: User, repositoryName: String) = {
