@@ -73,6 +73,8 @@ class UserSettingsView extends Backbone.Marionette.Layout
 
     @ui.closeAfterGithub.prop("checked", @model.get("closeAfterGithub"))
 
+    @updateAccessKey()
+
 
   handleSave : (event) ->
 
@@ -90,9 +92,17 @@ class UserSettingsView extends Backbone.Marionette.Layout
       method : "POST"
       url : "/api/user/accesskey"
       datatype : "json"
-    ).done( (accesskey) =>
-      console.log(accesskey)
+    ).done( =>
+      @updateAccessKey()
     )
 
 
+  updateAccessKey : ->
 
+    $.ajax(
+      url : "/api/user"
+      datatype : "json"
+    ).done( (userObj) =>
+      @ui.accessKeyInput.val(userObj.accessKey)
+      return
+    )
