@@ -6,7 +6,6 @@ views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
-views/faq_view  : FAQView
 views/user_settings_view  : UserSettingsView
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
@@ -25,7 +24,6 @@ class Router extends Backbone.Router
     "team"                                      : "team"
     "team/:date"                                : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
-    "faq"                                       : "faq"
     "settings"                                  : "settings"
 
   whitelist : [
@@ -77,10 +75,6 @@ class Router extends Backbone.Router
     @changeView(new UserSettingsView())
     @changeActiveNavbarItem()
 
-
-  faq  : ->
-
-    @changeView(new FAQView())
 
 
   showReport : (model) ->

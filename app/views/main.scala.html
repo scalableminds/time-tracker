@@ -46,7 +46,7 @@
             <a href="/log">Log now</a>
           </li>
           <li>
-            <a href="/faq">FAQ</a>
+            <a href="@controllers.routes.Application.faq">FAQ</a>
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -67,6 +67,11 @@
           </li>
         </ul>
       }.getOrElse {
+        <ul class="nav navbar-nav" id="main-nav">
+          <li>
+            <a href="@controllers.routes.Application.faq">FAQ</a>
+          </li>
+        </ul>
         <ul class="nav navbar-nav navbar-right">
           <li>
             <a href="@controllers.auth.routes.Authentication.authenticate(None)">
