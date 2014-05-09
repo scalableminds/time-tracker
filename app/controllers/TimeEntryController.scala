@@ -146,8 +146,8 @@ object TimeEntryController extends Controller {
   def createUserTimesList(entries: List[TimeEntry])(implicit ctx: DBAccessContext) = {
     import scala.collection.breakOut
     val l: List[Fox[JsObject]] = entries.groupBy(_.userId).map {
-      case (userGID, entries) =>
-        UserDAO.findOneByUserId(userGID).map { user =>
+      case (userId, entries) =>
+        UserDAO.findOneByUserId(userId).map { user =>
           val jsonTimeEntries = entries.map(TimeEntryDAO.formatter.writes)
           userInfo(user) ++ Json.obj("times" -> jsonTimeEntries)
         }

@@ -61,7 +61,7 @@ class TeamViewModel extends Backbone.Model
 
     # Call this after the model is initalized and format the data to fit this view
     # Iterate of every user...
-    userIssues = @dataSource.groupBy("userGID")
+    userIssues = @dataSource.groupBy("userId")
     _.each(userIssues, (timings, user) =>
 
       # and group his issue by his repositories (aka projects)

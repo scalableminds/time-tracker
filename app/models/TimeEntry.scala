@@ -30,8 +30,8 @@ object TimeEntry extends{
 
   implicit val timeEntryFormatter = Json.format[TimeEntry]
 
-  def fromForm(issue: Issue, duration: Int, userGID: Int, comment: Option[String]) =
-  TimeEntry(issue, duration, userGID, comment)
+  def fromForm(issue: Issue, duration: Int, userId: Int, comment: Option[String]) =
+  TimeEntry(issue, duration, userId, comment)
 
   def toForm(t: TimeEntry) =
   Some((t.issue, t.duration, t.userId, t.comment))

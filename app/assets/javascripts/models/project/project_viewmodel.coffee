@@ -38,7 +38,7 @@ class ProjectViewModel extends TeamViewModel
 
       # ... and group by their users
       userProjects = _.groupBy(timings, (timing) ->
-        return timing.get("userGID")
+        return timing.get("userId")
       )
 
       # Finally add the days of the month to every project...

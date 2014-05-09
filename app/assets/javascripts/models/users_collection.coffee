@@ -9,7 +9,7 @@ class UsersCollection extends Backbone.Collection
 
   getNameById : (id) ->
 
-    if user = @findWhere(id : id)
+    if user = @findWhere(id : parseInt(id))
       return user.get("fullName")
     else
-      throw new Exception("Couldn't find user with id: #{id}")
+      throw new Error("Couldn't find user with id: #{id}")
