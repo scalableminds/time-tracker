@@ -244,7 +244,7 @@ trait GithuIssueRequester extends GithubRequester{
   val extractIssues = (__).read(list[GithubIssue])
 }
 
-case class GithubUserDetails(id: Int, login: String, email: String, name: String)
+case class GithubUserDetails(id: Int, login: String, email: Option[String], name: Option[String])
 
 trait GithuUserDetailRequester extends GithubRequester{
 

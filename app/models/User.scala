@@ -69,6 +69,14 @@ case class User(userId: Int,
 object User {
   def generateAccessKey = UUID.randomUUID().toString.replace("-", "")
 
+  implicit val userFormat = Json.format[User]
+
+  val loggedInUserWrites: Writes[User] =
+    ((__ \ 'id).write[Int] and
+      (__ \ 'profile).write[UserProfile] and
+      (__ \ 'accessKey).write[Option[String]] and
+      (__ \ 'settings).write[JsValue])(u => (u.userId, u.profile, u.accessKey, u.settings))
+
   val publicUserWrites: Writes[User] =
     ((__ \ 'id).write[Int] and
       (__ \ 'fullName).write[String])(u => (u.userId, u.profile.fullName))
@@ -77,7 +85,7 @@ object User {
 object UserDAO extends BasicReactiveDAO[User] {
   val collectionName = "users"
 
-  implicit val formatter = Json.format[User]
+  implicit val formatter = User.userFormat
 
   def findOneByEmail(email: String)(implicit ctx: DBAccessContext) =
     findHeadOption("profile.email", email)

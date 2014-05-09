@@ -33,8 +33,8 @@ object Authentication extends GithubOauth with Controller {
       requestAccessToken(code, Nil).flatMap { token =>
         for {
           userDetails <- GithubApi.userDetails(token.accessToken).toFox
-          (first, last) = UserService.extractName(userDetails.name)
-          profile = UserProfile(userDetails.login, first, last, userDetails.name, Option(userDetails.email))
+          (first, last) = UserService.extractName(userDetails.name getOrElse "")
+          profile = UserProfile(userDetails.login, first, last, userDetails.name getOrElse "", userDetails.email)
           user <- UserService.save(userDetails.id, profile, token)
         } yield {
           GithubApi.listAllUserRepositories(token.accessToken).map{ repositories =>

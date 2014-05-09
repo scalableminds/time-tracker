@@ -36,6 +36,10 @@ object UserController extends Controller {
       }
   }
 
+  def readMyself = Authenticated{ implicit request =>
+    Ok(User.loggedInUserWrites.writes(request.user))
+  }
+
   def updateSettings = Authenticated.async(parse.json(1024)){ implicit request =>
     for{
       user <- UserService.updateSettings(request.user.userId, request.body) ?~> "Settings update failed"

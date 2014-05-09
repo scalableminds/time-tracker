@@ -62,7 +62,7 @@ object UserService{
       case Array(first, last@_*) =>
         (first, last.mkString(" "))
       case _ =>
-        ("", "")
+        (s, "")
     }
   }
 }
