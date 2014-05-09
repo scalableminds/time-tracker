@@ -17,7 +17,7 @@ models/users_collection : UsersCollection
 
 class TeamViewModel extends Backbone.Model
 
-  defaults :
+  defaults : ->
     date : moment()
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
@@ -25,7 +25,7 @@ class TeamViewModel extends Backbone.Model
     urlRoot : "team"
     viewTitle : "Team Report"
 
-  dataSource : TeamTimeCollection
+  dataSourceClass : TeamTimeCollection
 
 
   initialize : (options = {}) ->
@@ -33,7 +33,7 @@ class TeamViewModel extends Backbone.Model
     if options.date
       @set("date", moment(options.date).startOf("month"))
 
-    @dataSource = new @dataSource()
+    @dataSource = new @dataSourceClass()
     @usersCollection = new UsersCollection()
 
 

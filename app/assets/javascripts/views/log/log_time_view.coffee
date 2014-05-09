@@ -77,6 +77,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
 
     @model = new LogTimeModel()
     @collection = new ActiveRepositoriesCollection()
+    @collection.fetch()
     @listenTo(@, "render", @afterRender)
 
 

@@ -28,44 +28,31 @@ class MonthPickerView extends Backbone.Marionette.ItemView
     "click .month-title" : "monthReset"
 
 
-  initialize : ->
-
-     @listenTo(@, "render", @updateURL)
-
-
   monthPrevious : (evt) ->
 
     evt.preventDefault()
-    @changeDate("subtract")
+    date = @model.get("date").subtract("months", 1)
+    @changeDate(date)
     return
 
   monthNext : (evt) ->
 
     evt.preventDefault()
-    @changeDate("add")
+    date = @model.get("date").add("months", 1)
+    @changeDate(date)
     return
 
 
-  changeDate : (operation) ->
+  changeDate : (date) ->
 
-    date = @model.get("date")
-    @model.set("date", date[operation]("months", 1))
-    @render()
-    @model.fetch(reset : true)
+    url = "#{@model.get("urlRoot")}/#{date.year()}-#{date.month() + 1}"
+    app.router.navigate(url, trigger : true)
     return
 
 
   monthReset : ->
 
-    @model.set("date", moment())
-    @render()
+    @changeDate(moment())
     return
 
 
-  updateURL : ->
-
-    url = "#{@model.get("urlRoot")}/#{@model.get("date").year()}-#{@model.get("date").month() + 1}"
-    app.router.navigate(
-      url,
-      replace : true
-    )

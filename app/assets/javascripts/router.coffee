@@ -6,7 +6,11 @@ views/report_view  : ReportView
 views/month_picker_view : MonthPickerView
 views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
+<<<<<<< HEAD
 views/faq_view  : FAQView
+=======
+views/user_settings_view  : UserSettingsView
+>>>>>>> 842fa55060541eea86f0c8acb10e822adb4dfe71
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
 models/user/user_viewmodel : UserViewModel
@@ -26,6 +30,7 @@ class Router extends Backbone.Router
     "team/:date"                                : "team"
     "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
     "faq"                                       : "faq"
+    "settings"                                  : "settings"
 
   whitelist : [
     "/authenticate/github"
@@ -42,28 +47,39 @@ class Router extends Backbone.Router
 
     userModel = new UserViewModel(date : date)
     @showReport(userModel)
+    @changeActiveNavbarItem("/")
 
 
   project : (date) ->
 
     projectModel = new ProjectViewModel(date : date)
     @showReport(projectModel)
+    @changeActiveNavbarItem("/project")
 
 
   team : (date) ->
 
     teamModel = new TeamViewModel(date : date)
     @showReport(teamModel)
+    @changeActiveNavbarItem("/team")
 
 
   log : ->
 
     @changeView(new LogTimeView())
+    @changeActiveNavbarItem("/log")
 
 
-  admin  : ->
+  admin : ->
 
     @changeView(new AdminPanelView())
+    @changeActiveNavbarItem("/admin")
+
+
+  settings : ->
+
+    @changeView(new UserSettingsView())
+    @changeActiveNavbarItem()
 
 
   faq  : ->
@@ -106,6 +122,16 @@ class Router extends Backbone.Router
     return
 
 
+  changeActiveNavbarItem : (url) ->
+
+    $navbar = $("#main-nav")
+    $navbar.find(".active").removeClass("active")
+    if url
+      $navbar.find("a[href=\"#{url}\"]").closest("li").addClass("active")
+
+    return
+
+
   handlePageLinks  : ->
 
     # handle all links and manage page changes (rather the reloading the whole site)
@@ -125,3 +151,9 @@ class Router extends Backbone.Router
 
       return
     )
+
+
+  execute : (callback, args) ->
+
+    super(callback, args.map( (a) -> a or undefined ))
+    return
