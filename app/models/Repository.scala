@@ -1,9 +1,14 @@
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Writes, Json}
 import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.reactivemongo.AccessRestrictions._
+import reactivemongo.bson.BSONObjectID
+import models.auth.UserService
+import braingames.util.Fox
+import scala.concurrent.Future
+import play.modules.reactivemongo.json.BSONFormats._
 
 /**
  * Company: scalableminds
@@ -11,15 +16,29 @@ import braingames.reactivemongo.AccessRestrictions._
  * Date: 22.07.13
  * Time: 01:54
  */
-case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String]) {
+case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String], _id: BSONObjectID = BSONObjectID.generate) {
   def owner = name.split("/").head
 
   def shortName = name.split("/").last
+
+  def id = _id.stringify
 }
 
-object Repository{
+object Repository {
 
   implicit val repositoryFormat = Json.format[Repository]
+
+  def publicRepositoryWrites(repository: Repository): Future[JsObject] = {
+    for{
+      admins <- UserService.findAdminsOf(repository) getOrElse Nil
+    } yield
+      Json.obj(
+        "name" -> repository.name,
+        "usesIssueLinks" -> repository.usesIssueLinks,
+        "admins" -> Writes.list(User.publicUserWrites).writes(admins),
+        "id" -> repository.id
+      )
+  }
 
   def createFullName(owner: String, repo: String) =
     owner + "/" + repo

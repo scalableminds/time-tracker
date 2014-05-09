@@ -87,7 +87,6 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       .datepicker({format : "dd.mm.yyyy"})
       .datepicker("setValue", @model.get("timestamp").toDate())
       .on "changeDate", (evt) =>
-        @model.set("timestamp", moment(evt.date.valueOf()))
         @ui.inputDate.datepicker("hide")
 
 
@@ -110,6 +109,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       issueNumber : @ui.issueNumber.val()
       comment : @ui.inputComment.val()
       duration : @ui.inputDuration.val()
+      timestamp : moment.utc(@ui.inputDate.val()).valueOf()
     ).then(
       =>
         @showAlert("You time entry was successfully logged.", "success")

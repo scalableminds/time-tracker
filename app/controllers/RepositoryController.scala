@@ -10,9 +10,11 @@ import play.api.libs.concurrent.Execution.Implicits._
 import net.liftweb.common.{Failure, Empty, Full}
 import models.auth.UserService
 import scala.concurrent.Future
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsArray, JsError, JsSuccess, Json}
 import play.api.libs.concurrent.Akka
 import play.api.Play.current
+import braingames.util.Fox
+
 /**
  * Company: scalableminds
  * User: tmbo
@@ -44,7 +46,8 @@ object RepositoryController extends Controller {
   def list = Authenticated.async{ implicit request =>
     for{
       repositories <- RepositoryDAO.findAll
-    } yield Ok(Json.toJson(repositories))
+      js <- Future.traverse(repositories)(Repository.publicRepositoryWrites)
+    } yield Ok(JsArray(js))
   }
 
   def ensureAdminRights(user: User, repositoryName: String) = {
@@ -68,10 +71,8 @@ object RepositoryController extends Controller {
               r match {
                 case Empty =>
                   RepositoryDAO.insert(repo)
-                  if (repo.usesIssueLinks) {
-                    GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
-                    issueActor ! FullScan(repo, request.user.githubAccessToken)
-                  }
+                  GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
+                  issueActor ! FullScan(repo, repo.accessToken getOrElse request.user.githubAccessToken)
                   Redirect("/api/repos")
                 case _ =>
                   BadRequest("Repository allready added")
@@ -119,19 +120,10 @@ object RepositoryController extends Controller {
         issue <- (request.body \ "issue").asOpt[GithubIssue]
       } {
         RepositoryDAO.findByName(Repository.createFullName(owner, repository))(GlobalAccessContext).futureBox.foreach {
-          case Full(repo) if repo.usesIssueLinks =>
-            GithubIssueActor.ensureIssueIsArchived(repo, issue)
-            val result = UserService.findAdminsOf(repo).map(_.map(_.githubAccessToken)).flatMap { tokens =>
-              tryWithAnyAccessToken(tokens, GithubIssueActor.ensureTimeTrackingLink(repo, issue, _))
+          case Full(repo)  =>
+            repo.accessToken.map{accessToken =>
+              GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
             }
-            result.futureBox.map{
-              case Full(true) =>
-                Logger.info("Successfuly added link to issue with user token")
-              case e =>
-                Logger.warn("Failed to add link to issue with user token. " + e)
-            }
-          case Full(repo) =>
-            Logger.warn(s"Issue hook triggered, for a repository with disabled issue links. ${repo.name}")
           case _ =>
             Logger.warn(s"Issue hook triggered, but couldn't find repository ${Repository.createFullName(owner,repository)}")
         }

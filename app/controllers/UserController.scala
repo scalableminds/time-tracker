@@ -4,7 +4,7 @@ import scala.None
 import models.{RepositoryAccess, UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Writes
-import models.auth.UserCache
+import models.auth.{UserService, UserCache}
 import play.api.libs.json.Json
 import braingames.mvc.Filter
 import braingames.util.DefaultConverters._
@@ -36,9 +36,17 @@ object UserController extends Controller {
       }
   }
 
-  def showSettings() = Authenticated {
+  def updateSettings = Authenticated.async(parse.json(1024)){ implicit request =>
+    for{
+      user <- UserService.updateSettings(request.user.userId, request.body) ?~> "Settings update failed"
+    } yield {
+      JsonOk("Settings updated")
+    }
+  }
+
+  def readSettings = Authenticated{
     implicit request =>
-      Ok(views.html.user.settings(request.user.asInstanceOf[User]))
+      Ok(request.user.settings)
   }
 
   def listRepositories = Authenticated{ implicit request =>
@@ -57,7 +65,7 @@ object UserController extends Controller {
         _ <- UserDAO.setAccessKey(user, a)
       } yield {
         UserCache.removeUserFromCache(user.userId)
-        JsonOk("A new access key was created.")
+        JsonOk("A new access key was created")
       }
   }
 }

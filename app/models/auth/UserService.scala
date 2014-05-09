@@ -6,6 +6,7 @@ import play.api.Application
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import braingames.util.Fox
+import play.api.libs.json.{JsValue, JsObject}
 
 /**
  * Company: scalableminds
@@ -32,6 +33,13 @@ object UserService{
 
   def updateRepositories(userId: Int, repositories: List[RepositoryAccess])(implicit ctx: DBAccessContext) = {
     UserDAO.updateRepositories(userId, repositories).map{ user =>
+      UserCache.removeUserFromCache(userId)
+      user
+    }
+  }
+
+  def updateSettings(userId: Int, settings: JsValue)(implicit ctx: DBAccessContext) = {
+    UserDAO.updateSettings(userId, settings).map{ user =>
       UserCache.removeUserFromCache(userId)
       user
     }
