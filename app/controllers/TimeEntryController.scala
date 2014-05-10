@@ -109,7 +109,7 @@ object TimeEntryController extends Controller {
       issues <- IssueDAO.findByIssueReferences(issueReferences)
     } yield {
       val issueMap: Map[IssueReference, Issue] =  issues.map(i => (i.reference, i))(breakOut)
-      Json.arr(entries.map(TimeEntry.publicTimeEntryWrites(_, issueMap)))
+      JsArray(entries.map(TimeEntry.publicTimeEntryWrites(_, issueMap)))
     }
   }
 

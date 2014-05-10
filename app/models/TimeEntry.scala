@@ -31,8 +31,7 @@ object TimeEntry extends {
   def publicTimeEntryWrites(timeEntry: TimeEntry, issueResolver: Map[IssueReference, Issue]) = {
     val issue =
       issueResolver.get(timeEntry.issueReference)
-      .map(Json.toJson(_))
-      .getOrElse(Json.toJson(timeEntry.issueReference))
+      .getOrElse(Issue(timeEntry.issueReference, ""))
 
     Json.obj(
       "duration" -> timeEntry.duration,
