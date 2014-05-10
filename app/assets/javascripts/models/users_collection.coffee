@@ -13,3 +13,10 @@ class UsersCollection extends Backbone.Collection
       return user.get("fullName")
     else
       throw new Error("Couldn't find user with id: #{id}")
+
+  getGithubNameById : (id) ->
+
+    if user = @findWhere(id : parseInt(id))
+      return user.get("githubLogin")
+    else
+      throw new Error("Couldn't find user with id: #{id}")

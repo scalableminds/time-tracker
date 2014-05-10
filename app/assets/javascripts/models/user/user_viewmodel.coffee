@@ -32,14 +32,14 @@ class UserViewModel extends ViewModel
 
     # First group all issues by their repository (aka Project)
     projectIssues = @dataSource.groupBy((timeEntry) ->
-      return timeEntry.get("issueReference").project
+      return timeEntry.get("issue").reference.project
     )
 
     projectIssues = _.transform(projectIssues,
       (result, issues, key) ->
         result[key] = _.groupBy(issues,
           (timeEntry) ->
-            return timeEntry.get("issueReference").number
+            return timeEntry.get("issue").reference.number
         )
     )
 
@@ -48,8 +48,8 @@ class UserViewModel extends ViewModel
 
       issueGroups = _.map(project,
         (issues) =>
-          name : "Issue Name"
-          number : issues[0].get("issueReference").number
+          name : issues[0].get("issue").title
+          number : issues[0].get("issue").reference.number
           values : Utils.range(1, @get("date").daysInMonth()).map(
             (day) -> return Utils.sum(
               _.filter(issues,
@@ -71,6 +71,7 @@ class UserViewModel extends ViewModel
         name : repositoryName
         sum : sumTotal
         dailyTimeEntries : sumDaily
+        githubUrl : null
       )
 
       # Add the daily individual time logs to the collection
@@ -81,6 +82,7 @@ class UserViewModel extends ViewModel
           name : "#{number} #{name}"
           sum : Utils.sum(values)
           dailyTimeEntries : values
+          githubUrl : "https://github.com/#{repositoryName}/issues/#{number}"
         )
       )
     )

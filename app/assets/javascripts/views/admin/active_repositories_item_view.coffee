@@ -11,7 +11,9 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
       <%= name %>
     </td>
     <td>
-      someone
+      <% admins.forEach(function(admin){ %>
+        <span><%= admin.fullName %></span>
+      <% }) %>
     </td>
     <td>
       <a id="scan" href="/admin/repositories/<%= name %>/scan"><i class="glyphicon glyphicon-refresh"></i> scan</a>

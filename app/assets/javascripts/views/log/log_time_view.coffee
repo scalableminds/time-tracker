@@ -110,8 +110,6 @@ class LogTimeView extends Backbone.Marionette.CompositeView
 
 
 
-
-
   submitTimeLog : (evt) ->
 
     evt.preventDefault()

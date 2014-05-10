@@ -4,7 +4,7 @@
 package controllers
 
 import scala.None
-import models.{RepositoryAccess, UserDAO, User}
+import models.{RepositoryDAO, RepositoryAccess, UserDAO, User}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Writes
 import models.auth.{UserService, UserCache}
@@ -56,11 +56,15 @@ object UserController extends Controller {
       Ok(request.user.settings)
   }
 
-  def listRepositories = Authenticated{ implicit request =>
+  def listRepositories = Authenticated.async{ implicit request =>
     UsingFilters[RepositoryAccess](
       Filter("isAdmin", (isAdmin: Boolean, repoAccess) => repoAccess.isAdmin == isAdmin)
     ){ filter =>
-      Ok(Json.toJson(filter.applyOn(request.user.repositories)))
+      for{
+        usedRepositories <- RepositoryDAO.findAll
+      } yield {
+        Ok(Json.toJson(filter.applyOn(request.user.repositories.filterNot(r => usedRepositories.exists(_.name == r.name)))))
+      }
     }
   }
 
