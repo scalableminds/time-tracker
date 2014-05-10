@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package controllers
 
 import play.api.Play.current
@@ -8,10 +11,10 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
-import securesocial.core.Identity
 import play.api.libs.ws.WS.WSRequestHolder
 import scala.concurrent.Future
 import play.api.http.Status
+import models.User
 
 /**
  * Company: scalableminds
@@ -20,15 +23,18 @@ import play.api.http.Status
  * Time: 23:49
  */
 object GithubApi
-  extends GithubOrgRequestor
-  with GithubRepositoryRequestor
-  with GithubCollaboratorRequestor
-  with GithuIssueRequestor
-  with GithubHooksRequestor {
+  extends GithubOrgRequester
+  with GithubRepositoryRequester
+  with GithubCollaboratorRequester
+  with GithuIssueRequester
+  with GithubHooksRequester
+  with GithuUserDetailRequester{
 
   def hooksUrl(repo: String) = s"/repos/$repo/hooks"
 
   val orgsUrl = "/user/orgs"
+
+  val userUrl = "/user"
 
   val userReposUrl = "/user/repos"
 
@@ -39,7 +45,7 @@ object GithubApi
   def issuesUrl(repo: String) = s"/repos/$repo/issues"
 }
 
-trait GithubRequestor {
+trait GithubRequester {
   val GH = "https://api.github.com"
 
   def githubRequest(sub: String, prependHost: Boolean = true)(implicit token: String) = {
@@ -54,7 +60,7 @@ trait GithubRequestor {
   }
 }
 
-class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) extends GithubRequestor {
+class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) extends GithubRequester {
 
   case class LinkHeader(value: String, params: Map[String, String])
 
@@ -107,7 +113,7 @@ class ResultSet[T](requestUrl: String, deserializer: Reads[T], token: String) ex
   }
 }
 
-trait GithubOrgRequestor extends GithubRequestor {
+trait GithubOrgRequester extends GithubRequester {
 
   case class GithubOrga(login: String)
 
@@ -123,9 +129,13 @@ trait GithubOrgRequestor extends GithubRequestor {
   val extractOrgs = (__).read(list[GithubOrga])
 }
 
-trait GithubRepositoryRequestor extends GithubRequestor {
+case class GithubRepoPermissions(admin: Boolean, push: Boolean, pull: Boolean)
 
-  case class GithubRepo(full_name: String)
+case class GithubRepo(full_name: String, permissions: GithubRepoPermissions)
+
+trait GithubRepositoryRequester extends GithubOrgRequester {
+
+  implicit val githubRepoPermissionsFormat = Json.format[GithubRepoPermissions]
 
   implicit val githubRepoFormat = Json.format[GithubRepo]
 
@@ -133,23 +143,31 @@ trait GithubRepositoryRequestor extends GithubRequestor {
 
   def orgaReposUrl(orga: String): String
 
+  def listAllUserRepositories(token: String) = {
+    for{
+      orgas <- listOrgs(token)
+      orgaRepos <- Future.traverse(orgas)(orga => listOrgaRepositories(token, orga))
+      userRepos <- listUserRepositories(token)
+    } yield (userRepos :: orgaRepos).flatten
+  }
+
   def listUserRepositories(token: String) =
     new ResultSet(userReposUrl, extractRepos, token).results.map {
       results =>
-        results.flatten.map(_.full_name)
+        results.flatten
     }
 
   def listOrgaRepositories(token: String, orga: String) = {
     new ResultSet(orgaReposUrl(orga), extractRepos, token).results.map {
       results =>
-        results.flatten.map(_.full_name)
+        results.flatten
     }
   }
 
   val extractRepos = (__).read(list[GithubRepo])
 }
 
-trait GithubCollaboratorRequestor extends GithubRequestor {
+trait GithubCollaboratorRequester extends GithubRequester {
 
   case class GithubCollaborator(id: Int)
 
@@ -157,8 +175,8 @@ trait GithubCollaboratorRequestor extends GithubRequestor {
 
   def repoCollaboratorsUrl(repo: String): String
 
-  def isCollaborator(user: Identity, token: String, repo: String) =
-    listCollaborators(token, repo).map(_.map(_.toString).contains(user.identityId.userId))
+  def isCollaborator(user: User, token: String, repo: String) =
+    listCollaborators(token, repo).map(_.map(_.toString).contains(user.userId))
 
   def listCollaborators(token: String, repo: String) =
     githubRequest(repoCollaboratorsUrl(repo))(token).get().map {
@@ -175,7 +193,7 @@ trait GithubCollaboratorRequestor extends GithubRequestor {
   val extractCollabs = (__).read(list[GithubCollaborator])
 }
 
-trait GithubHooksRequestor extends GithubRequestor {
+trait GithubHooksRequester extends GithubRequester {
 
   def hooksUrl(repo: String): String
 
@@ -201,7 +219,7 @@ trait GithubHooksRequestor extends GithubRequestor {
 
 case class GithubIssue(url: String, title: String, body: String, number: Int)
 
-trait GithuIssueRequestor extends GithubRequestor{
+trait GithuIssueRequester extends GithubRequester{
 
 
   implicit val githubIssueFormat = Json.format[GithubIssue]
@@ -217,13 +235,41 @@ trait GithuIssueRequestor extends GithubRequestor{
   def issueBodyUpdate(body: String) =
     Json.obj("body" -> body)
 
-  def updateIssueBody(token: String, issue: GithubIssue, body: String) = {
+  def updateIssueBody(token: String, issue: GithubIssue, body: String): Future[Boolean] = {
     githubRequest(issue.url, prependHost = false)(token).post(issueBodyUpdate(body)).map{ response =>
       Logger.info("Update returned: " + response.status)
       if(response.status != 200)
         Logger.warn(response.body)
+      response.status == 200
     }
   }
 
   val extractIssues = (__).read(list[GithubIssue])
+}
+
+case class GithubUserDetails(id: Int, login: String, email: Option[String], name: Option[String])
+
+trait GithuUserDetailRequester extends GithubRequester{
+
+  implicit val githubUserDetailFormat = Json.format[GithubUserDetails]
+
+  val userUrl: String
+
+  def userDetails(token: String): Future[Option[GithubUserDetails]] = {
+    Logger.info("Requesting user details.")
+    githubRequest(userUrl)(token).get().map {
+      response =>
+        Logger.info("User details response status: " + response.status)
+        response.json.validate(githubUserDetailFormat).fold(
+          invalid => {
+            Logger.warn("An error occurred while trying to decode user details: " + invalid)
+            None
+          },
+          valid => {
+            Logger.info("Successfuly requested user details.")
+            Some(valid)
+          }
+        )
+    }
+  }
 }

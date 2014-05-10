@@ -1,39 +1,32 @@
+/*
+ * Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+ */
 package models
 
 import play.api.libs.json.{JsString, JsArray, Json}
 import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
-import java.util.{Calendar, Date}
-import org.joda.time.{Interval, YearMonth}
-import play.api.Logger
+import org.joda.time.{DateTime, Interval, YearMonth}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import braingames.reactivemongo.AccessRestrictions._
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 13:15
- */
-case class Issue(project: String, number: Int)
-
-object Issue {
-  implicit val issueFormatter = Json.format[Issue]
-}
-
-case class TimeEntry(issue: Issue, duration: Int, userGID: String, comment: Option[String], timestamp: Long = System.currentTimeMillis)
+case class TimeEntry(
+  issueReference: IssueReference,
+  duration: Int,
+  userId: Int,
+  comment: Option[String],
+  dateTime: DateTime = DateTime.now())
 
 object TimeEntry extends{
-  import Issue.issueFormatter
 
   implicit val timeEntryFormatter = Json.format[TimeEntry]
 
-  def fromForm(issue: Issue, duration: Int, userGID: String, comment: Option[String]) =
-  TimeEntry(issue, duration, userGID, comment)
+  def fromForm(issue: IssueReference, duration: Int, userId: Int, comment: Option[String]) =
+  TimeEntry(issue, duration, userId, comment)
 
   def toForm(t: TimeEntry) =
-  Some((t.issue, t.duration, t.userGID, t.comment))
+  Some((t.issueReference, t.duration, t.userId, t.comment))
 }
 
 object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
@@ -42,14 +35,14 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
   override val AccessDefinitions = new DefaultAccessDefinitions {
     override def findQueryFilter(implicit ctx: DBAccessContext) = {
       ctx.data match {
-        case _ if (ctx.globalAccess) =>
-          AllowEveryone
         case Some(user: User) =>
           val repositories = Await.result(RepositoryDAO.findAllWhereUserIsAdmin(user) getOrElse Nil, 5 seconds)
           AllowIf(Json.obj("$or" -> Json.arr(
-            Json.obj("issue.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.fullName))))),
-            Json.obj("userGID" -> user.githubId)
+            Json.obj("issueReference.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.name))))),
+            Json.obj("userId" -> user.userId)
           )))
+        case _ =>
+          DenyEveryone()
       }
     }
   }
@@ -60,8 +53,8 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     insert(timeEntry)
   }
 
-  def loggedTimeForIssue(issue: Issue)(implicit ctx: DBAccessContext) = {
-    find(Json.obj("issue" -> issue)).cursor[TimeEntry].collect[List]()
+  def loggedTimeForIssue(issueReference: IssueReference)(implicit ctx: DBAccessContext) = {
+    find(Json.obj("issueReference" -> issueReference)).cursor[TimeEntry].collect[List]()
   }
 
   def toInterval(year: Int, month: Int) = {
@@ -70,17 +63,17 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
 
   def timeStampQuery(interval: Interval) = {
     Json.obj(
-      "timestamp" -> Json.obj(
+      "dateTime" -> Json.obj(
         "$gte" -> interval.getStart.getMillis,
         "$lte" -> interval.getEnd.getMillis
       )
     )
   }
 
-  def loggedTimeForUser(userGID: String, year: Int, month: Int)(implicit ctx: DBAccessContext) = {
+  def loggedTimeForUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext) = withExceptionCatcher{
     val interval = toInterval(year, month)
     find(
-      Json.obj("userGID" -> userGID) ++ timeStampQuery(interval)).cursor[TimeEntry].collect[List]()
+      Json.obj("userId" -> userId) ++ timeStampQuery(interval)).cursor[TimeEntry].collect[List]()
   }
 
   def loggedTimeForInterval(year: Int, month: Int)(implicit ctx: DBAccessContext) = {

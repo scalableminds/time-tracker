@@ -1,34 +1,31 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models.services
 
 import akka.actor.Actor
-import models.Repository
+import models.{Issue, Repository, IssueDAO}
 import controllers.{Application, GithubApi, GithubIssue}
 import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
 import braingames.util.StartableActor
 import play.api.Logger
-import models.{IssueDAO, ArchivedIssue}
 import scala.concurrent.Future
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 25.07.13
- * Time: 02:23
- */
-case class FullScan(repo: Repository)
+case class FullScan(repo: Repository, accesssToken: String)
 
 class GithubIssueActor extends Actor {
   implicit val ec = context.system.dispatcher
 
   def receive = {
-    case FullScan(repo) =>
+    case FullScan(repo, accessToken) =>
       Logger.debug("Starting repo full scan.")
-      GithubApi.listRepositoryIssues(repo.accessToken, repo.fullName).map {
+      GithubApi.listRepositoryIssues(accessToken, repo.name).foreach {
         issues =>
-          issues.map {
+          issues.foreach {
             issue =>
               GithubIssueActor.ensureIssueIsArchived(repo, issue)
-              GithubIssueActor.ensureTimeTrackingLink(repo, issue)
+              if(repo.usesIssueLinks)
+                GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
           }
       }
   }
@@ -42,28 +39,28 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
 
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
     val link =
-      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.name, issue.number, Some("github")).url
+      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.shortName, issue.number, Some("github")).url
     s"""<a href="$link" target="_blank">Log Time</a>"""
   }
 
   def containsLinkHeuristic(s: String) = linkRx.r.findFirstIn(s)
 
-  def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue) = {
+  def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue, accessToken: String) = {
     val link = timeTrackingLinkFor(repo, issue)
     containsLinkHeuristic(issue.body) match {
       case Some(currentLink) if currentLink == link =>
         // there is nothing to do here
-        Future.successful(false)
+        Future.successful(true)
       case Some(currentLink) =>
         val body = issue.body.replaceAll(linkRx, link)
-        GithubApi.updateIssueBody(repo.accessToken, issue, body)
+        GithubApi.updateIssueBody(accessToken, issue, body)
       case _ =>
         val body = issue.body + "\n\n" + link
-        GithubApi.updateIssueBody(repo.accessToken, issue, body)
+        GithubApi.updateIssueBody(accessToken, issue, body)
     }
   }
 
   def ensureIssueIsArchived(repo: Repository, issue: GithubIssue) = {
-    IssueDAO.archiveIssue(ArchivedIssue(repo.fullName, issue.number, issue.title))(GlobalAccessContext)
+    IssueDAO.archiveIssue(Issue(repo.name, issue.number, issue.title))(GlobalAccessContext)
   }
 }

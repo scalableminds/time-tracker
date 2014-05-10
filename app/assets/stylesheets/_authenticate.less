@@ -1,0 +1,60 @@
+@colorReadOn: #7cc45c;
+@colorWriteOn: #CF6486;
+@colorOff: #dddddd;
+.authenticate {
+
+  h2 {
+    margin: 25px 0;
+  }
+
+  .well {
+    background-color: white;
+  }
+
+  .group {
+    margin-bottom: 10px;
+  }
+
+  .well h4 {
+    color: #999;
+    margin: -19px;
+    margin-bottom: 10px;
+    padding: 19px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .permission {
+    display: inline-block;
+    font-weight: normal;
+    text-align: center;
+    font-size: 14px;
+    padding: 6px 16px;
+    margin-right: 4px;
+  }
+
+  .labelColor(@color) {
+    color: @color;
+    //border: solid 2px @color;
+    //background: rgba(red(@color), green(@color), blue(@color), .2);
+  }
+
+  .read.off, .write.off {
+    .labelColor(@colorOff);
+  }
+
+  .read {
+    .labelColor(@colorReadOn);
+  }
+
+  .write {
+    .labelColor(@colorWriteOn);
+  }
+
+  .spacer {
+    padding: 3px 0;
+  }
+
+  .btn {
+    margin-top: 20px;
+  }
+}

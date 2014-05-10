@@ -1,58 +1,54 @@
 # Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
 
-# Home page
-GET         /                                                     controllers.Application.index
-GET         /home                                                 controllers.Application.home
-GET         /team                                                 controllers.Application.team
-GET                 /project                                                                                            controllers.Application.project
+# ~~ HTML API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Admin
-GET         /admin/repositories                                   controllers.admin.RepositoryAdministration.list
-POST        /admin/repositories                                   controllers.admin.RepositoryAdministration.add
-GET         /admin/repositories/:owner/:name/scan                 controllers.admin.RepositoryAdministration.scan(owner: String, name: String)
-DELETE      /admin/repositories/:owner/:name                      controllers.admin.RepositoryAdministration.delete(owner: String, name: String)
+# General
+GET           /                                               controllers.Application.index
+GET           /home                                           controllers.Application.home
+GET           /faq                                           controllers.Application.faq
 
-# Add Issue time entry
-GET         /create                                      					controllers.TimeEntryController.createGenericForm
-GET         /repos/:owner/:repo/issues/:issueNumber/create        controllers.TimeEntryController.createForm(owner, repo, issueNumber: Int, referer: Option[String])
-POST        /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
-POST        /repos/:owner/:repo/hook                              controllers.RepositoryController.issueHook(owner: String, repo: String)
+# Add time entry to issue
+GET           /create                                         controllers.TimeEntryController.createGenericForm
+GET           /repos/:owner/:repo/issues/:issue/create        controllers.TimeEntryController.createForm(owner, repo, issue: Int, referer: Option[String])
 
-# Request times
-GET         /times/:year/:month                                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
-GET         /user/times/:year/:month                              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
-GET         /user/settings                                        controllers.UserController.showSettings()
-POST        /user/accesskey                                       controllers.UserController.createAccessKey()
-GET         /repos/:owner/:repo/issues/:issueNumber               controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
-
-#Request issues
-GET         /issues/:owner/:repo                            			controllers.TimeEntryController.showIssues(owner, repo)
-
-# Login page
-GET         /login                                                securesocial.controllers.LoginPage.login
-GET         /logout                                               securesocial.controllers.LoginPage.logout
-
-# User Registration and password handling
-GET         /signup                                               securesocial.controllers.Registration.startSignUp
-POST        /signup                                               securesocial.controllers.Registration.handleStartSignUp
-GET         /signup/:token                                        securesocial.controllers.Registration.signUp(token)
-POST        /signup/:token                                        securesocial.controllers.Registration.handleSignUp(token)
-GET         /reset                                                securesocial.controllers.Registration.startResetPassword
-POST        /reset                                                securesocial.controllers.Registration.handleStartResetPassword
-GET         /reset/:token                                         securesocial.controllers.Registration.resetPassword(token)
-POST        /reset/:token                                         securesocial.controllers.Registration.handleResetPassword(token)
-GET         /password                                             securesocial.controllers.PasswordChange.page
-POST        /password                                             securesocial.controllers.PasswordChange.handlePasswordChange
+# Assets
+GET           /assets/javascripts/routes.js                   controllers.Application.javascriptRoutes
+GET           /assets/*file                                   controllers.Assets.at(path="/public", file)
 
 # Providers entry points
-GET         /authenticate/:provider                               securesocial.controllers.ProviderController.authenticate(provider)
-POST        /authenticate/:provider                               securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET         /not-authorized                                       securesocial.controllers.ProviderController.notAuthorized
+GET           /authenticate/complete                          controllers.auth.Authentication.complete(state, code)
+GET           /authenticate                                   controllers.auth.Authentication.authenticate(redirectUri: Option[String])
+GET           /authenticate/logout                            controllers.auth.Authentication.logout
 
-# Javascript routing
-GET         /assets/javascripts/routes.js                       controllers.Application.javascriptRoutes
+# ~~ JSON API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                                         controllers.Assets.at(path="/public", file)
+# Repositories
+GET           /api/repos                                      controllers.RepositoryController.list
+POST          /api/repos                                      controllers.RepositoryController.add
+GET           /api/repos/:owner/:name/scan                    controllers.RepositoryController.scan(owner, name)
+DELETE        /api/repos/:owner/:name                         controllers.RepositoryController.delete(owner, name)
+POST          /api/repos/:owner/:repo/hook                    controllers.RepositoryController.issueHook(owner, repo)
+POST          /api/repos/:owner/:repo/issues/:issueNumber     controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
+GET           /api/repos/:owner/:repo/issues/:issueNumber     controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
+
+# Users
+GET           /api/users                                      controllers.UserController.list
+GET           /api/users/:id                                  controllers.UserController.read(id: Int)
+
+# Current user
+GET           /api/user                                       controllers.UserController.readMyself
+GET           /api/user/settings                              controllers.UserController.readSettings
+POST          /api/user/settings                              controllers.UserController.updateSettings
+POST          /api/user/accesskey                             controllers.UserController.createAccessKey()
+GET           /api/user/repos                                 controllers.UserController.listRepositories
+GET           /api/user/times/:year/:month                    controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
+
+# Logged times
+GET           /api/times/:year/:month                         controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
+
+# Issues
+GET           /api/issues/:owner/:repo                        controllers.IssueController.list(owner, repo)
+
+# ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GET           /*any                                           controllers.Application.team(any: String)

@@ -1,0 +1,109 @@
+@(authWithPrivateScope: String, authWithPublicScope: String)(implicit session: controllers.SessionData)
+
+@main("Login"){
+<div class="container authenticate">
+  <div class="row">
+    <div class="col-sm-12">
+      <h2>Please choose which permissions you want to allow TimeTracker </h2>
+    </div>
+    <div class="col-sm-6">
+      <div class="well">
+        <h4> Public access </h4>
+        <div class="body">
+        <div class="group">
+          <div class="spacer">
+            <span class="permission read ">Read</span>
+            <strong> Your user profile </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission read ">Read</span>
+            Your followers
+
+          </div>
+        </div>
+        <div class="group">
+          <div class="spacer">
+            <span class="permission read off">None</span>
+            <strong> Your private repositories and organizations </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission read off">None</span>
+            Commit status
+          </div>
+          <div class="spacer">
+            <span class="permission read off">None</span>
+            Notifications
+          </div>
+        </div>
+        <div class="group">
+
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            <strong> Your public repositories and organizations </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Commit status
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Notifications
+          </div>
+        </div>
+        <div class="group">
+          <a class="btn btn-primary btn-block" href="@authWithPublicScope">Allow public access</a>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="well">
+        <h4> Private access </h4>
+        <div class="body">
+        <div class="group">
+          <div class="spacer">
+            <span class="permission read">Read</span>
+            <strong> Your user profile </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission read">Read</span>
+            Your followers
+          </div>
+        </div>
+        <div class="group">
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            <strong> Your private repositories and organizations </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Commit status
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Notifications
+          </div>
+        </div>
+        <div class="group">
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            <strong> Your public repositories and organizations </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Commit status
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Notifications
+          </div>
+        </div>
+        <div class="group">
+          <a class="btn btn-primary btn-block" href="@authWithPrivateScope">Allow private access</a>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

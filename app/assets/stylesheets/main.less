@@ -1,10 +1,17 @@
+@import "../../../public/bower_components/bootstrap/less/bootstrap.less";
+@import "_variables.less";
 @import "_user_time_report.less";
 @import "_responsive.less";
+@import "_admin.less";
+@import "_log_time.less";
+@import "_month_picker.less";
+@import "_spinner.less";
+@import "_authenticate.less";
+@import "_faq.less";
+@import "datepicker.css";
 
-@media screen and (min-width: 768px) {
-  #main-container {
-    padding: 50px 0;
-  }
+.view-title {
+  margin-bottom: 35px;
 }
 
 #logo {
@@ -14,61 +21,30 @@
   margin-bottom: -4px;
 }
 
-.navbar {
-  background-color: #eef8ee;
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid #e7e7e7;
-
-  a {
-    color: #777;
-    &:hover {
-      color: #5e5e5e;
-    }
-  }
-  .nav .caret {
-    border-top-color: #777;
-    border-bottom-color: #777;
-  }
-  .nav a:hover .caret {
-    border-top-color: #5e5e5e;
-    border-bottom-color: #5e5e5e;
-  }
-}
 .container.wide {
   width: auto;
   max-width: initial;
   margin: 0px 20px;
 }
 
+header.navbar {
+  border-radius: 0;
+  border-top: none;
+}
+
 section + section {
-  margin-top: 80px;
+  margin-top: 5em;
 }
 
-.alert {
-  margin: 0;
-  &.in {
-    margin: 20px 80px;
-  }
-}
-
-.month-picker {
-  float: right;
-  margin: 20px 0px;
-
-  @media screen and (min-width: 768px) {
-    .month-title {
-      width: 160px;
-    }
-  }
-
+.navbar-right > li > a {
+  padding: 8px;
 }
 
 .form-control:invalid {
   background: #fee;
 }
 
-.report-table {
+.table {
   font-size: 12px;
 
   th, td {
@@ -78,12 +54,12 @@ section + section {
     padding: 6px !important;
   }
 
-  .tfoot {
+  tfoot {
     border-top-width: 2px;
-  }
 
-  .tfoot td {
-    font-weight: bold;
+    td {
+      font-weight: bold;
+    }
   }
 
   .project-row {
@@ -131,6 +107,7 @@ section + section {
 
 footer {
   p {
+    margin-top: 3em;
     color: #595959;
     text-align: center;
     img {
@@ -138,3 +115,5 @@ footer {
     }
   }
 }
+
+

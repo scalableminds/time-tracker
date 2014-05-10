@@ -1,0 +1,46 @@
+.spinner-overlay {
+
+  width: 100%;
+  background-color: rgba(255,255,255,0.9);
+
+  position: absolute;
+  left: 0;
+  top: @navbar-offset;
+  height: 100%;
+
+  z-index: 100;
+}
+
+.v-center {
+  display: table
+}
+
+.v-center-agent {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.spinner {
+  color: #777;
+  animation : rotation 1s linear infinite;
+  -webkit-animation : rotation 1s linear infinite;
+  text-align: center;
+}
+
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

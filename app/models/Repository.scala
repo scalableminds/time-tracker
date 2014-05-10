@@ -1,71 +1,85 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json._
 import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import braingames.reactivemongo.AccessRestrictions._
+import reactivemongo.bson.BSONObjectID
+import models.auth.UserService
+import braingames.util.Fox
+import scala.concurrent.Future
+import play.modules.reactivemongo.json.BSONFormats._
+import play.api.libs.functional.syntax._
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 22.07.13
- * Time: 01:54
- */
-case class Repository(fullName: String, accessToken: String, admins: List[String], collaborators: List[String]) {
-  def owner = fullName.split("/").head
+case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String], _id: BSONObjectID = BSONObjectID.generate) {
+  def owner = name.split("/").head
 
-  def name = fullName.split("/").last
+  def shortName = name.split("/").last
 
-  def isAdmin(user: User) = {
-    admins.contains(user.githubId)
+  def id = _id.stringify
+}
+
+object Repository {
+
+  implicit val repositoryFormat = Json.format[Repository]
+
+  def publicRepositoryReads =
+    ((__ \ 'name).read[String] and
+      (__ \ 'usesIssueLinks).read[Boolean] and
+      (__ \ 'accessToken).readNullable[String])(Repository(_,_,_))
+
+  def publicRepositoryWrites(repository: Repository): Future[JsObject] = {
+    for{
+      admins <- UserService.findAdminsOf(repository) getOrElse Nil
+    } yield
+      Json.obj(
+        "name" -> repository.name,
+        "usesIssueLinks" -> repository.usesIssueLinks,
+        "admins" -> Writes.list(User.publicUserWrites).writes(admins),
+        "id" -> repository.id
+      )
   }
 
-  def isCollaborator(user: User) = {
-    collaborators.contains(user.githubId)
-  }
+  def createFullName(owner: String, repo: String) =
+    owner + "/" + repo
 }
 
 object RepositoryDAO extends BasicReactiveDAO[Repository] {
   val collectionName = "repositories"
 
+  implicit val formatter = Repository.repositoryFormat
+
   override val AccessDefinitions = new DefaultAccessDefinitions {
     override def findQueryFilter(implicit ctx: DBAccessContext) = {
       ctx.data match {
         case Some(user: User) =>
-          AllowIf(Json.obj("$or" -> List(
-            Json.obj("collaborators" -> user.githubId),
-            Json.obj("admins" -> user.githubId))))
-        case _ if ctx.globalAccess =>
-          AllowEveryone
+          AllowIf(Json.obj("name" -> Json.obj("$in" -> user.namesOfPushRepositories)))
         case _ =>
           DenyEveryone()
-
       }
     }
   }
 
-  def createFullName(owner: String, repo: String) =
-    owner + "/" + repo
-
-  implicit val formatter = Json.format[Repository]
-
-  def findByName(fullName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
-    find(Json.obj("fullName" -> fullName)).one[Repository]
+  def findByName(name: String)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+    find(Json.obj("name" -> name)).one[Repository]
   }
 
-  def removeByName(fullName: String)(implicit ctx: DBAccessContext) = {
+  def removeByName(name: String)(implicit ctx: DBAccessContext) = {
     remove(Json.obj(
-      "fullName" -> fullName
+      "name" -> name
     ))
   }
 
   def findAllWhereUserIsAdmin(user: User)(implicit ctx: DBAccessContext) = withExceptionCatcher{
-    find(Json.obj("admins" -> user.githubId)).cursor[Repository].collect[List]()
+    find(Json.obj("admins" -> user.userId)).cursor[Repository].collect[List]()
   }
 
-  def updateCollaborators(fullName: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {
+  def updateCollaborators(name: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {
     update(
-      Json.obj("fullName" -> fullName),
+      Json.obj("name" -> name),
       Json.obj("$set" -> Json.obj("collaborators" -> collaborators))
     )
   }
