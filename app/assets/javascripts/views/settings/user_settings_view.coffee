@@ -59,20 +59,21 @@ class UserSettingsView extends Backbone.Marionette.Layout
         valueFunc : -> return @model.get("name")
       name : "defaultRepository"
     )
+
     @listenTo(@, "render", @afterRender)
     @listenTo(@model, "sync", @render)
+
+    @listenTo(@defaultRepositorySelectorView, "render", ->
+      defaultRepository = @model.get("defaultRepository")
+      if defaultRepository
+        @defaultRepositorySelectorView.setValue(defaultRepository)
+    )
 
 
   afterRender : ->
 
     @defaultRepositorySelector.show(@defaultRepositorySelectorView)
-
-    defaultRepository = @model.get("defaultRepository")
-    if defaultRepository
-      @defaultRepositorySelectorView.$("option[value=\"#{defaultRepository}\"]").attr("selected", true)
-
     @ui.closeAfterGithub.prop("checked", @model.get("closeAfterGithub"))
-
     @updateAccessKey()
 
 
