@@ -111,6 +111,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       comment : @ui.inputComment.val()
       duration : @ui.inputDuration.val()
       dateTime : moment.utc(@ui.inputDate.val()).toISOString()
+      id : @ui.repository.find(":selected").prop("id")
     ).then(
       =>
         @showAlert("You time entry was successfully logged.", "success")

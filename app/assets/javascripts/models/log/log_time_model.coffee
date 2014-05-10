@@ -16,6 +16,6 @@ class LogTimeModel extends Backbone.Model
 
   save : (attributes) ->
 
-    @url = "/api/repos/#{attributes.repository}/issues/#{attributes.issueNumber}"
+    @url = "/api/repos/#{attributes.id}/issues/#{attributes.issueNumber}"
 
     super(attributes, {method : "POST"})
