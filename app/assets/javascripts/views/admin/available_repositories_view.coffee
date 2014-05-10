@@ -59,6 +59,5 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
 
     @trigger("newItem",
       name : @ui.repoName.val()
-      accessToken : @ui.repoAccessToken.val()
       usesIssueLinks : false
     )

@@ -16,7 +16,7 @@ models/viewmodel : ViewModel
 class UserViewModel extends ViewModel
 
   defaults : ->
-    date : moment()
+    date : moment().startOf("month")
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
     dailyTotalHours : 0
@@ -32,14 +32,14 @@ class UserViewModel extends ViewModel
 
     # First group all issues by their repository (aka Project)
     projectIssues = @dataSource.groupBy((timeEntry) ->
-      return timeEntry.get("issue").project
+      return timeEntry.get("issueReference").project
     )
 
     projectIssues = _.transform(projectIssues,
       (result, issues, key) ->
         result[key] = _.groupBy(issues,
           (timeEntry) ->
-            return timeEntry.get("issue").number
+            return timeEntry.get("issueReference").number
         )
     )
 
@@ -49,11 +49,11 @@ class UserViewModel extends ViewModel
       issueGroups = _.map(project,
         (issues) =>
           name : "Issue Name"
-          number : issues[0].get("issue").number
+          number : issues[0].get("issueReference").number
           values : Utils.range(1, @get("date").daysInMonth()).map(
             (day) -> return Utils.sum(
               _.filter(issues,
-                (issue) -> return moment(issue.get("timestamp")).date() == day
+                (issue) -> return moment(issue.get("dateTime")).date() == day
               ).map(
                 (projectFilterdByDay) -> return projectFilterdByDay.get("duration")
               )
