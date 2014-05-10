@@ -9,12 +9,11 @@ backbone.marionette : Marionette
 
 class AdminPanelView extends Backbone.Marionette.Layout
 
+  className : "admin container"
   template: _.template("""
-    <div class="admin">
-      <section class="row">
-        <div class="col-lg-12" id="repository-panel"></div>
-      </section>
-    <div>
+    <section class="row">
+      <div class="col-lg-12" id="repository-panel"></div>
+    </section>
   """)
 
   regions:

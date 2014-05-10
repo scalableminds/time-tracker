@@ -36,7 +36,7 @@ class Router extends Backbone.Router
 
     @handlePageLinks()
     @activeViews = null
-    @$mainContainer = $("#main-container .container")
+    @$mainContainer = $("#main-container")
 
 
   user : (date) ->
