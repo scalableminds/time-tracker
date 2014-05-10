@@ -43,6 +43,12 @@ object RepositoryController extends Controller {
     tryNext(tokens)
   }
 
+  def read(id: String) = Authenticated.async{ implicit request =>
+    for{
+      repo <- RepositoryDAO.findOneById(id)
+    } yield Ok(Json.toJson(repo))
+  }
+
   def list = Authenticated.async{ implicit request =>
     for{
       repositories <- RepositoryDAO.findAll

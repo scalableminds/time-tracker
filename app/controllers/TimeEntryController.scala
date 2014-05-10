@@ -74,10 +74,10 @@ object TimeEntryController extends Controller {
       }
   }
 
-  def createForm(owner: String, repo: String, issueNumber: Int, referer: Option[String]) = Authenticated.async {
+  def createForm(id: String, issueNumber: Int, referer: Option[String]) = Authenticated.async {
     implicit request =>
       for {
-        repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo)) ?~> "Repository couldn't be found"
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository couldn't be found"
         _ <- ensureCollaboration(request.user, repository).toFox
       } yield {
         Ok(html.timeEntry(repository, issueNumber))
