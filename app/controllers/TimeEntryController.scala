@@ -19,29 +19,6 @@ import play.api.libs.json._
 import net.liftweb.common.Full
 import org.joda.time.format.ISODateTimeFormat
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 13:21
- */
-
-object DurationParser {
-  val durationRx = """^\s*(\-?)\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$""" r
-
-  def parse(s: String) = {
-    durationRx.findFirstMatchIn(s).map {
-      case durationRx(_sign, _d, _h, _m) =>
-        val sign = if (_sign == null || _sign == "") 1 else -1
-        val d = if (_d == null) 0 else _d.toInt
-        val h = if (_h == null) 0 else _h.toInt
-        val m = if (_m == null) 0 else _m.toInt
-
-        sign * ((d * 8 + h) * 60 + m)
-    }
-  }
-}
-
 object TimeEntryController extends Controller {
   val DefaultAccessRole = None
 
@@ -124,11 +101,15 @@ object TimeEntryController extends Controller {
       "email" -> user.profile.email)
 
   def showTimeForAUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsValue] = {
+    import scala.collection.breakOut
     for {
       user <- UserDAO.findOneByUserId(userId) ?~> "User not found"
       entries <- TimeEntryDAO.loggedTimeForUser(userId, year, month)
+      issueReferences = entries.map(_.issueReference)
+      issues <- IssueDAO.findByIssueReferences(issueReferences)
     } yield {
-      Json.toJson(entries)
+      val issueMap: Map[IssueReference, Issue] =  issues.map(i => (i.reference, i))(breakOut)
+      Json.arr(entries.map(TimeEntry.publicTimeEntryWrites(_, issueMap)))
     }
   }
 

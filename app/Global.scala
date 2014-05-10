@@ -1,15 +1,12 @@
-import models.services.GithubIssueActor
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
+import models.GithubIssueActor
 import play.api.GlobalSettings
 
 import play.api.Application
 import play.api.libs.concurrent.Akka
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 25.07.13
- * Time: 03:17
- */
 object Global extends GlobalSettings{
   override def onStart(app: Application) = {
     implicit val sys = Akka.system(app)
