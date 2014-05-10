@@ -12,8 +12,9 @@ class LogTimeView extends Backbone.Marionette.CompositeView
 
   className : "log-time"
   title : "Log Time"
+
   template : _.template("""
-    <div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
       <div class="alert fade">
         <button type="button" class="close" data-dismiss="alert">×</button>
       </div>
@@ -81,7 +82,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
     @listenTo(@, "render", @afterRender)
 
 
-  afterRender : =>
+  afterRender : ->
 
     @ui.inputDate
       .datepicker({format : "yyyy-mm-dd"})

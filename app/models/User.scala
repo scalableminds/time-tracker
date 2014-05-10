@@ -1,38 +1,16 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models
 
-import _root_.java.util.UUID
+import java.util.UUID
 import play.api.libs.json._
 import braingames.reactivemongo.{DBAccessContextPayload, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
-import models.auth.{AccessToken, OAuth2Info}
+import models.auth.AccessToken
 import play.api.libs.functional.syntax._
 
 import braingames.util.Fox
-import reactivemongo.core.commands.LastError
-
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 22:36
- */
-
-case class UserProfile(
-  login: String,
-  firstName: String,
-  lastName: String,
-  fullName: String,
-  email: Option[String])
-
-object UserProfile {
-  implicit val userProfileFormat = Json.format[UserProfile]
-}
-
-case class RepositoryAccess(name: String, isAdmin: Boolean, isPusher: Boolean)
-
-object RepositoryAccess{
-  implicit val repositoryAccessFormat = Json.format[RepositoryAccess]
-}
 
 case class User(userId: Int,
   profile: UserProfile,
@@ -69,6 +47,14 @@ case class User(userId: Int,
 object User {
   def generateAccessKey = UUID.randomUUID().toString.replace("-", "")
 
+  implicit val userFormat = Json.format[User]
+
+  val loggedInUserWrites: Writes[User] =
+    ((__ \ 'id).write[Int] and
+      (__ \ 'profile).write[UserProfile] and
+      (__ \ 'accessKey).write[Option[String]] and
+      (__ \ 'settings).write[JsValue])(u => (u.userId, u.profile, u.accessKey, u.settings))
+
   val publicUserWrites: Writes[User] =
     ((__ \ 'id).write[Int] and
       (__ \ 'fullName).write[String])(u => (u.userId, u.profile.fullName))
@@ -77,7 +63,7 @@ object User {
 object UserDAO extends BasicReactiveDAO[User] {
   val collectionName = "users"
 
-  implicit val formatter = Json.format[User]
+  implicit val formatter = User.userFormat
 
   def findOneByEmail(email: String)(implicit ctx: DBAccessContext) =
     findHeadOption("profile.email", email)

@@ -1,7 +1,7 @@
 ### define
 backbone : backbone
 moment : moment
-Utils : Utils
+utils : Utils
 ###
 
 class UserTimeCollection extends Backbone.Collection

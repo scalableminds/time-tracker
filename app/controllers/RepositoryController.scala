@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+ */
 package controllers
 
 import play.api.mvc.Action
@@ -15,12 +18,6 @@ import play.api.libs.concurrent.Akka
 import play.api.Play.current
 import braingames.util.Fox
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 15.08.13
- * Time: 23:54
- */
 object RepositoryController extends Controller {
 
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)

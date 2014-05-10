@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models.auth
 
 import models._
@@ -8,12 +11,6 @@ import scala.concurrent.Await
 import braingames.util.Fox
 import play.api.libs.json.{JsValue, JsObject}
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 23:12
- */
 object UserService{
 
   def find(userId: Int): Fox[User] = {
@@ -62,7 +59,7 @@ object UserService{
       case Array(first, last@_*) =>
         (first, last.mkString(" "))
       case _ =>
-        ("", "")
+        (s, "")
     }
   }
 }

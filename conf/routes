@@ -36,6 +36,7 @@ GET           /api/users                                      controllers.UserCo
 GET           /api/users/:id                                  controllers.UserController.read(id: Int)
 
 # Current user
+GET           /api/user                                       controllers.UserController.readMyself
 GET           /api/user/settings                              controllers.UserController.readSettings
 POST          /api/user/settings                              controllers.UserController.updateSettings
 POST          /api/user/accesskey                             controllers.UserController.createAccessKey()
@@ -46,7 +47,7 @@ GET           /api/user/times/:year/:month                    controllers.TimeEn
 GET           /api/times/:year/:month                         controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
 
 # Issues
-GET           /api/issues/:owner/:repo                        controllers.TimeEntryController.showIssues(owner, repo)
+GET           /api/issues/:owner/:repo                        controllers.IssueController.list(owner, repo)
 
 # ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package controllers
 
 import play.api.Play.current
@@ -244,7 +247,7 @@ trait GithuIssueRequester extends GithubRequester{
   val extractIssues = (__).read(list[GithubIssue])
 }
 
-case class GithubUserDetails(id: Int, login: String, email: String, name: String)
+case class GithubUserDetails(id: Int, login: String, email: Option[String], name: Option[String])
 
 trait GithuUserDetailRequester extends GithubRequester{
 

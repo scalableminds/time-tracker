@@ -1,7 +1,7 @@
 ###  define
 backbone.marionette : Marionette
 underscore: _
-Utils: Utils
+utils: Utils
 ###
 
 class ReportItemView extends Backbone.Marionette.ItemView

@@ -1,20 +1,16 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models.services
 
 import akka.actor.Actor
-import models.Repository
+import models.{Issue, Repository, IssueDAO}
 import controllers.{Application, GithubApi, GithubIssue}
 import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
 import braingames.util.StartableActor
 import play.api.Logger
-import models.{IssueDAO, ArchivedIssue}
 import scala.concurrent.Future
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 25.07.13
- * Time: 02:23
- */
 case class FullScan(repo: Repository, accesssToken: String)
 
 class GithubIssueActor extends Actor {
@@ -65,6 +61,6 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
   }
 
   def ensureIssueIsArchived(repo: Repository, issue: GithubIssue) = {
-    IssueDAO.archiveIssue(ArchivedIssue(repo.name, issue.number, issue.title))(GlobalAccessContext)
+    IssueDAO.archiveIssue(Issue(repo.name, issue.number, issue.title))(GlobalAccessContext)
   }
 }

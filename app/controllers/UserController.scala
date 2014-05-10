@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package controllers
 
 import scala.None
@@ -34,6 +37,10 @@ object UserController extends Controller {
       } yield {
         Ok(User.publicUserWrites.writes(user))
       }
+  }
+
+  def readMyself = Authenticated{ implicit request =>
+    Ok(User.loggedInUserWrites.writes(request.user))
   }
 
   def updateSettings = Authenticated.async(parse.json(1024)){ implicit request =>

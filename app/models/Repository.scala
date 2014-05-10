@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package models
 
 import play.api.libs.json._
@@ -11,12 +14,6 @@ import scala.concurrent.Future
 import play.modules.reactivemongo.json.BSONFormats._
 import play.api.libs.functional.syntax._
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 22.07.13
- * Time: 01:54
- */
 case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String], _id: BSONObjectID = BSONObjectID.generate) {
   def owner = name.split("/").head
 
