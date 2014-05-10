@@ -12,4 +12,5 @@ class AvailableRepositoriesItemView extends Backbone.Marionette.ItemView
 
   attributes : ->
 
-    value: @model.get("name")
+    value : @model.get("name")
+    id : @model.get("id")

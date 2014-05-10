@@ -19,29 +19,6 @@ import play.api.libs.json._
 import net.liftweb.common.Full
 import org.joda.time.format.ISODateTimeFormat
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 13:21
- */
-
-object DurationParser {
-  val durationRx = """^\s*(\-?)\s*(?:(\d+)\s*d)?\s*(?:(\d+)\s*h)?\s*(?:(\d+)\s*m)?\s*$""" r
-
-  def parse(s: String) = {
-    durationRx.findFirstMatchIn(s).map {
-      case durationRx(_sign, _d, _h, _m) =>
-        val sign = if (_sign == null || _sign == "") 1 else -1
-        val d = if (_d == null) 0 else _d.toInt
-        val h = if (_h == null) 0 else _h.toInt
-        val m = if (_m == null) 0 else _m.toInt
-
-        sign * ((d * 8 + h) * 60 + m)
-    }
-  }
-}
-
 object TimeEntryController extends Controller {
   val DefaultAccessRole = None
 
@@ -72,17 +49,16 @@ object TimeEntryController extends Controller {
     }
   }
 
-  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction.async(parse.json) {
+  def create(id: String, issueNumber: Int, accessKey: String) = UserAwareAction.async(parse.json) {
     implicit request =>
-      val fullName = Repository.createFullName(owner, repo)
       for {
         user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
-        repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
+        repository <- RepositoryDAO.findOneById(id)(user) ?~> "Repository couldn't be found"
         _ <- ensureCollaboration(user, repository).toFox
         timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
         duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
       } yield {
-        val issueReference = IssueReference(fullName, issueNumber)
+        val issueReference = IssueReference(repository.name, issueNumber)
         val timeEntry = TimeEntry(issueReference, duration, user.userId, timeEntryPost.comment, timeEntryPost.dateTime)
         TimeEntryDAO.createTimeEntry(timeEntry)(user)
         JsonOk("OK")
@@ -104,15 +80,15 @@ object TimeEntryController extends Controller {
         repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo)) ?~> "Repository couldn't be found"
         _ <- ensureCollaboration(request.user, repository).toFox
       } yield {
-        Ok(html.timeEntry(owner, repo, issueNumber))
+        Ok(html.timeEntry(repository, issueNumber))
       }
   }
 
-  def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = Authenticated.async {
+  def showTimeForIssue(id: String, issueNumber: Int) = Authenticated.async {
     implicit request =>
-      val repositoryName = Repository.createFullName(owner, repo)
       for {
-        entries <- TimeEntryDAO.loggedTimeForIssue(IssueReference(repositoryName, issueNumber))
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository couldn't be found"
+        entries <- TimeEntryDAO.loggedTimeForIssue(IssueReference(repository.name, issueNumber))
       } yield {
         Ok(Json.toJson(entries))
       }
@@ -125,11 +101,15 @@ object TimeEntryController extends Controller {
       "email" -> user.profile.email)
 
   def showTimeForAUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext): Fox[JsValue] = {
+    import scala.collection.breakOut
     for {
       user <- UserDAO.findOneByUserId(userId) ?~> "User not found"
       entries <- TimeEntryDAO.loggedTimeForUser(userId, year, month)
+      issueReferences = entries.map(_.issueReference)
+      issues <- IssueDAO.findByIssueReferences(issueReferences)
     } yield {
-      Json.toJson(entries)
+      val issueMap: Map[IssueReference, Issue] =  issues.map(i => (i.reference, i))(breakOut)
+      Json.arr(entries.map(TimeEntry.publicTimeEntryWrites(_, issueMap)))
     }
   }
 

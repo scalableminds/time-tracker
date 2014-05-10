@@ -8,15 +8,6 @@ models/users_collection : UsersCollection
 
 class ViewModel extends Backbone.Model
 
-  defaults : ->
-    date : moment()
-    rows : new Backbone.Collection()
-    monthlyTotalHours : 0
-    dailyTotalHours : 0
-    urlRoot : "team"
-    viewTitle : "Team Report"
-
-
   initialize : (options = {}) ->
 
     if options.date

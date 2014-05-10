@@ -2,6 +2,7 @@
 underscore : _
 backbone : backbone
 backbone.marionette : Marionette
+app : app
 views/admin/available_repositories_item_view : AvailableRepositoriesItem
 models/admin/active_repositories_collection : ActiveRepositoriesCollection
 models/log/log_time_model : LogTimeModel
@@ -25,7 +26,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
         </h3>
         <div class="form-group">
           <label class="control-label" for="repository">Repository</label>
-          <div>
+          <div id="repository-selector">
             <select name="repository" class="form-control">
             </select>
           </div>
@@ -70,7 +71,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
     inputComment : "input[name=comment]"
     inputDuration : "input[name=duration]"
     issueNumber : "#issueNumber"
-    repository : "select"
+    repository : "#repository-selector select"
     form : "form"
 
 
@@ -78,8 +79,19 @@ class LogTimeView extends Backbone.Marionette.CompositeView
 
     @model = new LogTimeModel()
     @collection = new ActiveRepositoriesCollection()
-    @collection.fetch()
-    @listenTo(@, "render", @afterRender)
+    @collection.fetch().done(@setDefaultRepository.bind(this))
+
+    @listenTo(this, "render", @afterRender)
+    @listenTo(app.settings, "sync", @setDefaultRepository)
+
+
+  setDefaultRepository : ->
+
+    console.log this.ui.repository[0].options.length
+    defaultRepository = app.settings.get("defaultRepository")
+    if defaultRepository
+      @ui.repository.val(defaultRepository)
+
 
 
   afterRender : ->
@@ -91,9 +103,13 @@ class LogTimeView extends Backbone.Marionette.CompositeView
         @ui.inputDate.datepicker("hide")
 
 
+
   showDatePicker : ->
 
     @ui.inputDate.datepicker().show()
+
+
+
 
 
   submitTimeLog : (evt) ->
@@ -111,12 +127,17 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       comment : @ui.inputComment.val()
       duration : @ui.inputDuration.val()
       dateTime : moment.utc(@ui.inputDate.val()).toISOString()
+      id : @ui.repository.find(":selected").prop("id")
     ).then(
       =>
-        @showAlert("You time entry was successfully logged.", "success")
-      =>
+        if /\?.*referer=github/.test(window.location.href) and app.settings.get("closeAfterGithub")
+          window.close()
+        else
+          @showAlert("You time entry was successfully logged.", "success")
+    =>
         @showAlert("Ups. We couldn't save your time log.", "danger")
     )
+
 
   showAlert : (msg, className = danger) ->
 

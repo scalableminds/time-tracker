@@ -8,9 +8,9 @@ backbone.marionette : Marionette
 class RepositoryPanelView extends Backbone.Marionette.Layout
 
   template: _.template("""
-    <section id="available_repositories">
+    <section id="available_repositories" class="well">
     </section>
-    <section id="active_repositories">
+    <section id="active_repositories" class="well">
     </section>
   """)
 

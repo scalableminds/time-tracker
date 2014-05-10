@@ -1,4 +1,4 @@
-@(owner: String, repo: String, issueNumber: Int)(implicit session: controllers.SessionData)
+@(repository: models.Repository, issueNumber: Int)(implicit session: controllers.SessionData)
 
 @additionalHeader = {
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/datepicker.css")">
@@ -8,8 +8,8 @@
       <button type="button" class="close" data-dismiss="alert">×</button>
     </div>
     <div class="container">
-        <h3>/@owner/@repo/@issueNumber</h3>
-        @helper.form(action = routes.TimeEntryController.create(owner, repo, issueNumber), 'role -> "form") {
+        <h3>/@repository.name/@issueNumber</h3>
+        @helper.form(action = routes.TimeEntryController.create(repository.id, issueNumber), 'role -> "form") {
             <div class="form-group">
 
                 <label class="control-label" for="duration">Duration</label>
