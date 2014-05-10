@@ -99,7 +99,7 @@ cleanUp() {
   rm -rf $ROOT_ENV
 }
 
-#kstage
+stage
 createRootEnvironment
 copyBinariesToRootEnvironment
 renderAllTemplates
