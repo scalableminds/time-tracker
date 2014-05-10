@@ -24,6 +24,7 @@ class TeamViewModel extends ViewModel
     urlRoot : "team"
     viewTitle : "Team Report"
 
+
   dataSourceClass : TeamTimeCollection
 
   transformData : ->
@@ -64,6 +65,7 @@ class TeamViewModel extends ViewModel
         name : @usersCollection.getNameById(user)
         sum : sumTotal
         dailyTimeEntries : sumDaily
+        githubUrl : null
       )
 
       # Add the daily individual time logs to the collection
@@ -74,6 +76,7 @@ class TeamViewModel extends ViewModel
           name : projectName
           sum : sumCompleteProject
           dailyTimeEntries : timeEntry
+          githubUrl : "https://github.com/#{projectName}"
         )
       )
     )

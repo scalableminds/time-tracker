@@ -71,6 +71,7 @@ class UserViewModel extends ViewModel
         name : repositoryName
         sum : sumTotal
         dailyTimeEntries : sumDaily
+        githubUrl : null
       )
 
       # Add the daily individual time logs to the collection
@@ -81,6 +82,7 @@ class UserViewModel extends ViewModel
           name : "#{number} #{name}"
           sum : Utils.sum(values)
           dailyTimeEntries : values
+          githubUrl : "https://github.com/#{repositoryName}/issues/#{number}"
         )
       )
     )
