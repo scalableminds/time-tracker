@@ -1,15 +1,11 @@
 # Routes
 
-# ~~ HTML API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~ HTML API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # General
 GET           /                                         controllers.Application.index
 GET           /home                                     controllers.Application.home
 GET           /faq                                      controllers.Application.faq
-
-# Add time entry to issue
-GET           /create                                   controllers.TimeEntryController.createGenericForm
-GET           /repos/:id/issues/:issue/create           controllers.TimeEntryController.createForm(id, issue: Int, referer: Option[String])
 
 # Assets
 GET           /assets/javascripts/routes.js             controllers.Application.javascriptRoutes
@@ -20,7 +16,7 @@ GET           /authenticate/complete                    controllers.auth.Authent
 GET           /authenticate                             controllers.auth.Authentication.authenticate(redirectUri: Option[String])
 GET           /authenticate/logout                      controllers.auth.Authentication.logout
 
-# ~~ JSON API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~ JSON API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Repositories
 GET           /api/repos                                controllers.RepositoryController.list
@@ -50,6 +46,6 @@ GET           /api/times/:year/:month                   controllers.TimeEntryCon
 # Issues
 GET           /api/issues/:owner/:repo                  controllers.IssueController.list(owner, repo)
 
-# ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GET           /*any                                     controllers.Application.team(any: String)

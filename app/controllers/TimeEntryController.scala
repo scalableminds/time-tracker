@@ -65,24 +65,6 @@ object TimeEntryController extends Controller {
       }
   }
 
-  def createGenericForm() = Authenticated.async {
-    implicit request =>
-      for {
-        usedRepositories <- RepositoryDAO.findAll
-      } yield {
-        Ok(html.genericTimeEntry(usedRepositories))
-      }
-  }
-
-  def createForm(id: String, issueNumber: Int, referer: Option[String]) = Authenticated.async {
-    implicit request =>
-      for {
-        repository <- RepositoryDAO.findOneById(id) ?~> "Repository couldn't be found"
-        _ <- ensureCollaboration(request.user, repository).toFox
-      } yield {
-        Ok(html.timeEntry(repository, issueNumber))
-      }
-  }
 
   def showTimeForIssue(id: String, issueNumber: Int) = Authenticated.async {
     implicit request =>
