@@ -22,6 +22,8 @@ class ProjectViewModel extends ViewModel
     dailyTotalHours : 0
     urlRoot : "project"
     viewTitle : "Project View"
+    githubUrl : null
+
 
   dataSourceClass : TeamTimeCollection
 
@@ -68,6 +70,7 @@ class ProjectViewModel extends ViewModel
         name : repositoryName
         sum : sumTotal
         dailyTimeEntries : sumDaily
+        githubUrl : null
       )
 
       # Add the daily individual time logs to the collection
@@ -77,6 +80,7 @@ class ProjectViewModel extends ViewModel
           name : @usersCollection.getNameById(userID)
           sum : Utils.sum(dailyEntries)
           dailyTimeEntries : dailyEntries
+          githubUrl : "https://github.com/#{@usersCollection.getGithubNameById(userID)}"
         )
       )
     )
