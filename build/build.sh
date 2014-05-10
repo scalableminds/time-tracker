@@ -3,13 +3,30 @@
 set -e
 
 : ${BUILD_NUMBER:?"Need non empty BUILD_NUMBER variable! If you are starting this script from cli you should use build-cli.sh"}
-: ${GIT_BRANCH:?"Need non empty GIT_BRANCH variable"}
 : ${JOB_NAME:?"Need non empty JOB_NAME variable"}
 
 SCRIPT_DIR=$(dirname $0)
 
 export WORKSPACE=${WORKSPACE:-$(readlink -f ${SCRIPT_DIR}/..)}
-export NAME=${JOB_NAME}-${GIT_BRANCH}
+
+if [ `python2 -c "import jinja2"` ]; then
+  echo "This scrips needs jinja2 for template rendering, aborting ..."
+  exit 1
+fi
+
+REAL_BRANCH_FILE=${WORKSPACE}/.git/REAL_BRANCH
+if [ -f ${REAL_BRANCH_FILE} ]; then
+  GIT_BRANCH=$(<${REAL_BRANCH_FILE})
+elif [ -z "$GIT_BRANCH" ]; then
+  echo "Need either a $REAL_BRANCH_FILE containing branch or GIT_BRANCH environment variable"
+  exit 1
+fi
+
+if [ "$GIT_BRANCH" = "master" ]; then
+  export NAME=${JOB_NAME}
+else
+  export NAME=${JOB_NAME}-${GIT_BRANCH}
+fi
 
 export ROOT_ENV=$WORKSPACE/root_env
 export INSTALL_DIR=/usr/lib/$NAME
@@ -20,14 +37,10 @@ export PORT=12000
 export MODE=prod
 export VERSION=1.0
 
-if [ `python2 -c "import jinja2"` ]; then
-  echo "This scrips needs jinja2 for template rendering, aborting ..."
-  exit 1
-fi
-
 stage() {
   echo "[*] compiling..."
   cd $WORKSPACE
+  bower install
   sbt clean compile stage
 }
 
@@ -63,9 +76,14 @@ renderAllTemplates() {
   TEMPLATES=$(find $WORKSPACE/build/templates -type f)
   while read -r TEMPLATE; do
     TEMPLATE_PATH=${TEMPLATE#*/templates/}
-    echo "[*] rendering template $TEMPLATE_PATH"
-    mkdir -p $ROOT_ENV/`dirname $TEMPLATE_PATH`
-    renderTemplate $TEMPLATE > $ROOT_ENV/$TEMPLATE_PATH
+    if [ "$GIT_BRANCH" = "master" ]; then
+      TARGET_PATH=${TEMPLATE_PATH//-BRANCH/}
+    else
+      TARGET_PATH=${TEMPLATE_PATH//-BRANCH/$GIT_BRANCH}
+    fi
+    echo "[*] rendering template $TARGET_PATH"
+    mkdir -p `dirname $ROOT_ENV/$TARGET_PATH`
+    renderTemplate $TEMPLATE > $ROOT_ENV/$TARGET_PATH
   done <<< $TEMPLATES
 }
 
