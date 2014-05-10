@@ -16,7 +16,7 @@ models/viewmodel : ViewModel
 class ProjectViewModel extends ViewModel
 
   defaults : ->
-    date : moment()
+    date : moment().startOf("month")
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
     dailyTotalHours : 0
@@ -50,7 +50,7 @@ class ProjectViewModel extends ViewModel
           result[key] = Utils.range(1, @get("date").daysInMonth()).map(
             (day) -> return Utils.sum(
               _.filter(project,
-                (project) -> return moment(project.get("timestamp")).date() == day
+                (project) -> return moment(project.get("dateTime")).date() == day
               ).map(
                 (projectFilterdByDay) -> return projectFilterdByDay.get("duration")
               )

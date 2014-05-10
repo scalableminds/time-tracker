@@ -7,6 +7,7 @@ utils: Utils
 
 class ReportView extends Backbone.Marionette.CompositeView
 
+  className : "time-report"
   template : _.template("""
     <h3 class="view-title"><%= viewTitle %></h3>
     <table class="table table-hover table-bordered table-striped responsive">

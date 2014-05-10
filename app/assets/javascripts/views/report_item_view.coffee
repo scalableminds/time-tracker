@@ -9,7 +9,7 @@ class ReportItemView extends Backbone.Marionette.ItemView
   tagName : "tr"
 
   template : _.template("""
-    <td><%= name %></td>
+    <td title="<%= name %>" class="truncate"><%= name %></td>
     <td><%= Utils.minutesToHours(sum) %></td>
     <% _.each(dailyTimeEntries, function(day){ %>
       <td><%= Utils.minutesToHours(day) %></td>
