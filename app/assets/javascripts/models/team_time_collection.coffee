@@ -1,12 +1,10 @@
 ### define
 backbone : backbone
 moment : moment
-Utils : Utils
+utils : Utils
 ###
 
 class TeamTimeCollection extends Backbone.Collection
-
-  date : moment().startOf("month")
 
   url : ->
 
@@ -29,7 +27,7 @@ class TeamTimeCollection extends Backbone.Collection
         momentDay = moment(@date).add("days", day - 1)
         @reduce(
           (sumTotal, user) ->
-            if moment(user.get("timestamp")).isSame(momentDay, "day")
+            if moment(user.get("dateTime")).isSame(momentDay, "day")
               return sumTotal + user.get("duration")
             else
               return sumTotal

@@ -47,7 +47,7 @@ GET           /api/user/times/:year/:month                    controllers.TimeEn
 GET           /api/times/:year/:month                         controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
 
 # Issues
-GET           /api/issues/:owner/:repo                        controllers.TimeEntryController.showIssues(owner, repo)
+GET           /api/issues/:owner/:repo                        controllers.IssueController.list(owner, repo)
 
 # ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

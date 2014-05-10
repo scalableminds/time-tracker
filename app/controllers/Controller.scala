@@ -1,3 +1,6 @@
+/*
+* Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
+*/
 package controllers
 
 import play.api.mvc.{Controller => PlayController, Request}
@@ -9,12 +12,6 @@ import play.api.mvc.Request
 import play.api.mvc.RequestHeader
 import controllers.auth.{UserAwareRequest, AuthenticatedRequest, Secured}
 
-/**
- * Company: scalableminds
- * User: tmbo
- * Date: 19.07.13
- * Time: 14:39
- */
 trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData with Secured
 
 
