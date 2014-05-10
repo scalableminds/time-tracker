@@ -12,15 +12,15 @@ class AdminPanelView extends Backbone.Marionette.Layout
   template: _.template("""
     <div class="admin">
       <section class="row">
-        <div class="col-lg-12" id="repository_panel"></div>
+        <div class="col-lg-12" id="repository-panel"></div>
       </section>
     <div>
   """)
 
   regions:
-    billingRatesPanel: "#billing_rates_panel"
-    repositoryPanel: "#repository_panel"
-    infoPanel: "#info_panel"
+    billingRatesPanel: "#billing-rates_panel"
+    repositoryPanel: "#repository-panel"
+    infoPanel: "#info-panel"
 
   initialize: ->
 

@@ -16,7 +16,7 @@ class ActiveRepositoriesView extends Backbone.Marionette.CompositeView
         <thead>
           <tr>
             <th>Name</th>
-            <th>Admin Ids</th>
+            <th>Repository Admins</th>
             <th></th>
           </tr>
         </thead>
