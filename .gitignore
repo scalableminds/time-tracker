@@ -4,4 +4,6 @@
 logs/
 target/
 RUNNING_PID
+*.deb
+root_env/
 public/bower_components

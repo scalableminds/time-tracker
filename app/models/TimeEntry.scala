@@ -18,19 +18,35 @@ case class TimeEntry(
   comment: Option[String],
   dateTime: DateTime = DateTime.now())
 
-object TimeEntry extends{
+object TimeEntry extends {
 
   implicit val timeEntryFormatter = Json.format[TimeEntry]
 
   def fromForm(issue: IssueReference, duration: Int, userId: Int, comment: Option[String]) =
-  TimeEntry(issue, duration, userId, comment)
+    TimeEntry(issue, duration, userId, comment)
 
   def toForm(t: TimeEntry) =
-  Some((t.issueReference, t.duration, t.userId, t.comment))
+    Some((t.issueReference, t.duration, t.userId, t.comment))
+
+  def publicTimeEntryWrites(timeEntry: TimeEntry, issueResolver: Map[IssueReference, Issue]) = {
+    val issue =
+      issueResolver.get(timeEntry.issueReference)
+      .getOrElse(Issue(timeEntry.issueReference, ""))
+
+    Json.obj(
+      "duration" -> timeEntry.duration,
+      "userId" -> timeEntry.userId,
+      "comment" -> timeEntry.comment,
+      "dateTime" -> timeEntry.dateTime,
+      "issue" -> issue
+    )
+  }
 }
 
 object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
   val collectionName = "timeEntries"
+
+  implicit val formatter = TimeEntry.timeEntryFormatter
 
   override val AccessDefinitions = new DefaultAccessDefinitions {
     override def findQueryFilter(implicit ctx: DBAccessContext) = {
@@ -46,8 +62,6 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
       }
     }
   }
-
-  implicit val formatter = TimeEntry.timeEntryFormatter
 
   def createTimeEntry(timeEntry: TimeEntry)(implicit ctx: DBAccessContext) = {
     insert(timeEntry)
@@ -70,7 +84,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     )
   }
 
-  def loggedTimeForUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext) = withExceptionCatcher{
+  def loggedTimeForUser(userId: Int, year: Int, month: Int)(implicit ctx: DBAccessContext) = withExceptionCatcher {
     val interval = toInterval(year, month)
     find(
       Json.obj("userId" -> userId) ++ timeStampQuery(interval)).cursor[TimeEntry].collect[List]()

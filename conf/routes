@@ -1,54 +1,51 @@
 # Routes
 
-# ~~ HTML API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~ HTML API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # General
-GET           /                                               controllers.Application.index
-GET           /home                                           controllers.Application.home
-GET           /faq                                           controllers.Application.faq
-
-# Add time entry to issue
-GET           /create                                         controllers.TimeEntryController.createGenericForm
-GET           /repos/:owner/:repo/issues/:issue/create        controllers.TimeEntryController.createForm(owner, repo, issue: Int, referer: Option[String])
+GET           /                                         controllers.Application.index
+GET           /home                                     controllers.Application.home
+GET           /faq                                      controllers.Application.faq
 
 # Assets
-GET           /assets/javascripts/routes.js                   controllers.Application.javascriptRoutes
-GET           /assets/*file                                   controllers.Assets.at(path="/public", file)
+GET           /assets/javascripts/routes.js             controllers.Application.javascriptRoutes
+GET           /assets/*file                             controllers.Assets.at(path="/public", file)
 
 # Providers entry points
-GET           /authenticate/complete                          controllers.auth.Authentication.complete(state, code)
-GET           /authenticate                                   controllers.auth.Authentication.authenticate(redirectUri: Option[String])
-GET           /authenticate/logout                            controllers.auth.Authentication.logout
+GET           /authenticate/complete                    controllers.auth.Authentication.complete(state, code)
+GET           /authenticate                             controllers.auth.Authentication.authenticate(redirectUri: Option[String])
+GET           /authenticate/logout                      controllers.auth.Authentication.logout
 
-# ~~ JSON API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~ JSON API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Repositories
-GET           /api/repos                                      controllers.RepositoryController.list
-POST          /api/repos                                      controllers.RepositoryController.add
-GET           /api/repos/:owner/:name/scan                    controllers.RepositoryController.scan(owner, name)
-DELETE        /api/repos/:owner/:name                         controllers.RepositoryController.delete(owner, name)
-POST          /api/repos/:owner/:repo/hook                    controllers.RepositoryController.issueHook(owner, repo)
-POST          /api/repos/:owner/:repo/issues/:issueNumber     controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
-GET           /api/repos/:owner/:repo/issues/:issueNumber     controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
+GET           /api/repos                                controllers.RepositoryController.list
+POST          /api/repos                                controllers.RepositoryController.add
+GET           /api/repos/:id/scan                       controllers.RepositoryController.scan(id)
+GET           /api/repos/:id                            controllers.RepositoryController.read(id)
+DELETE        /api/repos/:id                            controllers.RepositoryController.delete(id)
+POST          /api/repos/:id/hook                       controllers.RepositoryController.issueHook(id)
+POST          /api/repos/:id/issues/:issueNumber        controllers.TimeEntryController.create(id, issueNumber: Int, accessKey: String ?= "")
+GET           /api/repos/:id/issues/:issueNumber        controllers.TimeEntryController.showTimeForIssue(id, issueNumber: Int)
 
 # Users
-GET           /api/users                                      controllers.UserController.list
-GET           /api/users/:id                                  controllers.UserController.read(id: Int)
+GET           /api/users                                controllers.UserController.list
+GET           /api/users/:id                            controllers.UserController.read(id: Int)
 
 # Current user
-GET           /api/user                                       controllers.UserController.readMyself
-GET           /api/user/settings                              controllers.UserController.readSettings
-POST          /api/user/settings                              controllers.UserController.updateSettings
-POST          /api/user/accesskey                             controllers.UserController.createAccessKey()
-GET           /api/user/repos                                 controllers.UserController.listRepositories
-GET           /api/user/times/:year/:month                    controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
+GET           /api/user                                 controllers.UserController.readMyself
+GET           /api/user/settings                        controllers.UserController.readSettings
+POST          /api/user/settings                        controllers.UserController.updateSettings
+POST          /api/user/accesskey                       controllers.UserController.createAccessKey()
+GET           /api/user/repos                           controllers.UserController.listRepositories
+GET           /api/user/times/:year/:month              controllers.TimeEntryController.showTimeForUser(year: Int, month: Int)
 
 # Logged times
-GET           /api/times/:year/:month                         controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
+GET           /api/times/:year/:month                   controllers.TimeEntryController.showTimesForInterval(year: Int, month: Int)
 
 # Issues
-GET           /api/issues/:owner/:repo                        controllers.IssueController.list(owner, repo)
+GET           /api/issues/:owner/:repo                  controllers.IssueController.list(owner, repo)
 
-# ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~ Fallback ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GET           /*any                                           controllers.Application.team(any: String)
+GET           /*any                                     controllers.Application.team(any: String)

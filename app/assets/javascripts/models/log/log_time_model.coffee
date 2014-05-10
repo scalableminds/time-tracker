@@ -6,16 +6,20 @@ moment: moment
 
 class LogTimeModel extends Backbone.Model
 
-  constructor : (repository = null, issueNumber = 0) ->
+  defaults :
+    issueNumber : 0
+    dateTime : moment()
 
-    super(
-      dateTime : moment.utc()
-      repository: repository
-      issueNumber : issueNumber
-    )
+  url : ->
+    "/api/repos/#{@get("id")}/issues/#{@get("issueNumber")}"
 
-  save : (attributes) ->
 
-    @url = "/api/repos/#{attributes.repository}/issues/#{attributes.issueNumber}"
+  initialize : (options) ->
 
-    super(attributes, {method : "POST"})
+    if options
+      {repositoryId, issueNumber} = options
+      @set(
+        id : repositoryId
+        issueNumber : issueNumber
+      )
+

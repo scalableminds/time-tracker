@@ -1,16 +1,18 @@
 ### define
 underscore : _
 backbone : Backbone
-views/admin/admin_panel_view  : AdminPanelView
 views/report_view  : ReportView
-views/month_picker_view : MonthPickerView
-views/log/log_time_view  : LogTimeView
 views/spinner_view  : SpinnerView
+views/admin/admin_panel_view  : AdminPanelView
+views/month_picker_view : MonthPickerView
+views/log/log_time_local_view  : LogTimeLocalView
+views/log/log_time_github_view  : LogTimeGithubView
 views/settings/user_settings_view  : UserSettingsView
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
 models/user/user_viewmodel : UserViewModel
 models/settings/user_settings_model : UserSettingsModel
+models/log/log_time_model : LogTimeModel
 ###
 
 class Router extends Backbone.Router
@@ -24,7 +26,7 @@ class Router extends Backbone.Router
     "admin"                                     : "admin"
     "team"                                      : "team"
     "team/:date"                                : "team"
-    "repos/:owner/:repo/issues/:issueId/create" : "timeEntry"
+    "repos/:repoId/issues/:issueId/create"      : "logFromGithub"
     "settings"                                  : "settings"
 
   whitelist : [
@@ -36,7 +38,7 @@ class Router extends Backbone.Router
 
     @handlePageLinks()
     @activeViews = null
-    @$mainContainer = $("#main-container .container")
+    @$mainContainer = $("#main-container")
 
 
   user : (date) ->
@@ -62,7 +64,15 @@ class Router extends Backbone.Router
 
   log : ->
 
-    @changeView(new LogTimeView())
+    logTimeModel = new LogTimeModel()
+    @changeView(new LogTimeLocalView(model : logTimeModel))
+    @changeActiveNavbarItem("/log")
+
+
+  logFromGithub : (repositoryId, issueNumber) ->
+
+    logTimeModel = new LogTimeModel({repositoryId, issueNumber})
+    @changeView(new LogTimeGithubView(model : logTimeModel))
     @changeActiveNavbarItem("/log")
 
 

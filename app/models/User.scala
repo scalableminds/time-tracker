@@ -57,7 +57,8 @@ object User {
 
   val publicUserWrites: Writes[User] =
     ((__ \ 'id).write[Int] and
-      (__ \ 'fullName).write[String])(u => (u.userId, u.profile.fullName))
+      (__ \ 'fullName).write[String] and
+      (__ \ 'githubLogin).write[String])(u => (u.userId, u.profile.fullName, u.profile.login))
 }
 
 object UserDAO extends BasicReactiveDAO[User] {

@@ -5,8 +5,7 @@ package controllers
 
 import play.api.mvc.Action
 import play.api.Logger
-import models.services.{FullScan, GithubIssueActor}
-import models.{User, Repository, RepositoryDAO}
+import models._
 import GithubApi.githubIssueFormat
 import braingames.reactivemongo.GlobalAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
@@ -17,6 +16,10 @@ import play.api.libs.json.{JsArray, JsError, JsSuccess, Json}
 import play.api.libs.concurrent.Akka
 import play.api.Play.current
 import braingames.util.Fox
+import play.api.libs.json.JsArray
+import play.api.libs.json.JsSuccess
+import net.liftweb.common.Full
+import controllers.GithubIssue
 
 object RepositoryController extends Controller {
 
@@ -38,6 +41,13 @@ object RepositoryController extends Controller {
       }
     }
     tryNext(tokens)
+  }
+
+  def read(id: String) = Authenticated.async{ implicit request =>
+    for{
+      repo <- RepositoryDAO.findOneById(id)
+      js <- Repository.publicRepositoryWrites(repo)
+    } yield Ok(js)
   }
 
   def list = Authenticated.async{ implicit request =>
@@ -81,11 +91,10 @@ object RepositoryController extends Controller {
       }
   }
 
-  def delete(owner: String, name: String) = Authenticated.async {
+  def delete(id: String) = Authenticated.async {
     implicit request =>
-      val repositoryName = Repository.createFullName(owner, name)
       for {
-        repository <- RepositoryDAO.findByName(repositoryName) ?~> "Repository not found"
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
         RepositoryDAO.removeByName(repository.name)
@@ -93,11 +102,10 @@ object RepositoryController extends Controller {
       }
   }
 
-  def scan(owner: String, name: String) = Authenticated.async {
+  def scan(id: String) = Authenticated.async {
     implicit request =>
-      val repositoryName = Repository.createFullName(owner, name)
       for {
-        repository <- RepositoryDAO.findByName(repositoryName) ?~> "Repository not found"
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
         if(repository.usesIssueLinks) {
@@ -109,20 +117,20 @@ object RepositoryController extends Controller {
       }
   }
 
-  def issueHook(owner: String, repository: String) = Action(parse.json) {
+  def issueHook(id: String) = Action(parse.json) {
     implicit request =>
       for {
         action <- (request.body \ "action").asOpt[String]
         if action == "opened"
         issue <- (request.body \ "issue").asOpt[GithubIssue]
       } {
-        RepositoryDAO.findByName(Repository.createFullName(owner, repository))(GlobalAccessContext).futureBox.foreach {
+        RepositoryDAO.findOneById(id)(GlobalAccessContext).futureBox.foreach {
           case Full(repo)  =>
             repo.accessToken.map{accessToken =>
               GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
             }
           case _ =>
-            Logger.warn(s"Issue hook triggered, but couldn't find repository ${Repository.createFullName(owner,repository)}")
+            Logger.warn(s"Issue hook triggered, but couldn't find repository $id")
         }
       }
       Ok("Thanks octocat :)")

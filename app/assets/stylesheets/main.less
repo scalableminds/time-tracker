@@ -1,6 +1,6 @@
 @import "../../../public/bower_components/bootstrap/less/bootstrap.less";
 @import "_variables.less";
-@import "_user_time_report.less";
+@import "_time_report.less";
 @import "_responsive.less";
 @import "_admin.less";
 @import "_log_time.less";
@@ -65,8 +65,14 @@ section + section {
   margin-top: 5em;
 }
 
-.navbar-right > li > a {
-  padding: 8px;
+.navbar-right {
+  & > li > a[href^='/'] {
+    padding: 8px;
+  }
+
+  .dropdown-toggle {
+    font-weight: bold;
+  }
 }
 
 .form-control:invalid {
