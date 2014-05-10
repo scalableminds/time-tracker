@@ -39,7 +39,7 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
 
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
     val link =
-      Application.hostUrl + controllers.routes.TimeEntryController.createForm(repo.owner, repo.shortName, issue.number, Some("github")).url
+      Application.hostUrl + s"/repos/${repo.id}/issues/${issue.number}/create?referer=github"
     s"""<a href="$link" target="_blank">Log Time</a>"""
   }
 
