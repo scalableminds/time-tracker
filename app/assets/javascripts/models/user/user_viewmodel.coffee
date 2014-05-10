@@ -32,7 +32,7 @@ class UserViewModel extends ViewModel
 
     # First group all issues by their repository (aka Project)
     projectIssues = @dataSource.groupBy((timeEntry) ->
-      return timeEntry.get("issue").project
+      return timeEntry.get("issueReference").project
     )
 
     # # Iterate over all issues ...

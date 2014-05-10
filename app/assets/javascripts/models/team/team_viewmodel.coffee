@@ -38,7 +38,7 @@ class TeamViewModel extends ViewModel
 
       # and group his issue by his repositories (aka projects)
       timeEntries = _.groupBy(timings,
-        (timing) -> timing.get("issue").project)
+        (timing) -> timing.get("issueReference").project)
 
       # Finally add the days of the month to every project...
       timeEntries = _.transform(timeEntries,
