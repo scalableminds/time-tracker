@@ -1,7 +1,7 @@
 ### define
 backbone : backbone
 moment : moment
-Utils : Utils
+utils : Utils
 models/user_time_collection : UserTimeCollection
 models/viewmodel : ViewModel
 ###

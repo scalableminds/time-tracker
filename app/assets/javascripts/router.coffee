@@ -74,7 +74,7 @@ class Router extends Backbone.Router
 
   settings : ->
 
-    userSettingsModel = new UserSettingsModel()
+    userSettingsModel = app.settings
     userSettingsView = new UserSettingsView(model : userSettingsModel)
     spinnerView = new SpinnerView(model : userSettingsModel)
     @changeView(spinnerView, userSettingsView)
