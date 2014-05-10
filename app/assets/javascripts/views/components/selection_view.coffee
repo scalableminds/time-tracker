@@ -27,3 +27,9 @@ class SelectionView extends Backbone.Marionette.CollectionView
   getValue : ->
 
     return @el.value
+
+
+  setValue : (value) ->
+
+    @el.value = value
+    return

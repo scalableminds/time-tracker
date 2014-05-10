@@ -1,12 +1,12 @@
 /*
 * Copyright (C) 20011-2014 Scalable minds UG (haftungsbeschränkt) & Co. KG. <http://scm.io>
 */
-package models.services
+package models
 
 import akka.actor.Actor
-import models.{Issue, Repository, IssueDAO}
+import models.Issue
 import controllers.{Application, GithubApi, GithubIssue}
-import braingames.reactivemongo.{GlobalAccessContext, GlobalDBAccess, DBAccessContext}
+import braingames.reactivemongo.{GlobalAccessContext, DBAccessContext}
 import braingames.util.StartableActor
 import play.api.Logger
 import scala.concurrent.Future
@@ -61,6 +61,6 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
   }
 
   def ensureIssueIsArchived(repo: Repository, issue: GithubIssue) = {
-    IssueDAO.archiveIssue(Issue(repo.name, issue.number, issue.title))(GlobalAccessContext)
+    IssueDAO.archiveIssue(Issue(IssueReference(repo.name, issue.number), issue.title))(GlobalAccessContext)
   }
 }
