@@ -5,7 +5,7 @@ if [ $# -lt 3 ]; then
   exit 1
 fi
 
-export PROJECT_NAME=$1
+export JOB_NAME=$1
 export GIT_BRANCH=$2
 export BUILD_NUMBER=$3
 
