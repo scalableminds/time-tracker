@@ -72,17 +72,16 @@ object TimeEntryController extends Controller {
     }
   }
 
-  def create(owner: String, repo: String, issueNumber: Int, accessKey: String) = UserAwareAction.async(parse.json) {
+  def create(id: String, issueNumber: Int, accessKey: String) = UserAwareAction.async(parse.json) {
     implicit request =>
-      val fullName = Repository.createFullName(owner, repo)
       for {
         user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
-        repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo))(user) ?~> "Repository couldn't be found"
+        repository <- RepositoryDAO.findOneById(id)(user) ?~> "Repository couldn't be found"
         _ <- ensureCollaboration(user, repository).toFox
         timeEntryPost <- request.body.asOpt[TimeEntryPost] ?~> "Invalid time entry supplied."
         duration <- parseAsDuration(timeEntryPost.duration) ?~> "Invalid duration supplied."
       } yield {
-        val issueReference = IssueReference(fullName, issueNumber)
+        val issueReference = IssueReference(repository.name, issueNumber)
         val timeEntry = TimeEntry(issueReference, duration, user.userId, timeEntryPost.comment, timeEntryPost.dateTime)
         TimeEntryDAO.createTimeEntry(timeEntry)(user)
         JsonOk("OK")
@@ -104,15 +103,15 @@ object TimeEntryController extends Controller {
         repository <- RepositoryDAO.findByName(Repository.createFullName(owner, repo)) ?~> "Repository couldn't be found"
         _ <- ensureCollaboration(request.user, repository).toFox
       } yield {
-        Ok(html.timeEntry(owner, repo, issueNumber))
+        Ok(html.timeEntry(repository, issueNumber))
       }
   }
 
-  def showTimeForIssue(owner: String, repo: String, issueNumber: Int) = Authenticated.async {
+  def showTimeForIssue(id: String, issueNumber: Int) = Authenticated.async {
     implicit request =>
-      val repositoryName = Repository.createFullName(owner, repo)
       for {
-        entries <- TimeEntryDAO.loggedTimeForIssue(IssueReference(repositoryName, issueNumber))
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository couldn't be found"
+        entries <- TimeEntryDAO.loggedTimeForIssue(IssueReference(repository.name, issueNumber))
       } yield {
         Ok(Json.toJson(entries))
       }

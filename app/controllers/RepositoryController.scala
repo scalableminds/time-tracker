@@ -81,11 +81,10 @@ object RepositoryController extends Controller {
       }
   }
 
-  def delete(owner: String, name: String) = Authenticated.async {
+  def delete(id: String) = Authenticated.async {
     implicit request =>
-      val repositoryName = Repository.createFullName(owner, name)
       for {
-        repository <- RepositoryDAO.findByName(repositoryName) ?~> "Repository not found"
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
         RepositoryDAO.removeByName(repository.name)
@@ -93,11 +92,10 @@ object RepositoryController extends Controller {
       }
   }
 
-  def scan(owner: String, name: String) = Authenticated.async {
+  def scan(id: String) = Authenticated.async {
     implicit request =>
-      val repositoryName = Repository.createFullName(owner, name)
       for {
-        repository <- RepositoryDAO.findByName(repositoryName) ?~> "Repository not found"
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
         if(repository.usesIssueLinks) {
@@ -109,20 +107,20 @@ object RepositoryController extends Controller {
       }
   }
 
-  def issueHook(owner: String, repository: String) = Action(parse.json) {
+  def issueHook(id: String) = Action(parse.json) {
     implicit request =>
       for {
         action <- (request.body \ "action").asOpt[String]
         if action == "opened"
         issue <- (request.body \ "issue").asOpt[GithubIssue]
       } {
-        RepositoryDAO.findByName(Repository.createFullName(owner, repository))(GlobalAccessContext).futureBox.foreach {
+        RepositoryDAO.findOneById(id)(GlobalAccessContext).futureBox.foreach {
           case Full(repo)  =>
             repo.accessToken.map{accessToken =>
               GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
             }
           case _ =>
-            Logger.warn(s"Issue hook triggered, but couldn't find repository ${Repository.createFullName(owner,repository)}")
+            Logger.warn(s"Issue hook triggered, but couldn't find repository $id")
         }
       }
       Ok("Thanks octocat :)")

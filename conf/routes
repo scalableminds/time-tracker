@@ -25,11 +25,11 @@ GET           /authenticate/logout                            controllers.auth.A
 # Repositories
 GET           /api/repos                                      controllers.RepositoryController.list
 POST          /api/repos                                      controllers.RepositoryController.add
-GET           /api/repos/:owner/:name/scan                    controllers.RepositoryController.scan(owner, name)
-DELETE        /api/repos/:owner/:name                         controllers.RepositoryController.delete(owner, name)
-POST          /api/repos/:owner/:repo/hook                    controllers.RepositoryController.issueHook(owner, repo)
-POST          /api/repos/:owner/:repo/issues/:issueNumber     controllers.TimeEntryController.create(owner, repo, issueNumber: Int, accessKey: String ?= "")
-GET           /api/repos/:owner/:repo/issues/:issueNumber     controllers.TimeEntryController.showTimeForIssue(owner, repo, issueNumber: Int)
+GET           /api/repos/:id/scan                             controllers.RepositoryController.scan(id)
+DELETE        /api/repos/:id                                  controllers.RepositoryController.delete(id)
+POST          /api/repos/:id/hook                             controllers.RepositoryController.issueHook(id)
+POST          /api/repos/:id/issues/:issueNumber              controllers.TimeEntryController.create(id, issueNumber: Int, accessKey: String ?= "")
+GET           /api/repos/:id/issues/:issueNumber              controllers.TimeEntryController.showTimeForIssue(id, issueNumber: Int)
 
 # Users
 GET           /api/users                                      controllers.UserController.list
