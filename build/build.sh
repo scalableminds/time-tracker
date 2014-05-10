@@ -60,7 +60,7 @@ copyBinariesToRootEnvironment(){
   echo "[*] copying binary files..."
   INSTALL_DIR_PATH=${ROOT_ENV}${INSTALL_DIR}
   mkdir -p $INSTALL_DIR_PATH
-  cp -r $WORKSPACE/target/universal/stage $INSTALL_DIR_PATH
+  cp -r $WORKSPACE/target/universal/stage/* $INSTALL_DIR_PATH
 }
 
 renderTemplate() {
