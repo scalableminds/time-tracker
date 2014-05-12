@@ -8,12 +8,7 @@ import play.api.libs.json.Json
 import java.security.SecureRandom
 import java.math.BigInteger
 import com.scalableminds.util.reactivemongo.DBAccessContext
-
-case class Session(token: String, userId: Int)
-
-object Session{
-  val sessionFormat = Json.format[Session]
-}
+import com.scalableminds.util.auth.Session
 
 object SessionService{
   def createSession(userId: Int)(implicit ctx: DBAccessContext) = {

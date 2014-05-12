@@ -6,7 +6,7 @@ package controllers
 import play.api.mvc.Action
 import play.api.Logger
 import models._
-import com.scalableminds.util.reactivemongo.GlobalAccessContext
+import com.scalableminds.util.reactivemongo.{DBAccessContext, GlobalAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import net.liftweb.common._
 import scala.concurrent.Future
@@ -16,6 +16,7 @@ import play.api.Play.current
 import net.liftweb.common.Full
 import com.scalableminds.util.github.GithubApi
 import com.scalableminds.util.github.models.GithubIssue
+import com.scalableminds.util.tools.Fox
 
 object RepositoryController extends Controller {
 
@@ -60,6 +61,14 @@ object RepositoryController extends Controller {
     }
   }
 
+  def ensureRepositoryDoesNotExist(repoName: String)(implicit ctx: DBAccessContext): Fox[Boolean] = {
+    RepositoryDAO.findByName(repoName).futureBox.map{
+      case Full(_) => Empty
+      case Empty => Full(true)
+      case f: Failure => f
+    }
+  }
+
   def add = Authenticated.async(parse.json) {
     implicit request =>
       request.body.validate(Repository.publicRepositoryReads) match {
@@ -69,17 +78,13 @@ object RepositoryController extends Controller {
           } else {
             for {
               _ <- ensureAdminRights(request.user, repo.name).toFox
-              r <- RepositoryDAO.findByName(repo.name).futureBox
+              _ <- ensureRepositoryDoesNotExist(repo.name) ?~> "Repository already exists"
+              _ <- RepositoryDAO.insert(repo)
+              js <- Repository.publicRepositoryWrites(repo)
             } yield {
-              r match {
-                case Empty =>
-                  RepositoryDAO.insert(repo)
-                  GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
-                  issueActor ! FullScan(repo, repo.accessToken getOrElse request.user.githubAccessToken)
-                  Redirect("/api/repos")
-                case _ =>
-                  BadRequest("Repository allready added")
-              }
+              GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
+              issueActor ! FullScan(repo, repo.accessToken getOrElse request.user.githubAccessToken)
+              Ok(js)
             }
           }
         case e: JsError =>

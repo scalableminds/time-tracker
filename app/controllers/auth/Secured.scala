@@ -33,7 +33,7 @@ object Secured {
   /**
    * Creates a map which can be added to a cookie to set a session
    */
-  def createSession(user: User): Tuple2[String, String] = {
+  def createSession(user: User): (String, String) = {
     val token = SessionService.createSession(user.userId)(GlobalAccessContext)
     (SessionInformationKey -> token)
   }
