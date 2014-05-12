@@ -57,6 +57,8 @@ class LogTimeLocalView extends LogTimeView
 
   initialize : ->
 
+    super()
+
     @repositoryModel = new RepositoryModel(id : @model.get("id"))
     @repositoryModel.fetch().done( =>
       repoName = @repositoryModel.get("name")
