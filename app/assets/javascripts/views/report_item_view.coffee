@@ -11,7 +11,7 @@ class ReportItemView extends Backbone.Marionette.ItemView
   template : _.template("""
     <td title="<%= name %>" class="truncate">
       <% if(githubUrl){ %>
-        <a href="<%= githubUrl %>"><%= name %></a>
+        <a href="<%= githubUrl %>" target="_blank"><%= name %></a>
       <% } else { %>
         <%= name %>
       <% }%>
