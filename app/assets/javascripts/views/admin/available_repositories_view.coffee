@@ -49,7 +49,7 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
 
   events:
     "click button": "addItem"
-    "click input[type=checkbox]" : "showAccessToken"
+    "click input[type=checkbox]" : "toggleAccessToken"
 
   ui :
     "repoName" : "select"
@@ -66,10 +66,15 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
         isAdmin : true
     )
 
-  showAccessToken : ->
+  toggleAccessToken : ->
 
-    @ui.containerAccessToken.removeClass("hidden")
-    window.setTimeout (=> @ui.containerAccessToken.addClass("in")), 100
+    enableIssueLink = if @ui.enableIssueLink.prop("checked") then true else false
+    if enableIssueLink
+      @ui.containerAccessToken.removeClass("hidden")
+      window.setTimeout (=> @ui.containerAccessToken.addClass("in")), 100
+    else
+      @ui.containerAccessToken.addClass("hidden")
+
 
 
   addItem: ->
