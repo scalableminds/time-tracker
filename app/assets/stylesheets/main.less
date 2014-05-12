@@ -1,7 +1,6 @@
 @import "../../../public/bower_components/bootstrap/less/bootstrap.less";
 @import "_variables.less";
 @import "_time_report.less";
-@import "_responsive.less";
 @import "_admin.less";
 @import "_log_time.less";
 @import "_month_picker.less";
@@ -49,6 +48,12 @@ html, body {
   margin-top: -20px;
   background-color: @full-blue;
   color: #fff;
+}
+.preamble-content-right {
+  text-align: right;
+}
+.preamble-content-left {
+  text-align: left;
 }
 span.green {
   color: @full-green;
@@ -186,6 +191,11 @@ section + section {
 }
 
 
+.thin {
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 35px
+}
 
 footer, .push {
   height: @footer-height;
@@ -217,3 +227,4 @@ footer {
 }
 
 
+@import "_responsive.less";
