@@ -12,34 +12,31 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
       <h3 class="col-lg-12">Add a New Repository</h3>
     </header>
     <div class="row">
-      <div class="col-sm-7">
-        <select name="repository" class="form-control"></select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-7">
+      <div class="col-sm-7 row-spacer">
+        <div>
+          <select name="repository" class="form-control"></select>
+        </div>
         <div class="input-group">
           <span class="input-group-addon">
             <input type="checkbox" id="enableIssueLink">
           </span>
           <div class="form-control">
             Would you like to add links to this repository's issues pointing to the time tracker?
-             <a href="/faq#auto-link" title="What is this?"><i class="fa fa-question-circle"></i></a>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="row fade hidden access-token">
-      <div class="col-sm-7">
-        <div class="input-group">
+        <div class="input-group hidden access-token"">
           <span class="input-group-addon"><i class="fa fa-key"></i></span>
           <input class="form-control" type="text" id="input-access-token" name="accessToken" required="" value="" placeholder="Access Token">
         </div>
+        <div class="col-sm-3 row">
+          <button type="button" class="btn btn-block btn-default">Add</button>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-3">
-        <button type="button" class="btn btn-block btn-default">Add</button>
+      <div class="col-sm-5 help">
+          <i class="fa fa-question-circle pull-left"></i>
+          To enable time-tracking for one of your repositories, please add it here.
+          You can choose to automatically add links to the repository's issues, poining to the time tracker for convient tracking within Github's user interface.
+          <a href="/faq#auto-link">Learn more.</a>
       </div>
     </div>
   """)
