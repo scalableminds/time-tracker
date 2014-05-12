@@ -1,10 +1,61 @@
 @(message: String)(implicit session: controllers.SessionData)
 
 @main("scalable minds time tracker") {
-    <div class="container">
-        <h3>:D</h3>
-        <p>
-            This is an awesome github powered time tracker!
-        </p>
+    <div class="preamble">
+        <div class="container">
+              <div class="row">
+                <div class="col-md-2">
+                  <img src="@routes.Assets.at("images/github120_white.png")" alt="GitHub"/>
+                </div>                
+                <div class="col-md-4 text-right">
+                  <h1>GitHub Time Tracking</h1>
+                </div>
+                <div class="col-md-6">
+                    <div>
+                        <h1><span class="red">made easy<br>for free</span> </h1>
+                    </div>
+                </div>
+              </div>
+
+              <div class="row button-container">
+                <div class="col-md-12 text-center">
+                    <a href="@controllers.auth.routes.Authentication.authenticate(None)">
+                        <button type="button" class="btn btn-landingpage btn-xlarge">
+                          Try Now
+                        </button>
+                    </a>
+                </div>
+              </div>              
+        </div>
     </div>
+        <div class="container text-left feature-container">
+              <div class="row">
+                <div class="col-md-4">
+                    <h2>Effortless</h2>
+                    <p>Track time direct for each repositories without additional maintenance.</p> 
+                </div>
+                <div class="col-md-4">
+                    <h2>Issue Linking</h2>
+                    <p>Optional, issues get a link in the description to track your time even faster.</p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Overview</h2>
+                    <p>Get your mounthly overview with one click.<br>As admin you can see the logged times of the whole team.</p>
+                </div>                
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <h2>Free</h2>
+                  <p>No costs<br>No strings attached<br>No advertisement<p>
+                </div>
+                <div class="col-md-4">
+                    <h2>Linked with GitHub</h2>
+                    <p>Time-Tracker communicates directly with your GitHub accout, so you can start logging without any setup.
+                </div>
+                <div class="col-md-4">
+                    <h2>Safe</h2>
+                    <p>SSL Security<br> Data hosting in Germany</p>
+                </div>                
+              </div>                
+        </div> 
 }
