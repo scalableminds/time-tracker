@@ -4,12 +4,12 @@
 package models
 
 import play.api.libs.json._
-import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
+import com.scalableminds.util.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
-import braingames.reactivemongo.AccessRestrictions._
+import com.scalableminds.util.reactivemongo.AccessRestrictions._
 import reactivemongo.bson.BSONObjectID
 import models.auth.UserService
-import braingames.util.Fox
+import com.scalableminds.util.tools.Fox
 import scala.concurrent.Future
 import play.modules.reactivemongo.json.BSONFormats._
 import play.api.libs.functional.syntax._

@@ -4,9 +4,9 @@
 package models
 
 import play.api.libs.json.Json
-import braingames.reactivemongo.DBAccessContext
+import com.scalableminds.util.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
-import braingames.util.Fox
+import com.scalableminds.util.tools.Fox
 
 case class Issue(reference: IssueReference, title: String)
 

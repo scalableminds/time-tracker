@@ -5,7 +5,7 @@ package models.auth
 
 import org.joda.time.DateTime
 import models.{UserDAO, BasicReactiveDAO}
-import braingames.reactivemongo.DBAccessContext
+import com.scalableminds.util.reactivemongo.DBAccessContext
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 

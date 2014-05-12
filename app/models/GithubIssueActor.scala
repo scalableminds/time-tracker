@@ -4,12 +4,13 @@
 package models
 
 import akka.actor.Actor
-import models.Issue
-import controllers.{Application, GithubApi, GithubIssue}
-import braingames.reactivemongo.{GlobalAccessContext, DBAccessContext}
-import braingames.util.StartableActor
+import controllers.Application
+import com.scalableminds.util.reactivemongo.{GlobalAccessContext, DBAccessContext}
+import com.scalableminds.util.tools.StartableActor
 import play.api.Logger
 import scala.concurrent.Future
+import com.scalableminds.util.github.GithubApi
+import com.scalableminds.util.github.models.GithubIssue
 
 case class FullScan(repo: Repository, accesssToken: String)
 
