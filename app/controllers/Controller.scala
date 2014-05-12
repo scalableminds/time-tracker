@@ -4,8 +4,8 @@
 package controllers
 
 import play.api.mvc.{Controller => PlayController, Request}
-import braingames.mvc.ExtendedController
-import braingames.reactivemongo.{AuthorizedAccessContext, DBAccessContext}
+import com.scalableminds.util.mvc.ExtendedController
+import com.scalableminds.util.reactivemongo.{AuthorizedAccessContext, DBAccessContext}
 import models.User
 import play.api.mvc.Flash
 import play.api.mvc.Request

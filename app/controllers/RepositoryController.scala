@@ -6,20 +6,16 @@ package controllers
 import play.api.mvc.Action
 import play.api.Logger
 import models._
-import GithubApi.githubIssueFormat
-import braingames.reactivemongo.GlobalAccessContext
+import com.scalableminds.util.reactivemongo.GlobalAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
-import net.liftweb.common.{Failure, Empty, Full}
-import models.auth.UserService
+import net.liftweb.common._
 import scala.concurrent.Future
-import play.api.libs.json.{JsArray, JsError, JsSuccess, Json}
+import play.api.libs.json._
 import play.api.libs.concurrent.Akka
 import play.api.Play.current
-import braingames.util.Fox
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsSuccess
 import net.liftweb.common.Full
-import controllers.GithubIssue
+import com.scalableminds.util.github.GithubApi
+import com.scalableminds.util.github.models.GithubIssue
 
 object RepositoryController extends Controller {
 

@@ -3,7 +3,7 @@
 */
 package models
 
-import braingames.reactivemongo.SecuredMongoDAO
+import com.scalableminds.util.reactivemongo.SecuredMongoDAO
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.api.Play
 

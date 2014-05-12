@@ -5,12 +5,12 @@ package models
 
 import java.util.UUID
 import play.api.libs.json._
-import braingames.reactivemongo.{DBAccessContextPayload, DBAccessContext}
+import com.scalableminds.util.reactivemongo.{DBAccessContextPayload, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
-import models.auth.AccessToken
 import play.api.libs.functional.syntax._
 
-import braingames.util.Fox
+import com.scalableminds.util.tools.Fox
+import com.scalableminds.util.auth.AccessToken
 
 case class User(userId: Int,
   profile: UserProfile,

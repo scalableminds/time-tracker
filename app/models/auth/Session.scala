@@ -7,7 +7,7 @@ import models.BasicReactiveDAO
 import play.api.libs.json.Json
 import java.security.SecureRandom
 import java.math.BigInteger
-import braingames.reactivemongo.DBAccessContext
+import com.scalableminds.util.reactivemongo.DBAccessContext
 
 case class Session(token: String, userId: Int)
 

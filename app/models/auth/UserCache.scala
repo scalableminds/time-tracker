@@ -6,7 +6,7 @@ package models.auth
 import play.api.cache.Cache
 import play.api.Play.current
 import models.UserDAO
-import braingames.reactivemongo.GlobalDBAccess
+import com.scalableminds.util.reactivemongo.GlobalDBAccess
 
 object UserCache extends GlobalDBAccess{
   val userCacheTimeout = current.configuration.getInt("director.user.cacheTimeout") getOrElse 300

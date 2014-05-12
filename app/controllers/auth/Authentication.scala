@@ -8,9 +8,11 @@ import play.api.{Logger, Play}
 import models.auth._
 import play.api.libs.concurrent.Execution.Implicits._
 import models.{RepositoryAccess, UserProfile}
-import controllers.{GithubApi, Controller}
+import controllers.Controller
 import net.liftweb.common.Full
-import braingames.reactivemongo.GlobalAccessContext
+import com.scalableminds.util.reactivemongo.GlobalAccessContext
+import com.scalableminds.util.auth.GithubOauth
+import com.scalableminds.util.github.GithubApi
 
 object Authentication extends GithubOauth with Controller {
 
@@ -45,7 +47,7 @@ object Authentication extends GithubOauth with Controller {
         }
       }.futureBox.map{
         case Full(user) =>
-          Logger.info("Saved user. " + user)
+          Logger.info("Saved user. " + user.profile.fullName)
           val redirectUri = RedirectionCache.retrieve(state) getOrElse defaultRedirectUri
           Redirect(redirectUri).withSession(Secured.createSession(user))
         case x =>
