@@ -21,9 +21,20 @@
   }
 
   #available-repositories {
-    .row + .row {
-      margin-bottom: 10px;
+    .row-spacer div + div {
+      margin-top: 5px;
     }
+
+    .fa-question-circle {
+      font-size: 2.5em;
+    }
+
+    @media (max-width: @screen-md) {
+      .help {
+        margin-top: 20px;
+      }
+    }
+
   }
 
 
