@@ -4,12 +4,12 @@
 package models
 
 import play.api.libs.json.{JsString, JsArray, Json}
-import braingames.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
+import com.scalableminds.util.reactivemongo.{DefaultAccessDefinitions, DBAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import org.joda.time.{DateTime, Interval, YearMonth}
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import braingames.reactivemongo.AccessRestrictions._
+import com.scalableminds.util.reactivemongo.AccessRestrictions._
 
 case class TimeEntry(
   issueReference: IssueReference,

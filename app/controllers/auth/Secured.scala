@@ -6,10 +6,10 @@ package controllers.auth
 import play.api.mvc._
 import play.api.mvc.Request
 import scala.concurrent.Future
-import braingames.util.{FoxImplicits, Fox}
+import com.scalableminds.util.tools.{FoxImplicits, Fox}
 import net.liftweb.common.{Full, Empty}
 import play.api.libs.concurrent.Execution.Implicits._
-import braingames.reactivemongo.GlobalAccessContext
+import com.scalableminds.util.reactivemongo.GlobalAccessContext
 import models.User
 import models.auth.SessionService
 import play.api.Play
@@ -33,7 +33,7 @@ object Secured {
   /**
    * Creates a map which can be added to a cookie to set a session
    */
-  def createSession(user: User): Tuple2[String, String] = {
+  def createSession(user: User): (String, String) = {
     val token = SessionService.createSession(user.userId)(GlobalAccessContext)
     (SessionInformationKey -> token)
   }

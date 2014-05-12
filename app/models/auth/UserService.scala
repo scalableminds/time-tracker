@@ -4,12 +4,13 @@
 package models.auth
 
 import models._
-import braingames.reactivemongo.{DBAccessContext, GlobalAccessContext, GlobalDBAccess}
+import com.scalableminds.util.reactivemongo.{DBAccessContext, GlobalAccessContext, GlobalDBAccess}
 import play.api.Application
 import scala.concurrent.duration._
 import scala.concurrent.Await
-import braingames.util.Fox
+import com.scalableminds.util.tools.Fox
 import play.api.libs.json.{JsValue, JsObject}
+import com.scalableminds.util.auth.AccessToken
 
 object UserService{
 

@@ -9,8 +9,8 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Writes
 import models.auth.{UserService, UserCache}
 import play.api.libs.json.Json
-import braingames.mvc.Filter
-import braingames.util.DefaultConverters._
+import com.scalableminds.util.mvc.Filter
+import com.scalableminds.util.tools.DefaultConverters._
 
 /**
  * Company: scalableminds
