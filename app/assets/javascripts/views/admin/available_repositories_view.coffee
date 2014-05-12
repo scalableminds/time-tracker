@@ -12,10 +12,12 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
       <h3 class="col-lg-12">Add a New Repository</h3>
     </header>
     <div class="row">
-      <div class="col-sm-5">
+      <div class="col-sm-7">
         <select name="repository" class="form-control"></select>
       </div>
-      <div class="col-sm-5">
+    </div>
+    <div class="row">
+      <div class="col-sm-7">
         <div class="input-group">
           <span class="input-group-addon">
             <input type="checkbox" id="enableIssueLink">
@@ -25,12 +27,18 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
              <a href="/faq#auto-link" title="What is this?"><i class="fa fa-question-circle"></i></a>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="row fade hidden access-token">
+      <div class="col-sm-7">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-key"></i></span>
-          <input class="form-control" type="text" id="inputAccess" name="accessToken" required="" value="" placeholder="Access Token">
+          <input class="form-control" type="text" id="input-access-token" name="accessToken" required="" value="" placeholder="Access Token">
         </div>
       </div>
-      <div class="col-sm-2">
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
         <button type="button" class="btn btn-block btn-default">Add</button>
       </div>
     </div>
@@ -41,10 +49,14 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
 
   events:
     "click button": "addItem"
+    "click input[type=checkbox]" : "showAccessToken"
 
   ui :
     "repoName" : "select"
-    "repoAccessToken" : "input"
+    "repoAccessToken" : "#input-access-token"
+    "enableIssueLink" : "#enableIssueLink"
+    "containerAccessToken" : ".access-token"
+
 
   initialize: ->
 
@@ -54,10 +66,22 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
         isAdmin : true
     )
 
+  showAccessToken : ->
+
+    @ui.containerAccessToken.removeClass("hidden")
+    window.setTimeout (=> @ui.containerAccessToken.addClass("in")), 100
+
 
   addItem: ->
 
+    enableIssueLink = if @ui.enableIssueLink.prop("checked") then true else false
+    if enableIssueLink
+      accessToken = @ui.repoAccessToken.val()
+    else
+      accessToken = null
+
     @trigger("newItem",
       name : @ui.repoName.val()
-      usesIssueLinks : false
+      usesIssueLinks : enableIssueLink
+      accessToken: accessToken
     )

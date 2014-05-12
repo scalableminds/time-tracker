@@ -80,7 +80,7 @@ object RepositoryController extends Controller {
                   RepositoryDAO.insert(repo)
                   GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
                   issueActor ! FullScan(repo, repo.accessToken getOrElse request.user.githubAccessToken)
-                  Redirect("/api/repos")
+                  Ok
                 case _ =>
                   BadRequest("Repository allready added")
               }
