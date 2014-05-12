@@ -6,13 +6,13 @@ trait Dependencies{
   val akkaVersion = "2.2.0"
   val reactiveVersion = "0.10.0"
   val reactivePlayVersion = "0.10.2"
-  val scmUtilVersion= "6.1.0"
+  val scmUtilVersion= "6.2.0"
 
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val commonsEmail = "org.apache.commons" % "commons-email" % "1.3.1"
   val reactivePlay = "org.reactivemongo" %% "play2-reactivemongo" % reactivePlayVersion
   val reactiveBson = "org.reactivemongo" %% "reactivemongo-bson-macros" % reactiveVersion
-  val braingamesUtil = "com.scalableminds" %% "util" % scmUtilVersion
+  val scmUtil = "com.scalableminds" %% "util" % scmUtilVersion
   val joda = "joda-time" % "joda-time" % "2.2"
   val akkaAgent = "com.typesafe.akka" %% "akka-agent" % akkaVersion
   val typesafeMailer = "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
@@ -54,7 +54,7 @@ object ApplicationBuild extends Build with Dependencies with Resolvers{
     commonsEmail,
     akkaAgent,
     joda,
-    braingamesUtil,
+    scmUtil,
     typesafeMailer,
     liftBox)
 
