@@ -78,7 +78,7 @@ renderAllTemplates() {
   TEMPLATES=$(find $WORKSPACE/build/templates -type f)
   while read -r TEMPLATE; do
     TEMPLATE_PATH=${TEMPLATE#*/templates/}
-    TARGET_PATH=${TEMPLATE_PATH//-BRANCH/$GIT_BRANCH}
+    TARGET_PATH=${TEMPLATE_PATH//-BRANCH/-$GIT_BRANCH}
     echo "[*] rendering template $TARGET_PATH"
     mkdir -p `dirname $ROOT_ENV/$TARGET_PATH`
     renderTemplate $TEMPLATE > $ROOT_ENV/$TARGET_PATH
