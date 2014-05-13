@@ -69,7 +69,6 @@ renderTemplate() {
   python2 -c "import jinja2; print jinja2.Template(\"\"\"$TEMPLATE_CONTENT\"\"\").render(\
     name=\"$NAME\", project=\"$JOB_NAME\", branch=\"$GIT_BRANCH\", mode=\"$MODE\", port=\"$PORT\", \
     install_dir=\"$INSTALL_DIR\", pid_dir=\"$PID_DIR\", log_dir=\"#LOG_DIR\")"
-
 }
 
 renderAllTemplates() {

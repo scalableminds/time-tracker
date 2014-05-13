@@ -1,5 +1,7 @@
 {% set dbname = name %}
-{% set config_file = "conf/application_%s.conf" % mode %}
+{% set config_dir = "%s/conf" % install_dir %}
+{% set app_config = "%s/application_%s.conf" % (config_dir, mode) %}
+{% set logger_config = "%s/application-logger-%s.xml" % (config_dir, mode) %}
 
 #! /bin/sh
 ### BEGIN INIT INFO
@@ -22,7 +24,7 @@ DESC={{name}}
 NAME={{name}}
 INSTALL_DIR={{install_dir}}
 DAEMON=${INSTALL_DIR}/bin/{{project}}
-DAEMON_ARGS="-Dconfig.file=${INSTALL_DIR}/{{config_file}} -Dhttp.port={{port}} -Dmongodb.db={{dbname}} -Dapplication.branch={{branch}}"
+DAEMON_ARGS="-Dconfig.file={{app_config}} -Dhttp.port={{port}} -Dmongodb.db={{dbname}} -Dapplication.fullname={{name}} -Dapplication.name={{project}} -Dapplication.branch={{branch}} -Dlogger.file={{logger_config}} -Dapplication.logDir={{log_dir}}"
 PIDFILE=/var/run/{{name}}/{{name.pid}}
 SCRIPTNAME=/etc/init.d/{{name}}
 DAEMON_USER={{name}}
