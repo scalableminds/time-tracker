@@ -100,6 +100,8 @@ buildPackage() {
   --iteration ${BUILD_NUMBER} \
   --before-install="${INSTALL_SCRIPT_DIR}/before-install.sh" \
   --after-remove="${INSTALL_SCRIPT_DIR}/after-remove.sh" \
+  --deb-user root \
+  --deb-group root \
   --template-scripts \
   --template-value name="${NAME}" \
   --template-value project="${JOB_NAME}" \
