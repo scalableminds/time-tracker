@@ -9,15 +9,11 @@ sbt clean compile stage
 
 if [ -f ${PID_FILE} ];then
   echo "[info] Stopping application (with PID `cat ${PID_FILE}`)..."
-  sudo -u $USER kill `cat ${PID_FILE}`
-
-  RESULT=$?
-
-  if test "$RESULT" = 0; then
-    echo "[info] Done!"
-  else
-    echo "[\033[31merror\033[0m] Failed ($RESULT)"
+  if ! $(sudo -u $USER kill `cat ${PID_FILE}`); then
+    sudo rm ${PID_FILE}
   fi
 fi
 
-sudo -u $USER bash -c "target/universal/stage/bin/time-tracker -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512M -Dconfig.file=conf/application_production.conf -Dmongodb.db="time-tracker" -Dhttp.port=12000 -Dpidfile.path=/var/lib/time-tracker/RUNNING_PID >> /var/log/time-tracker/timetracker.log&"
+echo "starting time-tracker ..."
+sudo chown $USER target/universal/stage/bin/time-tracker
+sudo -u $USER bash -c "target/universal/stage/bin/time-tracker -Dconfig.file=conf/application_production.conf -Dmongodb.db="time-tracker" -Dhttp.port=12000 -Dpidfile.path=/var/lib/time-tracker/RUNNING_PID >> /var/log/time-tracker/timetracker.log&"
