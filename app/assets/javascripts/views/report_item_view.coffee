@@ -18,7 +18,7 @@ class ReportItemView extends Backbone.Marionette.ItemView
     </td>
     <td><%= Utils.minutesToHours(sum) %></td>
     <% _.each(dailyTimeEntries, function(day){ %>
-      <td><%= Utils.minutesToHours(day) %></td>
+      <td><%= Utils.minutesToHours(day) || "" %></td>
     <% }) %>
   """)
 
