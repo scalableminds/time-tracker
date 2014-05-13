@@ -18,6 +18,12 @@ $ ->
 
   app.addInitializer ->
 
+    $ ->
+      $("#main-container").addClass("container wide")
+
+
+  app.addInitializer ->
+
     app.router = new Router()
 
     $(document).on("backbutton", (event) -> app.trigger("backbutton", event))
