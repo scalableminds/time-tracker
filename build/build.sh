@@ -71,6 +71,12 @@ renderTemplate() {
     install_dir=\"$INSTALL_DIR\", pid_dir=\"$PID_DIR\", log_dir=\"$LOG_DIR\")"
 }
 
+makeInitScriptExecutable() {
+  #A more general approach to setting modi on files could be a suffix such as ".x" for "add executable flag", so far it's not nesseccary though
+  chmod +x $ROOT_ENV/etc/init.d/$NAME
+
+}
+
 renderAllTemplates() {
   TEMPLATES=$(find $WORKSPACE/build/templates -type f)
   while read -r TEMPLATE; do
@@ -122,5 +128,6 @@ stage
 createRootEnvironment
 copyBinariesToRootEnvironment
 renderAllTemplates
+makeInitScriptExecutable
 buildPackage
 cleanUp

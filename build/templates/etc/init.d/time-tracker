@@ -25,7 +25,7 @@ NAME={{name}}
 INSTALL_DIR={{install_dir}}
 DAEMON=${INSTALL_DIR}/bin/{{project}}
 DAEMON_ARGS="-Dconfig.file={{app_config}} -Dhttp.port={{port}} -Dmongodb.db={{dbname}} -Dapplication.fullname={{name}} -Dapplication.name={{project}} -Dapplication.branch={{branch}} -Dlogger.file={{logger_config}} -Dapplication.logDir={{log_dir}}"
-PIDFILE=/var/run/{{name}}/{{name.pid}}
+PIDFILE=/var/run/{{name}}/{{name}}.pid
 SCRIPTNAME=/etc/init.d/{{name}}
 DAEMON_USER={{name}}
 
