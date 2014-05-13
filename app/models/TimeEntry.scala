@@ -52,9 +52,8 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     override def findQueryFilter(implicit ctx: DBAccessContext) = {
       ctx.data match {
         case Some(user: User) =>
-          val repositories = Await.result(RepositoryDAO.findAllWhereUserIsAdmin(user) getOrElse Nil, 5 seconds)
           AllowIf(Json.obj("$or" -> Json.arr(
-            Json.obj("issueReference.project" -> Json.obj("$in" -> JsArray(repositories.map(r => JsString(r.name))))),
+            Json.obj("issueReference.project" -> Json.obj("$in" -> user.namesOfAdminRepositories)),
             Json.obj("userId" -> user.userId)
           )))
         case _ =>
