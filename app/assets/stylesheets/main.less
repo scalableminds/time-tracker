@@ -21,6 +21,10 @@ html, body {
   height: 100%;
 }
 
+body {
+  background-color: @background-color;
+}
+
 
 #logo {
   width: 22px;
@@ -46,8 +50,12 @@ html, body {
   margin-left: -35px;
   margin-right: -35px;
   margin-top: -20px;
-  background-color: @full-blue;
-  color: #fff;
+  background-color: @preamble-color;
+  color: @preamble-text-color;
+
+  span.highlight {
+    color: @highlight-color;
+  }
 }
 .preamble-content-right {
   text-align: right;
@@ -55,13 +63,7 @@ html, body {
 .preamble-content-left {
   text-align: left;
 }
-span.green {
-  color: @full-green;
-}
-span.red {
-  color: @full-red;
-  
-}
+
 .container-full {
   margin: 0 auto;
   width: 100%;
@@ -69,7 +71,7 @@ span.red {
 
 header.navbar {
   border-radius: 0;
-  border-top: none;
+  border: none;
 }
 
 section + section {
@@ -178,16 +180,16 @@ section + section {
 
 .btn-landingpage:hover {
   color: #fff;
-  background-color: @full-red-dark;
+  background-color: @highlight-hover-color;
 }
 
 .btn-landingpage {
   color: #fff;
-  background-color: @full-red;
+  background-color: @highlight-color;
   border: none;
   text-decoration: none;
   //background-position: 0;
-  transition: none;   
+  transition: none;
 }
 
 
@@ -206,8 +208,6 @@ footer {
   .footer {
     display : inline;
   }
-
-  background-color: #fff;
 
   a {
     color: @font-grey;
