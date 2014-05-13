@@ -22,11 +22,8 @@ elif [ -z "$GIT_BRANCH" ]; then
   exit 1
 fi
 
-if [ "$GIT_BRANCH" = "master" ]; then
-  export NAME=${JOB_NAME}
-else
-  export NAME=${JOB_NAME}-${GIT_BRANCH}
-fi
+export NAME=${JOB_NAME}-${GIT_BRANCH}
+
 
 export ROOT_ENV=$WORKSPACE/root_env
 export INSTALL_DIR=/usr/lib/$NAME
@@ -81,11 +78,7 @@ renderAllTemplates() {
   TEMPLATES=$(find $WORKSPACE/build/templates -type f)
   while read -r TEMPLATE; do
     TEMPLATE_PATH=${TEMPLATE#*/templates/}
-    if [ "$GIT_BRANCH" = "master" ]; then
-      TARGET_PATH=${TEMPLATE_PATH//-BRANCH/}
-    else
-      TARGET_PATH=${TEMPLATE_PATH//-BRANCH/$GIT_BRANCH}
-    fi
+    TARGET_PATH=${TEMPLATE_PATH//-BRANCH/$GIT_BRANCH}
     echo "[*] rendering template $TARGET_PATH"
     mkdir -p `dirname $ROOT_ENV/$TARGET_PATH`
     renderTemplate $TEMPLATE > $ROOT_ENV/$TARGET_PATH
