@@ -8,9 +8,6 @@ models/log/repository_model : RepositoryModel
 
 class LogTimeLocalView extends LogTimeView
 
-  className : "log-time"
-  title : "Log Time"
-
   template : _.template("""
     <div class="col-sm-6 col-sm-offset-3">
       <div class="alert fade">

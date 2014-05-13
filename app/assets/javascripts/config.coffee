@@ -22,12 +22,9 @@ requirejs
     "moment" :
       exports : "moment"
     "bootstrap" : ["jquery"]
-    "backbone" :
-      deps : ["jquery", "underscore"]
-      exports : "Backbone"
     "backbone.marionette" :
       deps : ["backbone"]
-      exports : "marionette"
+      exports : "Marionette"
     "datepicker" :
       deps : ["jquery"]
       exports : "datepicker"
