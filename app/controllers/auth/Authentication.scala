@@ -20,7 +20,7 @@ object Authentication extends GithubOauth with Controller {
 
   val defaultRedirectUri = host + controllers.routes.Application.index().url
 
-  val authCompleteUrl = "http://localhost:9000/authenticate/complete"
+  val authCompleteUrl = host + "/authenticate/complete"
 
   val minScope = List("user", "public_repo")
 
