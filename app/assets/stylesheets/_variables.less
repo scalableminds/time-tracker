@@ -1,18 +1,39 @@
+// Color scheme from: http://www.colourlovers.com/palette/803797/Salt_With_Battery
+
 @navbar-offset : 51px;
 @footer-height : 40px;
+
+@eyeshadow : #CFFFDD;
+@fringy-flower : #B4DEC1;
+@scarpa-flow : #5C5863;
+@cadillac : #A85163;
+@radical-red : #FF1F4C;
+
 @mint-green : #eef8ee;
 @full-green : #4DA14D;
 @light-blue : #E7F1F1;
 @full-blue : #8DC6C6;
 @font-grey : #777777;
-@full-red : #D19595;
+@full-red : #A85163;
 @full-red-dark : darken(@full-red, 10%);
 
 
+@highlight-color: @scarpa-flow;
+@highlight-hover-color: @cadillac;
+@preamble-color: @fringy-flower;
+@preamble-text-color: white;
+@header-color: @mint-green;
+// @header-text-color: white;
+@background-color: white;
+
+
 // Overwriting Bootstraps Variables
-@brand-primary : darken(@mint-green, 40%);
-@btn-sucess : @full-green;
-@btn-danger : @full-red;
-@navbar-default-bg : @mint-green;
-@link-color :  darken(@brand-primary, 20%);
+@brand-primary : @highlight-color;
+@btn-sucess : @eyeshadow;
+@btn-danger : @radical-red;
+@navbar-default-bg : @header-color;
+// @navbar-default-color : @header-text-color;
+// @navbar-default-link-color : @header-text-color;
+// @navbar-default-link-hover-color : darken(@header-text-color, 20%);
+@link-color : @cadillac;
 @icon-font-path : "/public/bower_components/bootstrap";

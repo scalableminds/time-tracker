@@ -68,7 +68,7 @@ renderTemplate() {
 
   python2 -c "import jinja2; print jinja2.Template(\"\"\"$TEMPLATE_CONTENT\"\"\").render(\
     name=\"$NAME\", project=\"$JOB_NAME\", branch=\"$GIT_BRANCH\", mode=\"$MODE\", port=\"$PORT\", \
-    install_dir=\"$INSTALL_DIR\", pid_dir=\"$PID_DIR\", log_dir=\"#LOG_DIR\")"
+    install_dir=\"$INSTALL_DIR\", pid_dir=\"$PID_DIR\", log_dir=\"$LOG_DIR\")"
 }
 
 renderAllTemplates() {
@@ -100,6 +100,8 @@ buildPackage() {
   --iteration ${BUILD_NUMBER} \
   --before-install="${INSTALL_SCRIPT_DIR}/before-install.sh" \
   --after-remove="${INSTALL_SCRIPT_DIR}/after-remove.sh" \
+  --deb-user root \
+  --deb-group root \
   --template-scripts \
   --template-value name="${NAME}" \
   --template-value project="${JOB_NAME}" \

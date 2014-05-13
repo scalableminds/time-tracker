@@ -26,7 +26,7 @@ class ReportView extends Backbone.Marionette.CompositeView
           <td>&sum;</td>
           <td><%= Utils.minutesToHours(monthlyTotalHours) %></td>
           <% _.each(dailyTotalHours, function(day){ %>
-            <td><%= Utils.minutesToHours(day) %></td>
+            <td><%= Utils.minutesToHours(day) || "" %></td>
           <% }) %>
         </tr>
       </tfoot>
