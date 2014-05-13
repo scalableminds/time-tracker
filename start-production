@@ -14,5 +14,6 @@ if [ -f ${PID_FILE} ];then
   fi
 fi
 
+echo "starting time-tracker ..."
 sudo chown $USER target/universal/stage/bin/time-tracker
 sudo -u $USER bash -c "target/universal/stage/bin/time-tracker -Dconfig.file=conf/application_production.conf -Dmongodb.db="time-tracker" -Dhttp.port=12000 -Dpidfile.path=/var/lib/time-tracker/RUNNING_PID >> /var/log/time-tracker/timetracker.log&"
