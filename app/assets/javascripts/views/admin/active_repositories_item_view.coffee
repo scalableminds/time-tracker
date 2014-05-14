@@ -16,7 +16,7 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
       <% }) %>
     </td>
     <td>
-      <a id="scan" href="/api/repos/<%= id %>/scan <%= name %>/scan"><i class="fa fa-refresh"></i> scan</a>
+      <a id="scan" href="/api/repos/<%= id %>/scan"><i class="fa fa-refresh"></i> scan</a>
       <a id="remove" href="#"><i class="fa fa-trash-o"></i> remove</a>
     </td>
   """)
