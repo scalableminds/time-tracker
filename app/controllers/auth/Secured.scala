@@ -14,6 +14,7 @@ import models.User
 import models.auth.SessionService
 import play.api.Play
 import play.api.mvc.Results._
+import scala.concurrent.duration._
 
 class AuthenticatedRequest[A](
   val user: User, override val request: Request[A]
@@ -30,12 +31,14 @@ object Secured {
    */
   val SessionInformationKey = "time-tracker-session"
 
+  val CookieLifeTime = (365 days).toSeconds.toInt
+
   /**
    * Creates a map which can be added to a cookie to set a session
    */
   def createCookie(user: User): Cookie = {
     val token = SessionService.createSession(user.userId)(GlobalAccessContext)
-    Cookie(SessionInformationKey, token)
+    Cookie(SessionInformationKey, token, maxAge = Some(CookieLifeTime))
   }
 
   def discardCookie =
