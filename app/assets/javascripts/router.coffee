@@ -108,8 +108,7 @@ class Router extends Backbone.Router
 
   changeView : (views...) ->
 
-    if @activeViews == views
-      return
+    $("#main-container").addClass("container wide")
 
     # Remove current views
     if @activeViews

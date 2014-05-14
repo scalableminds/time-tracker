@@ -10,7 +10,7 @@ datepicker : Datepicker
 
 class LogTimeView extends Backbone.Marionette.CompositeView
 
-  className : "log-time"
+  className : "log-time row"
   title : "Log Time"
 
   events :

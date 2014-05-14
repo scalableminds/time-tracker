@@ -9,7 +9,7 @@ backbone.marionette : Marionette
 
 class AdminPanelView extends Backbone.Marionette.Layout
 
-  className : "admin container"
+  className : "admin"
   template: _.template("""
     <section class="row">
       <div class="col-lg-12" id="repository-panel"></div>

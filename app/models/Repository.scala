@@ -72,15 +72,4 @@ object RepositoryDAO extends BasicReactiveDAO[Repository] {
       "name" -> name
     ))
   }
-
-  def findAllWhereUserIsAdmin(user: User)(implicit ctx: DBAccessContext) = withExceptionCatcher{
-    find(Json.obj("admins" -> user.userId)).cursor[Repository].collect[List]()
-  }
-
-  def updateCollaborators(name: String, collaborators: List[String])(implicit ctx: DBAccessContext) = {
-    update(
-      Json.obj("name" -> name),
-      Json.obj("$set" -> Json.obj("collaborators" -> collaborators))
-    )
-  }
 }

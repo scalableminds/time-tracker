@@ -4,8 +4,10 @@ backbone.marionette : marionette
 
 class SpinnerView extends Backbone.Marionette.ItemView
 
+  className : "spinner-overlay"
+
   template : _.template("""
-    <div class="spinner-overlay v-center">
+    <div class="v-center">
       <div class="v-center-agent">
         <div class="spinner">
           <i class="fa fa-refresh fa-3x"></i>
