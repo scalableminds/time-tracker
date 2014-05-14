@@ -1,12 +1,12 @@
 @()(implicit session: controllers.SessionData)
 
 @main("Frequently Asked Question"){
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-8 col-md-offset-2 faq">
         <h2>Frequently Asked Questions</h2>
 
         <a id="auto-link"></a>
         <h4>What is an 'automatic time tracking link' for Github Issues?</h4>
-        <p>The TimeTracker can be configured to automatically add a weblink pointing to your time tracker profile on every Github Issue in your repositories. Both existing issues and newly created issues will be affected. This feature is meant to provide you with an easy and convient way of tracking time within Github issue tracking.</p>
+        <p>The Time-Tracker can be configured to automatically add a weblink pointing to your time tracker profile on every Github Issue in your repositories. Both existing issues and newly created issues will be affected. This feature is meant to provide you with an easy and convient way of tracking time within Github issue tracking.</p>
 
         <a id=""></a>
         <h4>At what interval are the links added to issues?</h4>
@@ -18,11 +18,12 @@
 
         <a id=""></a>
         <h4>What is an 'access token' and where can I get mine?</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, accusamus, asperiores aliquam dignissimos quibusdam illo fuga veniam ipsa optio quia delectus tenetur rerum nisi ea labore. Esse, deleniti neque alias!</p>
+        <p>The access token is used to access all your Github issues to add 'Log now' inks pointing to the Time-Tracker. It serves as a means of authentification to the Github server. You can get your access token by creating one in your Github user's profile under the 'Application' category. For more information see the <a href="https://help.github.com/articles/creating-an-access-token-for-command-line-use">Github help.</a></p>
 
         <a id=""></a>
-        <h4>How can I change the TimeTracker's access permission to my Github account after signing up?</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, accusamus, asperiores aliquam dignissimos quibusdam illo fuga veniam ipsa optio quia delectus tenetur rerum nisi ea labore. Esse, deleniti neque alias!</p>
+        <h4>How can I change the Time-Tracker's access permission to my Github account after signing up?</h4>
+        <p>Changing the permission from access to your public repositories to include your private ones as well is easy. Just log out of Time-Tracker and log in again selecting 'Allow Private Access'.</br>
+        Unfortunately, the other way around requires a little bit more work. You need to completely revoke Time-Tracker's access to Github using the Gihub <a href="https://help.github.com/articles/creating-an-access-token-for-command-line-use">application settings.</a> Upon your next log in to Time-Tracker you will be asked again for permission and can choose 'Allpw public access'.</p>
 
     </div>
 }
