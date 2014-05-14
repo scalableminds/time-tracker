@@ -6,7 +6,7 @@
     "jquery": "2.1",
     "requirejs": "~2.1.9",
     "lodash": "~2.2.1",
-    "backbone": "~1.1.0",
+    "backbone": "~1.1.2",
     "backbone.marionette": "1.6.2",
     "font-awesome": "~4.0.3",
     "momentjs": "~2.5.0"
