@@ -15,13 +15,6 @@ $ ->
     app.settings.fetch()
     return
 
-
-  app.addInitializer ->
-
-    $ ->
-      $("#main-container").addClass("container wide")
-
-
   app.addInitializer ->
 
     app.router = new Router()
