@@ -19,8 +19,8 @@ class Router extends Backbone.Router
 
   routes :
     "log"                                       : "log"
-    "home"                                      : "user"
-    "home/:date"                                : "user"
+    "me"                                        : "user"
+    "me/:date"                                  : "user"
     "project"                                   : "project"
     "project/:date"                             : "project"
     "admin"                                     : "admin"
