@@ -11,9 +11,6 @@
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bower_components/font-awesome/css/font-awesome.min.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-    <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("bower_components/requirejs/require.js")" data-main="main" type="text/javascript"></script>
-    <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
     @additionalHeader
   </head>
   <body>
@@ -86,24 +83,24 @@
         }
         </nav>
       </header>
-      <div id="main-container" class="container wide">
+      <div id="main-container">
       @content
       </div>
       <div class="push"></div>
     </div>
-    <footer>
-      <div class="container text-center"> 
-        <p class="footer">by <a href="http://scm.io/"><img src="@routes.Assets.at("images/scalableminds.png")" alt="scalable minds" /></a>
-        </p>
-        <p class="footer">
-          <a href="http://scm.io/legal/">Impressum</a>
-        </p>
-        <div class="container text-center">
-          <p class="footer">
-            <a href="//www.iubenda.com/privacy-policy/527259" class="iubenda-white iub-legal-only iubenda-embed" title="Privacy Policy">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
-          </p>
-        </div>
-      </div>
+    <footer class="container">
+      <p>
+        by <a href="http://scm.io/"><img src="@routes.Assets.at("images/scalableminds.png")" alt="scalable minds" /></a>
+      </p>
+      <p class="legal">
+        <a href="http://scm.io/legal/">Impressum</a>
+        <!--<a href="//www.iubenda.com/privacy-policy/527259" class="iubenda-white iub-legal-only iubenda-embed" title="Privacy Policy">Privacy Policy</a>
+        <script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>-->
+      </p>
     </footer>
+
+    <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("bower_components/requirejs/require.js")" data-main="main" type="text/javascript"></script>
+    <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
   </body>
 </html>
