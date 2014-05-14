@@ -28,15 +28,18 @@ object Secured {
   /**
    * Key used to store authentication information in the client cookie
    */
-  val SessionInformationKey = "session"
+  val SessionInformationKey = "time-tracker-session"
 
   /**
    * Creates a map which can be added to a cookie to set a session
    */
-  def createSession(user: User): (String, String) = {
+  def createCookie(user: User): Cookie = {
     val token = SessionService.createSession(user.userId)(GlobalAccessContext)
-    (SessionInformationKey -> token)
+    Cookie(SessionInformationKey, token)
   }
+
+  def discardCookie =
+    DiscardingCookie(SessionInformationKey)
 }
 
 /**
@@ -52,9 +55,9 @@ trait Secured extends FoxImplicits {
   val host = Play.current.configuration.getString("host.url").get
 
   private def userFromSession(implicit request: RequestHeader): Fox[User] =
-    request.session.get(Secured.SessionInformationKey) match {
-      case Some(id) =>
-        SessionService.resolve(id)(GlobalAccessContext)
+    request.cookies.get(Secured.SessionInformationKey) match {
+      case Some(cookie) =>
+        SessionService.resolve(cookie.value)(GlobalAccessContext)
       case _ =>
         Empty
     }

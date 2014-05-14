@@ -49,7 +49,7 @@ object Authentication extends GithubOauth with Controller {
         case Full(user) =>
           Logger.info("Saved user. " + user.profile.fullName)
           val redirectUri = RedirectionCache.retrieve(state) getOrElse defaultRedirectUri
-          Redirect(redirectUri).withSession(Secured.createSession(user))
+          Redirect(redirectUri).withCookies(Secured.createCookie(user))
         case x =>
           Logger.info("Saving user failed. " + x)
           BadRequest("Failed to complete github auth.")
@@ -67,7 +67,7 @@ object Authentication extends GithubOauth with Controller {
     for {
       _ <- SessionService.removeSessions(request.user.userId)
     } yield {
-        Redirect(controllers.routes.Application.index())
+        Redirect(controllers.routes.Application.index()).discardingCookies(Secured.discardCookie)
     }
   }
 }
