@@ -20,7 +20,7 @@ class UserViewModel extends ViewModel
     rows : new Backbone.Collection()
     monthlyTotalHours : 0
     dailyTotalHours : 0
-    urlRoot : "home"
+    urlRoot : "me"
     viewTitle : "User Report"
 
   dataSourceClass : UserTimeCollection
