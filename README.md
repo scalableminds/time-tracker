@@ -1,5 +1,12 @@
-# ![Time-Tracker logo](https://timer.scm.io/assets/images/stopwatch.png) Time-Tracker
-GitHub time tracking made easy.
+# ![Time-Tracker logo](https://timer.scm.io/assets/images/stopwatch.png) [Time-Tracker](https://timer.scm.io)
+Time tracking for Github issues.
+
+## Features
+* Log your time for each issue you work on
+* Get an overview of your and your team's work
+* Injects links into Github issues for easy tracking
+* Uses Github user accounts and repository settings
+
 
 ## Dependencies
 
