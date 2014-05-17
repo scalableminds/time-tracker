@@ -1,4 +1,4 @@
-@media screen and (max-width: 768px) {
+@media screen and (max-width: @screen-sm-min) {
 
   // Make the month picker full width
   .month-picker {
@@ -21,6 +21,37 @@
     padding: 20px 40px;
     font-size: 30px;
     line-height: normal;
+  }
+}
+
+@media screen and (min-width: @screen-sm-min) and (max-width: @screen-md-min)  {
+
+  // Make the month picker full width
+  .month-picker {
+    float: none;
+  }
+
+  // One mobile devices only display the first two columns
+  table.responsive {
+    th:nth-child(-n+2), td:nth-child(-n+2){ display: table-cell }
+    td, th{ display: none; }
+  }
+
+  .preamble-content-right {
+    text-align: center;
+  }
+  .preamble-content-left {
+    text-align: center;
+  }
+  .btn-xlarge {
+    padding: 20px 40px;
+    font-size: 30px;
+    line-height: normal;
+  }
+  .thin {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 35px
   }
 }
 
