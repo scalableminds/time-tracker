@@ -1,4 +1,4 @@
-# ![Time-Tracker logo](https://timer.scm.io/assets/images/stopwatch.png) [Time-Tracker](https://timer.scm.io)
+# [![Time-Tracker logo](https://timer.scm.io/assets/images/stopwatch.png) Time-Tracker](https://timer.scm.io)
 Time tracking for Github issues.
 
 ## Features
