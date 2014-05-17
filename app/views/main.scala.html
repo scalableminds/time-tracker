@@ -30,7 +30,7 @@
         @session.userOpt.map { user =>
           <ul class="nav navbar-nav" id="main-nav">
             <li>
-              <a href="/">Me</a>
+              <a href="/me">Me</a>
             </li>
             <li>
               <a href="/project">Project</a>
@@ -86,8 +86,8 @@
       <div id="main-container">
       @content
       </div>
-      <div class="push"></div>
     </div>
+    <div class="push"></div>
     <footer class="container">
       <p>
         by <a href="http://scm.io/"><img src="@routes.Assets.at("images/scalableminds.png")" alt="scalable minds" /></a>
@@ -99,8 +99,13 @@
       </p>
     </footer>
 
-    <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("bower_components/requirejs/require.js")" data-main="main" type="text/javascript"></script>
-    <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
+    @session.userOpt.map { user =>
+      <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
+      <script src="@routes.Assets.at("bower_components/requirejs/require.js")" data-main="main" type="text/javascript"></script>
+      <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
+    }.getOrElse {
+      <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")" type="text/javascript"></script>
+      <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")" type="text/javascript"></script>
+    }
   </body>
 </html>

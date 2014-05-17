@@ -18,7 +18,7 @@ models/log/log_time_model : LogTimeModel
 class Router extends Backbone.Router
 
   routes :
-    "log"                                       : "log"
+    ""                                          : "user"
     "me"                                        : "user"
     "me/:date"                                  : "user"
     "project"                                   : "project"
@@ -26,6 +26,7 @@ class Router extends Backbone.Router
     "admin"                                     : "admin"
     "team"                                      : "team"
     "team/:date"                                : "team"
+    "log"                                       : "log"
     "repos/:repoId/issues/:issueId/create"      : "logFromGithub"
     "settings"                                  : "settings"
 
@@ -46,6 +47,7 @@ class Router extends Backbone.Router
     userModel = new UserViewModel(date : date)
     @showReport(userModel)
     @changeActiveNavbarItem("/")
+    @changeTitle("Me")
 
 
   project : (date) ->
@@ -53,6 +55,7 @@ class Router extends Backbone.Router
     projectModel = new ProjectViewModel(date : date)
     @showReport(projectModel)
     @changeActiveNavbarItem("/project")
+    @changeTitle("Project")
 
 
   team : (date) ->
@@ -60,6 +63,7 @@ class Router extends Backbone.Router
     teamModel = new TeamViewModel(date : date)
     @showReport(teamModel)
     @changeActiveNavbarItem("/team")
+    @changeTitle("Team")
 
 
   log : ->
@@ -67,6 +71,7 @@ class Router extends Backbone.Router
     logTimeModel = new LogTimeModel()
     @changeView(new LogTimeLocalView(model : logTimeModel))
     @changeActiveNavbarItem("/log")
+    @changeTitle("Log time")
 
 
   logFromGithub : (repositoryId, issueNumber) ->
@@ -74,12 +79,14 @@ class Router extends Backbone.Router
     logTimeModel = new LogTimeModel({repositoryId, issueNumber})
     @changeView(new LogTimeGithubView(model : logTimeModel))
     @changeActiveNavbarItem("/log")
+    @changeTitle("Log time")
 
 
   admin : ->
 
     @changeView(new AdminPanelView())
     @changeActiveNavbarItem("/admin")
+    @changeTitle("Admin")
 
 
   settings : ->
@@ -90,11 +97,8 @@ class Router extends Backbone.Router
     @changeView(spinnerView, userSettingsView)
     userSettingsModel.fetch()
     @changeActiveNavbarItem()
+    @changeTitle("User Settings")
 
-
-  faq  : ->
-
-    @changeActiveNavbarItem("/faq")
 
 
   showReport : (model) ->
@@ -130,6 +134,9 @@ class Router extends Backbone.Router
 
     return
 
+  changeTitle : (title) ->
+
+    window.document.title = title
 
   changeActiveNavbarItem : (url) ->
 
