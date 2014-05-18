@@ -15,7 +15,6 @@ requirejs
     "backbone"            : "../bower_components/backbone/backbone"
     "backbone.marionette" : "../bower_components/backbone.marionette/lib/backbone.marionette"
     "bootstrap"           : "../bower_components/bootstrap/dist/js/bootstrap"
-    "backgrid"            : "backgrid"
     "datepicker"          : "bootstrap-datepicker"
 
   shim :
@@ -28,6 +27,3 @@ requirejs
     "datepicker" :
       deps : ["jquery"]
       exports : "datepicker"
-    "backgrid" :
-      deps: ["jquery", "backbone", "underscore"]
-      exports: "Backgrid"
