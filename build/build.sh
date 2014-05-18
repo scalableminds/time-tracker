@@ -71,6 +71,7 @@ renderTemplate() {
 makeInitScriptExecutable() {
   #A more general approach to setting modi on files could be a suffix such as ".x" for "add executable flag", so far it's not nesseccary though
   chmod +x $ROOT_ENV/etc/init.d/$NAME
+  chmod +x ${ROOT_ENV}${INSTALL_DIR}/bin/time-tracker
 
 }
 
