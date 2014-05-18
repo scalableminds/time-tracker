@@ -22,9 +22,9 @@ object Authentication extends GithubOauth with Controller {
 
   val authCompleteUrl = host + "/authenticate/complete"
 
-  val minScope = List("user", "public_repo")
+  val minScope = List("write:repo_hook, read:org")
 
-  val normalScope = List("user", "repo")
+  val normalScope = List("repo, read:org")
 
   val secret = config.getString("authentication.github.secret").get
 

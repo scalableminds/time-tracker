@@ -11,7 +11,7 @@ class ViewModel extends Backbone.Model
   initialize : (options = {}) ->
 
     if options.date
-      @set("date", moment(options.date).startOf("month"))
+      @set("date", moment(options.date, "YYYY-MM").startOf("month"))
 
     @dataSource = new @dataSourceClass()
     @usersCollection = new UsersCollection()

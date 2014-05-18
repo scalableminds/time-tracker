@@ -16,15 +16,29 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
       <% }) %>
     </td>
     <td>
-      <a id="scan" href="/admin/repositories/<%= name %>/scan"><i class="glyphicon glyphicon-refresh"></i> scan</a>
-      <a id="remove" href="#"><i class="glyphicon glyphicon-trash"></i> remove</a>
+      <a id="scan" href="/api/repos/<%= id %>/scan"><i class="fa fa-refresh"></i> scan</a>
+      <a id="remove" href="#"><i class="fa fa-trash-o"></i> remove</a>
     </td>
   """)
 
   events:
     "click a#remove": "removeItem"
+    "click a#scan" : "scan"
 
+  ui :
+    "spinner" : ".fa-refresh"
 
   removeItem: ->
 
     @model.destroy()
+
+
+  scan : (evt) ->
+
+    evt.preventDefault()
+
+    $.get(evt.target.href).done(=>
+      @ui.spinner.removeClass("fa-spin")
+    )
+
+    @ui.spinner.addClass("fa-spin")

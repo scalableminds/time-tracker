@@ -4,7 +4,7 @@
 <div class="container authenticate">
   <div class="row">
     <div class="col-sm-12">
-      <h2>Please choose which permissions you want to allow TimeTracker </h2>
+      <h2>Please choose which permissions you want to grant Time-Tracker </h2>
     </div>
     <div class="col-sm-6">
       <div class="well">
@@ -13,12 +13,29 @@
         <div class="group">
           <div class="spacer">
             <span class="permission read ">Read</span>
-            <strong> Your user profile </strong>
+            <strong> Your public user profile </strong>
           </div>
           <div class="spacer">
-            <span class="permission read ">Read</span>
-            Your followers
-
+            <span class="permission read">Read</span>
+            Organizations and teams
+          </div>
+        </div>
+        <div class="group">
+          <div class="spacer">
+            <span class="permission read">Read</span>
+            <strong> Your public repositories and organizations </strong>
+          </div>
+          <div class="spacer">
+            <span class="permission read">Read</span>
+            Code
+          </div>
+          <div class="spacer">
+            <span class="permission read">Read</span>
+            Issues
+          </div>
+          <div class="spacer">
+            <span class="permission write">Write</span>
+            Webhooks and services
           </div>
         </div>
         <div class="group">
@@ -28,26 +45,15 @@
           </div>
           <div class="spacer">
             <span class="permission read off">None</span>
-            Commit status
+            Code
           </div>
           <div class="spacer">
             <span class="permission read off">None</span>
-            Notifications
-          </div>
-        </div>
-        <div class="group">
-
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            <strong> Your public repositories and organizations </strong>
+            Issues
           </div>
           <div class="spacer">
-            <span class="permission write">Write</span>
-            Commit status
-          </div>
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            Notifications
+            <span class="permission read off">None</span>
+            Webhooks and services
           </div>
         </div>
         <div class="group">
@@ -60,44 +66,52 @@
       <div class="well">
         <h4> Private access </h4>
         <div class="body">
-        <div class="group">
-          <div class="spacer">
-            <span class="permission read">Read</span>
-            <strong> Your user profile </strong>
+          <div class="group">
+            <div class="spacer">
+              <span class="permission read ">Read</span>
+              <strong> Your public user profile </strong>
+            </div>
+            <div class="spacer">
+              <span class="permission read">Read</span>
+              Organizations and teams
+            </div>
           </div>
-          <div class="spacer">
-            <span class="permission read">Read</span>
-            Your followers
+          <div class="group">
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              <strong> Your public repositories and organizations </strong>
+            </div>
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              Code
+            </div>
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              Issues
+            </div>
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              Webhooks and services
+            </div>
           </div>
-        </div>
-        <div class="group">
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            <strong> Your private repositories and organizations </strong>
+          <div class="group">
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              <strong> Your private repositories and organizations </strong>
+            </div>
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              Code
+            </div>
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              Issues
+            </div>
+            <div class="spacer">
+              <span class="permission write">Write</span>
+              Webhooks and services
+            </div>
           </div>
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            Commit status
-          </div>
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            Notifications
-          </div>
-        </div>
-        <div class="group">
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            <strong> Your public repositories and organizations </strong>
-          </div>
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            Commit status
-          </div>
-          <div class="spacer">
-            <span class="permission write">Write</span>
-            Notifications
-          </div>
-        </div>
         <div class="group">
           <a class="btn btn-primary btn-block" href="@authWithPrivateScope">Allow private access</a>
         </div>
