@@ -18,8 +18,19 @@ Time tracking for Github issues.
 * [bower](http://bower.io/)
 
 ## Installation
+After cloning the repository (`git clone git@github.com:scalableminds/time-tracker.git`), create a file under `conf/github.conf` with the following content:
+
+```
+# DEV settings
+authentication.github{
+  clientId = "GITHUB APPLICATION CLIENT ID"
+  secret = "GITHUB APPLICATION SECRET"
+}
+```
+
+After that you can use the following commands to install / run the application:
+
 ```bash
-git clone git@github.com:scalableminds/time-tracker.git
 cd time-tracker
 bower install
 sbt run

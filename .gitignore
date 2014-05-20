@@ -1,6 +1,7 @@
 .DS_Store
 .idea/
 .idea_modules/
+conf/github.conf
 logs/
 target/
 RUNNING_PID
