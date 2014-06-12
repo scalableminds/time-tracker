@@ -22,8 +22,8 @@ object RepositoryController extends Controller {
 
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
 
-  def hookUrl(repositoryName: String) =
-    s"${Application.hostUrl}/api/repos/$repositoryName/hook"
+  def hookUrl(repositoryId: String) =
+    s"${Application.hostUrl}/api/repos/$repositoryId/hook"
 
   def tryWithAnyAccessToken[T](tokens: List[String], body: String => Future[Boolean]) = {
     def tryNext(tokens: List[String]): Future[Boolean] = {
@@ -69,6 +69,17 @@ object RepositoryController extends Controller {
     }
   }
 
+  def createWebHook(id: String) = Authenticated.async {
+    implicit request =>
+      for {
+        repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
+        _ <- ensureAdminRights(request.user, repository.name)
+      } yield {
+        GithubApi.createWebHook(request.user.githubAccessToken, repository.name, hookUrl(repository.id))
+        JsonOk("created Webhook")
+      }
+  }
+
   def add = Authenticated.async(parse.json) {
     implicit request =>
       request.body.validate(Repository.publicRepositoryReads) match {
@@ -82,7 +93,7 @@ object RepositoryController extends Controller {
               _ <- RepositoryDAO.insert(repo)
               js <- Repository.publicRepositoryWrites(repo)
             } yield {
-              GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
+              GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.id))
               issueActor ! FullScan(repo, repo.accessToken getOrElse request.user.githubAccessToken)
               Ok(js)
             }
