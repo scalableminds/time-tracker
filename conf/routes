@@ -22,7 +22,6 @@ GET           /authenticate/logout                      controllers.auth.Authent
 GET           /api/repos                                controllers.RepositoryController.list
 POST          /api/repos                                controllers.RepositoryController.add
 GET           /api/repos/:id/scan                       controllers.RepositoryController.scan(id)
-GET           /api/repos/:id/createhook                 controllers.RepositoryController.createWebHook(id)
 GET           /api/repos/:id                            controllers.RepositoryController.read(id)
 DELETE        /api/repos/:id                            controllers.RepositoryController.delete(id)
 POST          /api/repos/:id/hook                       controllers.RepositoryController.issueHook(id)
