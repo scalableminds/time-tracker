@@ -28,7 +28,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
 
     @ui.inputDate
       .datepicker({format : "yyyy-mm-dd"})
-      .datepicker("setValue", @model.get("dateTime").toDate())
+      .datepicker("setValue", @model.get("dateTime").format("YYYY-MM-DD"))
       .on "changeDate", (evt) =>
         @ui.inputDate.datepicker("hide")
 
