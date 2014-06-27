@@ -52,8 +52,8 @@ class LogTimeView extends Backbone.Marionette.CompositeView
   submitTimeLog : (evt) ->
 
     evt.preventDefault()
-
-    unless @ui.form[0].checkValidity()
+    form = @ui.form[0]
+    unless form.checkValidity()
       @showAlert("Your specified time couldn't be recognized. Use something like: 2h 10m", "danger")
       return
 
@@ -64,6 +64,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
           window.close()
         else
           @showAlert("You time entry was successfully logged.", "success")
-    =>
+          form.reset()
+      =>
         @showAlert("Ups. We couldn't save your time log.", "danger")
     )

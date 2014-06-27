@@ -22,8 +22,8 @@ object RepositoryController extends Controller {
 
   lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
 
-  def hookUrl(repositoryName: String) =
-    s"${Application.hostUrl}/api/repos/$repositoryName/hook"
+  def hookUrl(repositoryId: String) =
+    s"${Application.hostUrl}/api/repos/$repositoryId/hook"
 
   def tryWithAnyAccessToken[T](tokens: List[String], body: String => Future[Boolean]) = {
     def tryNext(tokens: List[String]): Future[Boolean] = {
@@ -82,7 +82,7 @@ object RepositoryController extends Controller {
               _ <- RepositoryDAO.insert(repo)
               js <- Repository.publicRepositoryWrites(repo)
             } yield {
-              GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.name))
+              GithubApi.createWebHook(request.user.githubAccessToken, repo.name, hookUrl(repo.id))
               issueActor ! FullScan(repo, repo.accessToken getOrElse request.user.githubAccessToken)
               Ok(js)
             }
@@ -110,8 +110,9 @@ object RepositoryController extends Controller {
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
         if(repository.usesIssueLinks) {
+          GithubApi.createWebHook(request.user.githubAccessToken, repository.name, hookUrl(repository.id))
           issueActor ! FullScan(repository, request.user.githubAccessToken)
-          JsonOk("Scan is in progress")
+          JsonOk("Recreated webhook and scanning the repo")
         } else {
           JsonBadRequest("Issue links are disabled for this repository.")
         }

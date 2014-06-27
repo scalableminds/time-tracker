@@ -99,6 +99,7 @@ buildPackage() {
   -v $VERSION \
   --iteration ${BUILD_NUMBER} \
   --before-install="${INSTALL_SCRIPT_DIR}/before-install.sh" \
+  --before-remove="${INSTALL_SCRIPT_DIR}/before-remove.sh" \
   --after-remove="${INSTALL_SCRIPT_DIR}/after-remove.sh" \
   --deb-user root \
   --deb-group root \
