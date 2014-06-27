@@ -16,7 +16,7 @@ class LogTimeLocalView extends LogTimeView
       <form action="" method="POST" role="form">
         <h3>
           Log time for issue #
-          <input id="issueNumber" class="form-control" type="text" value="<%= issueNumber %>" name="issueNumber" required="" pattern="^\\d+$">
+          <input id="issueNumber" class="form-control reset" type="text" value="<%= issueNumber %>" name="issueNumber" required="" pattern="^\\d+$">
         </h3>
         <div class="form-group">
           <label class="control-label" for="repository">Repository</label>
@@ -28,13 +28,13 @@ class LogTimeLocalView extends LogTimeView
           <label class="control-label" for="duration">Duration</label>
           <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
-            <input id="duration" class="form-control" type="text" name="duration" autofocus="" required="" pattern="^\\s*\\-?\\s*(?:(\\d+)\\s*d)?\\s*(?:(\\d+)\\s*h)?\\s*(?:(\\d+)\\s*m)?\\s*$">
+            <input id="duration" class="form-control reset" type="text" name="duration" autofocus="" required="" pattern="^\\s*\\-?\\s*(?:(\\d+)\\s*d)?\\s*(?:(\\d+)\\s*h)?\\s*(?:(\\d+)\\s*m)?\\s*$">
           </div>
 
           <label class="control-label" for="comment">Comment</label>
           <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-comment-o"></i></span>
-            <input id="comment" name="comment" class="form-control" type="text">
+            <input id="comment" name="comment" class="form-control reset" type="text">
           </div>
 
           <label class="control-label" for="date">Date</label>
