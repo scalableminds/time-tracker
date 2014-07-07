@@ -33,6 +33,7 @@ class Router extends Backbone.Router
   whitelist : [
     "/authenticate/github"
     "/faq"
+    "/terms"
   ]
 
   initialize  : ->

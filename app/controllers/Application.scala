@@ -32,6 +32,11 @@ object Application extends Controller {
       Ok(html.faq())
   }
 
+  def terms = UserAwareAction {
+    implicit request =>
+      Ok(html.terms())
+  }
+
   def javascriptRoutes = Action { implicit request =>
     Ok(
       Routes.javascriptRouter("jsRoutes")(

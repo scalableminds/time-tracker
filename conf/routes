@@ -6,6 +6,7 @@
 GET           /                                         controllers.Application.index
 GET           /me                                       controllers.Application.home
 GET           /faq                                      controllers.Application.faq
+GET           /terms                                      controllers.Application.terms
 
 # Assets
 GET           /assets/javascripts/routes.js             controllers.Application.javascriptRoutes
