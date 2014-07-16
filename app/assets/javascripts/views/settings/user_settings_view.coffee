@@ -39,6 +39,11 @@ class UserSettingsView extends Backbone.Marionette.Layout
         <i class="fa fa-camera-retro"></i> Generate new Access-Key
       </a>
     </section>
+
+    <section>
+      <h3>Change permissions</h3>
+      <a href="reauthorize" class="btn btn-default">Grant public/private access</a>
+    </section>
   """)
 
   events :

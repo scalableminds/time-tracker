@@ -66,7 +66,7 @@ object Authentication extends GithubOauth with Controller {
     Redirect(authWithEmptyScope)
   }
 
-  def reauthorize(redirectUri: Option[String]) = Action{ implicit request =>
+  def reauthorize(redirectUri: Option[String]) = UserAwareAction{ implicit request =>
     val cacheId = RedirectionCache.store(redirectUri getOrElse defaultRedirectUri)
     val authWithPrivateScope = authorizeUrl(cacheId, normalScope, authCompleteUrl)
     val authWithPublicScope = authorizeUrl(cacheId, minScope, authCompleteUrl)
