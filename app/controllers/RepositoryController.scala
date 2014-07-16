@@ -69,17 +69,6 @@ object RepositoryController extends Controller {
     }
   }
 
-  def createWebHook(id: String) = Authenticated.async {
-    implicit request =>
-      for {
-        repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
-        _ <- ensureAdminRights(request.user, repository.name)
-      } yield {
-        GithubApi.createWebHook(request.user.githubAccessToken, repository.name, hookUrl(repository.id))
-        JsonOk("created Webhook")
-      }
-  }
-
   def add = Authenticated.async(parse.json) {
     implicit request =>
       request.body.validate(Repository.publicRepositoryReads) match {
@@ -121,8 +110,9 @@ object RepositoryController extends Controller {
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
         if(repository.usesIssueLinks) {
+          GithubApi.createWebHook(request.user.githubAccessToken, repository.name, hookUrl(repository.id))
           issueActor ! FullScan(repository, request.user.githubAccessToken)
-          JsonOk("Scan is in progress")
+          JsonOk("Recreated webhook and scanning the repo")
         } else {
           JsonBadRequest("Issue links are disabled for this repository.")
         }

@@ -26,9 +26,9 @@ object Authentication extends GithubOauth with Controller {
 
   val normalScope = List("repo, read:org")
 
-  val secret = config.getString("authentication.github.secret").get
+  lazy val secret = config.getString("authentication.github.secret").get
 
-  val clientId = config.getString("authentication.github.clientId").get
+  lazy val clientId = config.getString("authentication.github.clientId").get
 
   def complete(state: String, code: String) = Action.async {
     implicit request =>

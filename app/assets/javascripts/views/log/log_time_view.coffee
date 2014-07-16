@@ -28,7 +28,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
 
     @ui.inputDate
       .datepicker({format : "yyyy-mm-dd"})
-      .datepicker("setValue", @model.get("dateTime").toDate())
+      .datepicker("setValue", @model.get("dateTime").format("YYYY-MM-DD"))
       .on "changeDate", (evt) =>
         @ui.inputDate.datepicker("hide")
 
@@ -49,11 +49,17 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       @ui.labelAlert.addClass("alert-#{className} in")
 
 
+  resetAlert : ->
+
+    @ui.labelAlert
+      .removeClass("in")
+      .text("")
+
+
   submitTimeLog : (evt) ->
 
     evt.preventDefault()
-    form = @ui.form[0]
-    unless form.checkValidity()
+    unless @ui.form[0].checkValidity()
       @showAlert("Your specified time couldn't be recognized. Use something like: 2h 10m", "danger")
       return
 
@@ -63,8 +69,9 @@ class LogTimeView extends Backbone.Marionette.CompositeView
         if /\?.*referer=github/.test(window.location.href) and app.settings.get("closeAfterGithub")
           window.close()
         else
-          @showAlert("You time entry was successfully logged.", "success")
-          form.reset()
+          @showAlert("Your time entry was successfully logged.", "success")
+          @$(".reset").each(-> $(this).val(""))
+          setTimeout(@resetAlert.bind(@), 3000)
       =>
         @showAlert("Ups. We couldn't save your time log.", "danger")
     )
