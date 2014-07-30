@@ -24,9 +24,7 @@ class GithubIssueActor extends Actor {
         issues =>
           issues.foreach {
             issue =>
-              GithubIssueActor.ensureIssueIsArchived(repo, issue)
-              if(repo.usesIssueLinks)
-                GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
+              GithubIssueActor.ensureIssue(repo, issue, accessToken)
           }
       }
   }
@@ -45,6 +43,12 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
   }
 
   def containsLinkHeuristic(s: String) = linkRx.r.findFirstIn(s)
+
+  def ensureIssue(repo: Repository, issue: GithubIssue, accessToken: String) = {
+    if(repo.usesIssueLinks)
+      ensureTimeTrackingLink(repo, issue, accessToken)
+    ensureIssueIsArchived(repo, issue)
+  }
 
   def ensureTimeTrackingLink(repo: Repository, issue: GithubIssue, accessToken: String) = {
     val link = timeTrackingLinkFor(repo, issue)

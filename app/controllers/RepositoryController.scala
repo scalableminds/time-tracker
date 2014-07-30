@@ -129,7 +129,7 @@ object RepositoryController extends Controller {
         RepositoryDAO.findOneById(id)(GlobalAccessContext).futureBox.foreach {
           case Full(repo)  =>
             repo.accessToken.map{accessToken =>
-              GithubIssueActor.ensureTimeTrackingLink(repo, issue, accessToken)
+              GithubIssueActor.ensureIssue(repo, issue, accessToken)
             }
           case _ =>
             Logger.warn(s"Issue hook triggered, but couldn't find repository $id")
