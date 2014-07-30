@@ -74,12 +74,6 @@ object Authentication extends GithubOauth with Controller {
     Ok(views.html.login(authWithPrivateScope, authWithPublicScope))
   }
 
-  // TODO: update in
-  // github.com/scalableminds/braingames-libs/ ... /util/src/main/scala/com/scalableminds/util/auth/GithubOAuth.scala
-  def authorizeUrl(state: String, redirectUri: String) =
-    s"$GithubAuthorizeUri?client_id=$clientId&redirect_uri=$redirectUri&state=$state"
-
-
   def logout = Authenticated.async{ implicit request =>
     for {
       _ <- SessionService.removeSessions(request.user.userId)
