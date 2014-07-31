@@ -47,9 +47,13 @@ object Authentication extends GithubOauth with Controller {
         }
       }.futureBox.map{
         case Full(user) =>
-          Logger.info("Saved user. " + user.profile.fullName)
-          val redirectUri = RedirectionCache.retrieve(state) getOrElse defaultRedirectUri
-          Redirect(redirectUri).withCookies(Secured.createCookie(user))
+          if (user.authInfo.scope == "") {
+            Redirect("/reauthorize")
+          } else {
+            val redirectUri = RedirectionCache.retrieve(state) getOrElse defaultRedirectUri
+            Redirect(redirectUri).withCookies(Secured.createCookie(user))
+          }
+
         case x =>
           Logger.info("Saving user failed. " + x)
           BadRequest("Failed to complete github auth.")
@@ -58,8 +62,15 @@ object Authentication extends GithubOauth with Controller {
 
   def authenticate(redirectUri: Option[String]) = Action{ implicit request =>
     val cacheId = RedirectionCache.store(redirectUri getOrElse defaultRedirectUri)
+    val authWithEmptyScope = authorizeUrl(cacheId, authCompleteUrl)
+    Redirect(authWithEmptyScope)
+  }
+
+  def reauthorize(redirectUri: Option[String]) = UserAwareAction{ implicit request =>
+    val cacheId = RedirectionCache.store(redirectUri getOrElse defaultRedirectUri)
     val authWithPrivateScope = authorizeUrl(cacheId, normalScope, authCompleteUrl)
     val authWithPublicScope = authorizeUrl(cacheId, minScope, authCompleteUrl)
+
     Ok(views.html.login(authWithPrivateScope, authWithPublicScope))
   }
 

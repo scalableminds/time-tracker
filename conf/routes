@@ -15,6 +15,7 @@ GET           /assets/*file                             controllers.Assets.at(pa
 # Providers entry points
 GET           /authenticate/complete                    controllers.auth.Authentication.complete(state, code)
 GET           /authenticate                             controllers.auth.Authentication.authenticate(redirectUri: Option[String])
+GET           /reauthorize                              controllers.auth.Authentication.reauthorize(redirectUri: Option[String])
 GET           /authenticate/logout                      controllers.auth.Authentication.logout
 
 # ~~ JSON API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
