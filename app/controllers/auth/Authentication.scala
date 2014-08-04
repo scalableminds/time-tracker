@@ -7,7 +7,7 @@ import play.api.mvc.Action
 import play.api.{Logger, Play}
 import models.auth._
 import play.api.libs.concurrent.Execution.Implicits._
-import models.{RepositoryAccess, UserProfile}
+import models.{GithubUpdateActor, RepositoryAccess, UserProfile}
 import controllers.Controller
 import net.liftweb.common.Full
 import com.scalableminds.util.reactivemongo.GlobalAccessContext
@@ -39,10 +39,7 @@ object Authentication extends GithubOauth with Controller {
           profile = UserProfile(userDetails.login, first, last, userDetails.name getOrElse "", userDetails.email)
           user <- UserService.save(userDetails.id, profile, token)
         } yield {
-          GithubApi.listAllUserRepositories(token.accessToken).map{ repositories =>
-            val rs = repositories.map(r => RepositoryAccess(r.full_name, r.permissions.admin, r.permissions.push))
-            UserService.updateRepositories(user.userId, rs)(GlobalAccessContext)
-          }
+          GithubUpdateActor.updateUserRepositories(user, token)
           user
         }
       }.futureBox.map{
@@ -55,7 +52,7 @@ object Authentication extends GithubOauth with Controller {
           }
 
         case x =>
-          Logger.info("Saving user failed. " + x)
+          Logger.debug("Saving user failed. " + x)
           BadRequest("Failed to complete github auth.")
       }
   }

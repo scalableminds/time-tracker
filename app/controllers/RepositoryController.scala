@@ -20,7 +20,7 @@ import com.scalableminds.util.tools.Fox
 
 object RepositoryController extends Controller {
 
-  lazy val issueActor = Akka.system.actorFor("/user/" + GithubIssueActor.name)
+  lazy val issueActor = Akka.system.actorFor("/user/" + GithubUpdateActor.name)
 
   def hookUrl(repositoryId: String) =
     s"${Application.hostUrl}/api/repos/$repositoryId/hook"
@@ -129,7 +129,7 @@ object RepositoryController extends Controller {
         RepositoryDAO.findOneById(id)(GlobalAccessContext).futureBox.foreach {
           case Full(repo)  =>
             repo.accessToken.map{accessToken =>
-              GithubIssueActor.ensureIssue(repo, issue, accessToken)
+              GithubUpdateActor.ensureIssue(repo, issue, accessToken)
             }
           case _ =>
             Logger.warn(s"Issue hook triggered, but couldn't find repository $id")

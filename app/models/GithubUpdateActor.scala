@@ -4,34 +4,58 @@
 package models
 
 import akka.actor.Actor
+import com.scalableminds.util.auth.AccessToken
 import controllers.Application
 import com.scalableminds.util.reactivemongo.{GlobalAccessContext, DBAccessContext}
-import com.scalableminds.util.tools.StartableActor
-import play.api.Logger
+import com.scalableminds.util.tools.{FoxImplicits, StartableActor}
+import models.GithubUpdateActor
+import models.auth.UserService
+import play.api.{Play, Logger}
 import scala.concurrent.Future
 import com.scalableminds.util.github.GithubApi
 import com.scalableminds.util.github.models.GithubIssue
+import scala.concurrent.duration._
 
 case class FullScan(repo: Repository, accesssToken: String)
+case class UpdateAUsersRepositories(user: User, token: AccessToken)
+case object UpdateAllUserRepositories
 
-class GithubIssueActor extends Actor {
+class GithubUpdateActor extends Actor {
   implicit val ec = context.system.dispatcher
 
+  val conf = Play.current.configuration
+
+  val userRepositoryUpdateInterval =
+    (conf.getInt("application.github.userRepositoryUpdateIntervalInMinutes") getOrElse 5) minutes
+
+  override def preStart = {
+    context.system.scheduler.schedule(userRepositoryUpdateInterval, userRepositoryUpdateInterval, self, UpdateAllUserRepositories)
+  }
+
   def receive = {
+    case UpdateAUsersRepositories(user, token) =>
+      GithubUpdateActor.updateUserRepositories(user, token)
+
+    case UpdateAllUserRepositories =>
+      UserDAO.findAll(GlobalAccessContext).map( users =>
+        users.map( user => self ! UpdateAUsersRepositories(user, user.authInfo)))
+
     case FullScan(repo, accessToken) =>
       Logger.debug("Starting repo full scan.")
       GithubApi.listRepositoryIssues(accessToken, repo.name).foreach {
         issues =>
           issues.foreach {
             issue =>
-              GithubIssueActor.ensureIssue(repo, issue, accessToken)
+              GithubUpdateActor.ensureIssue(repo, issue, accessToken)
           }
       }
   }
 
 }
 
-object GithubIssueActor extends StartableActor[GithubIssueActor] {
+object GithubUpdateActor extends StartableActor[GithubUpdateActor] with FoxImplicits{
+  import play.api.libs.concurrent.Execution.Implicits._
+
   val name = "githubIssueActor"
 
   val linkRx = "<a[^>]*>Log Time</a>"
@@ -62,6 +86,13 @@ object GithubIssueActor extends StartableActor[GithubIssueActor] {
       case _ =>
         val body = issue.body + "\n\n" + link
         GithubApi.updateIssueBody(accessToken, issue, body)
+    }
+  }
+
+  def updateUserRepositories(user: User, token: AccessToken) = {
+    GithubApi.listAllUserRepositories(token.accessToken).toFox.flatMap{ repositories =>
+      val rs = repositories.map(r => RepositoryAccess(r.full_name, r.permissions.admin, r.permissions.push))
+      UserService.updateRepositories(user.userId, rs)(GlobalAccessContext)
     }
   }
 
