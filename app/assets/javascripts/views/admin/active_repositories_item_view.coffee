@@ -24,10 +24,16 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
 
   events:
     "click a#remove": "removeItem"
-    "click a#scan" : "scan"
+    "click @ui.scan" : "scan"
 
   ui :
     "spinner" : ".fa-refresh"
+    "scan" : "a#scan"
+
+  onRender: ->
+
+    @ui.scan.tooltip(title : "Gather issue titles and add log links if desired")
+
 
   removeItem: ->
 

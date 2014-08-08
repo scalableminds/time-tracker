@@ -65,7 +65,6 @@ class UserSettingsView extends Backbone.Marionette.Layout
       name : "defaultRepository"
     )
 
-    @listenTo(@, "render", @afterRender)
     @listenTo(@model, "sync", @render)
 
     @listenTo(@defaultRepositorySelectorView, "render", ->
@@ -75,7 +74,7 @@ class UserSettingsView extends Backbone.Marionette.Layout
     )
 
 
-  afterRender : ->
+  onRender : ->
 
     @defaultRepositorySelector.show(@defaultRepositorySelectorView)
     @ui.closeAfterGithub.prop("checked", @model.get("closeAfterGithub"))

@@ -15,10 +15,9 @@ class SelectionView extends Backbone.Marionette.CollectionView
 
     @name = options.name
     @collection.fetch().done(@render.bind(this))
-    @listenTo(@, "render", @afterRender)
 
 
-  afterRender : ->
+  onRender : ->
 
     @$el.attr("name", @name)
     return

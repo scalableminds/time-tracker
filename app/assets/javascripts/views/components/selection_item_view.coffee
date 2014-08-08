@@ -15,8 +15,6 @@ class SelectionItemView extends Backbone.Marionette.ItemView
 
     @getValue = options.valueFunc
     @getLabel = options.labelFunc ? options.valueFunc
-    @listenTo(this, "render", @afterRender)
-
 
   serializeData : ->
 
@@ -25,7 +23,7 @@ class SelectionItemView extends Backbone.Marionette.ItemView
     }
 
 
-  afterRender : ->
+  onRender : ->
 
     @$el.attr(
       id : @model.get("id")

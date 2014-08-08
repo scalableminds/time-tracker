@@ -28,10 +28,8 @@ class AdminPanelView extends Backbone.Marionette.Layout
     #@infoPanelView = new InfoPanelView()
     @repositoryPanelView = new RepositoryPanelView()
 
-    @listenTo(@, "render", @afterRender)
 
-
-  afterRender: ->
+  onRender: ->
 
     # subviews
     #@billingRatesPanel.show(@billingRatesPanelView)

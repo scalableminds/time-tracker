@@ -26,9 +26,9 @@ class RepositoryPanelView extends Backbone.Marionette.Layout
     @activeRepositoriesView = new ActiveRepositoriesView()
 
     @listenTo(@availableRepositoriesView, "newItem", @addActiveRepository)
-    @listenTo(@, "render", @afterRender)
 
-  afterRender: ->
+
+  onRender: ->
 
     @availableRepositories.show(@availableRepositoriesView)
     @activeRepositories.show(@activeRepositoriesView)

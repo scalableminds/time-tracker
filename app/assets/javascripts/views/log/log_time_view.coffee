@@ -20,12 +20,7 @@ class LogTimeView extends Backbone.Marionette.CompositeView
     "click @ui.inputDate" : "showDatePicker"
 
 
-  initialize : ->
-
-    @listenTo(this, "render", @afterRender)
-
-
-  afterRender : ->
+  onRender : ->
 
     @ui.inputDate
       .datepicker({format : "yyyy-mm-dd"})
