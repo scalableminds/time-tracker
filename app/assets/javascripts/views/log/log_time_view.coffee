@@ -6,6 +6,7 @@ app : app
 views/admin/available_repositories_item_view : AvailableRepositoriesItem
 models/admin/active_repositories_collection : ActiveRepositoriesCollection
 datepicker : Datepicker
+libs/toast : Toast
 ###
 
 class LogTimeView extends Backbone.Marionette.CompositeView
@@ -38,40 +39,20 @@ class LogTimeView extends Backbone.Marionette.CompositeView
     @ui.inputDate.datepicker().show()
 
 
-  showAlert : (msg, className = danger) ->
-
-    # clear existing styles
-    @ui.labelAlert
-      .removeClass("alert-success")
-      .removeClass("alert-danger")
-      .text(msg)
-
-      @ui.labelAlert.addClass("alert-#{className} in")
-
-
-  resetAlert : ->
-
-    @ui.labelAlert
-      .removeClass("in")
-      .text("")
-
-
   submitTimeLog : (evt) ->
 
     evt.preventDefault()
     unless @ui.form[0].checkValidity()
-      @showAlert("Your specified time couldn't be recognized. Use something like: 2h 10m", "danger")
+      Toast.error("Your specified time couldn't be recognized. Use something like: 2h 10m")
       return
-
 
     @save().then(
       =>
         if /\?.*referer=github/.test(window.location.href) and app.settings.get("closeAfterGithub")
           window.close()
         else
-          @showAlert("Your time entry was successfully logged.", "success")
+          Toast.success("Your time entry was successfully logged.")
           @$(".reset").each(-> $(this).val(""))
-          setTimeout(@resetAlert.bind(@), 3000)
       =>
-        @showAlert("Ups. We couldn't save your time log.", "danger")
+        Toast.error("Ups. We couldn't save your time log.")
     )

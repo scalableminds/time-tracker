@@ -10,9 +10,6 @@ class LogTimeLocalView extends LogTimeView
 
   template : _.template("""
     <div class="col-sm-6 col-sm-offset-3">
-      <div class="alert fade">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-      </div>
       <form action="" method="POST" role="form">
         <h3>
           Log time for issue #
@@ -54,7 +51,6 @@ class LogTimeLocalView extends LogTimeView
   itemViewContainer : "select"
 
   ui :
-    labelAlert : ".alert"
     inputDate : "input[name=date]"
     inputComment : "input[name=comment]"
     inputDuration : "input[name=duration]"

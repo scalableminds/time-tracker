@@ -22,6 +22,20 @@ html, body {
   padding-bottom: @footer-height;
 }
 
+#alert-container {
+  position: fixed;
+  right: 20px;
+  top: 60px;
+  z-index: 1050; //above modal backdrop
+
+  .alert {
+    cursor: default;
+    position: relative;
+  }
+  .alert:hover {
+    box-shadow: 0 0 10px rgba(100, 100, 100, .2);
+  }
+}
 
 body {
   background-color: @background-color;

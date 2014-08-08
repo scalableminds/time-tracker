@@ -1,6 +1,7 @@
 ### define
 underscore : _
 backbone.marionette: Marionette
+libs/toast : Toast
 ###
 
 class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
@@ -36,9 +37,9 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
   scan : (evt) ->
 
     evt.preventDefault()
-
-    $.get(evt.target.href).done(=>
-      @ui.spinner.removeClass("fa-spin")
-    )
-
     @ui.spinner.addClass("fa-spin")
+
+    $.get(evt.target.href).then(
+      (res) => Toast.message(res.messages)
+      (res) => Toast.message(res.responseJSON.messages)
+    ).always(=> @ui.spinner.removeClass("fa-spin"))
