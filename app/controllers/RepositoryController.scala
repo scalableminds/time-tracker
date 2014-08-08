@@ -109,13 +109,9 @@ object RepositoryController extends Controller {
         repository <- RepositoryDAO.findOneById(id) ?~> "Repository not found"
         _ <- ensureAdminRights(request.user, repository.name)
       } yield {
-        if(repository.usesIssueLinks) {
-          GithubApi.createWebHook(request.user.githubAccessToken, repository.name, hookUrl(repository.id))
-          issueActor ! FullScan(repository, request.user.githubAccessToken)
-          JsonOk("Recreated webhook and scanning the repo")
-        } else {
-          JsonBadRequest("Issue links are disabled for this repository.")
-        }
+        GithubApi.createWebHook(request.user.githubAccessToken, repository.name, hookUrl(repository.id))
+        issueActor ! FullScan(repository, request.user.githubAccessToken)
+        JsonOk("Recreated webhook and scanning the repo")
       }
   }
 
