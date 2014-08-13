@@ -11,8 +11,22 @@ import play.api.mvc.Flash
 import play.api.mvc.Request
 import play.api.mvc.RequestHeader
 import controllers.auth.{UserAwareRequest, AuthenticatedRequest, Secured}
+import scala.concurrent.Future
+import models.UserDAO
+import com.scalableminds.util.reactivemongo.{DBAccessContext, GlobalAccessContext}
+import play.api.libs.concurrent.Execution.Implicits._
 
-trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData with Secured
+
+trait Controller extends PlayController with ExtendedController with ProvidesAccessContext with ProvidesSessionData with Secured {
+  def userFromRequestOrKey(accessKey: String)(implicit request: UserAwareRequest[_]) = {
+    for {
+      u1 <- Future.successful(request.userOpt)
+      u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext).futureBox
+    } yield {
+      u1 orElse u2
+    }
+  }
+}
 
 
 trait ProvidesAccessContext{
