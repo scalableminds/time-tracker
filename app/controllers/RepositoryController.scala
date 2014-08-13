@@ -47,9 +47,10 @@ object RepositoryController extends Controller {
     } yield Ok(js)
   }
 
-  def list = Authenticated.async{ implicit request =>
+  def list(accessKey: String) = UserAwareAction.async{ implicit request =>
     for{
-      repositories <- RepositoryDAO.findAll
+      user <- userFromRequestOrKey(accessKey) ?~> "Unauthorized."
+      repositories <- RepositoryDAO.findAll(user)
       js <- Future.traverse(repositories)(Repository.publicRepositoryWrites)
     } yield Ok(JsArray(js))
   }

@@ -8,7 +8,6 @@ import com.scalableminds.util.reactivemongo.{GlobalAccessContext, DBAccessContex
 import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import com.scalableminds.util.tools.ExtendedTypes._
-import scala.concurrent.Future
 import models.User
 import com.scalableminds.util.tools.Fox
 import play.api.Logger
@@ -31,15 +30,6 @@ object TimeEntryController extends Controller {
 
   def parseAsDuration(s: String) = {
     DurationParser.parse(s)
-  }
-
-  def userFromRequestOrKey(accessKey: String)(implicit request: UserAwareRequest[_]) = {
-    for {
-      u1 <- Future.successful(request.userOpt)
-      u2 <- UserDAO.findByAccessKey(accessKey)(GlobalAccessContext).futureBox
-    } yield {
-      u1 orElse u2
-    }
   }
 
   def ensureCollaboration(user: User, repository: Repository) = {
