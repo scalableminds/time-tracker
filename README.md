@@ -16,6 +16,7 @@ Time tracking for Github issues.
 * [node.js 0.10.0+](http://nodejs.org/download/)
 * [git](http://git-scm.com/downloads)
 * [bower](http://bower.io/)
+* [scalable minds coffee-script](https://github.com/scalableminds/coffee-script)
 
 ## Installation
 After cloning the repository (`git clone git@github.com:scalableminds/time-tracker.git`), create a file under `conf/github.conf` with the following content:
@@ -33,6 +34,7 @@ After that you can use the following commands to install / run the application:
 ```bash
 cd time-tracker
 bower install
+npm install -g scalableminds/coffee-script
 sbt run
 ```
 
