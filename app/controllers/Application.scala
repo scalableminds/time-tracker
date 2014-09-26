@@ -27,6 +27,11 @@ object Application extends Controller {
       Ok(html.team())
   }
 
+  def repository = Authenticated {
+    implicit request =>
+      Ok(html.repository())
+  }
+
   def faq = UserAwareAction {
     implicit request =>
       Ok(html.faq())

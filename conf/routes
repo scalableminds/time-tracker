@@ -6,7 +6,8 @@
 GET           /                                         controllers.Application.index
 GET           /me                                       controllers.Application.home
 GET           /faq                                      controllers.Application.faq
-GET           /terms                                      controllers.Application.terms
+GET           /terms                                    controllers.Application.terms
+GET           /repository                               controllers.Application.repository
 
 # Assets
 GET           /assets/javascripts/routes.js             controllers.Application.javascriptRoutes
@@ -29,6 +30,10 @@ DELETE        /api/repos/:id                            controllers.RepositoryCo
 POST          /api/repos/:id/hook                       controllers.RepositoryController.issueHook(id)
 POST          /api/repos/:id/issues/:issueNumber        controllers.TimeEntryController.create(id, issueNumber: Int, accessKey: String ?= "")
 GET           /api/repos/:id/issues/:issueNumber        controllers.TimeEntryController.showTimeForIssue(id, issueNumber: Int)
+
+# None-Github Repositories
+GET           /api/otherrepos                           controllers.RepositoryController.listNoneGithub
+POST          /api/otherrepos                           controllers.RepositoryController.addNoneGithub
 
 # Users
 GET           /api/users                                controllers.UserController.list

@@ -134,4 +134,30 @@ object RepositoryController extends Controller {
       }
       Ok("Thanks octocat :)")
   }
+
+  def addNoneGithub = Authenticated.async(parse.json) {
+    implicit request =>
+      request.body.validate(NoneGithubRepository.publicRepositoryReads) match {
+        case JsSuccess(repo, _) =>
+          for {
+            // _ <- ensureAdminRights(request.user, repo.name).toFox
+            // _ <- ensureRepositoryDoesNotExist(repo.name) ?~> "Repository already exists"
+            _ <- NoneGithubRepositoryDAO.insert(repo)
+            js <- NoneGithubRepository.publicRepositoryWrites(repo)
+          } yield {
+            println(js)
+            Ok(js)
+          }
+        case e: JsError =>
+          Future.successful(BadRequest(JsError.toFlatJson(e)))
+      }
+  }
+
+  def listNoneGithub = Authenticated.async { implicit request =>
+    for {
+      repositories <- NoneGithubRepositoryDAO.findAll(request.user)
+      js <- Future.traverse(repositories)(NoneGithubRepository.publicRepositoryWrites)
+    } yield Ok(JsArray(js))
+  }
+
 }

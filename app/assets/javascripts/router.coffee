@@ -8,6 +8,7 @@ views/month_picker_view : MonthPickerView
 views/log/log_time_local_view  : LogTimeLocalView
 views/log/log_time_github_view  : LogTimeGithubView
 views/settings/user_settings_view  : UserSettingsView
+views/repository/repository_outer_panel_view : RepositoryOuterPanelView
 models/team/team_viewmodel : TeamViewModel
 models/project/project_viewmodel : ProjectViewModel
 models/user/user_viewmodel : UserViewModel
@@ -29,6 +30,7 @@ class Router extends Backbone.Router
     "log"                                       : "log"
     "repos/:repoId/issues/:issueId/create"      : "logFromGithub"
     "settings"                                  : "settings"
+    "repository"                                : "repository"
 
   whitelist : [
     "/authenticate/github"
@@ -90,6 +92,13 @@ class Router extends Backbone.Router
     @changeTitle("Admin")
 
 
+  repository : ->
+
+    @changeView(new RepositoryOuterPanelView())
+    @changeActiveNavbarItem("/repository")
+    @changeTitle("Repository")
+
+
   settings : ->
 
     userSettingsModel = app.settings
@@ -99,7 +108,6 @@ class Router extends Backbone.Router
     userSettingsModel.fetch()
     @changeActiveNavbarItem()
     @changeTitle("User Settings")
-
 
 
   showReport : (model) ->

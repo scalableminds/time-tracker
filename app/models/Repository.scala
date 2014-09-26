@@ -14,7 +14,13 @@ import scala.concurrent.Future
 import play.modules.reactivemongo.json.BSONFormats._
 import play.api.libs.functional.syntax._
 
-case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String], _id: BSONObjectID = BSONObjectID.generate) {
+trait RepositoryBase {
+  def owner: String
+  def shortName: String
+  def id: String
+}
+
+case class Repository(name: String, usesIssueLinks: Boolean, accessToken: Option[String], _id: BSONObjectID = BSONObjectID.generate) extends RepositoryBase {
   def owner = name.split("/").head
 
   def shortName = name.split("/").last
