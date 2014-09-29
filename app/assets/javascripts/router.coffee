@@ -43,11 +43,15 @@ class Router extends Backbone.Router
     @$mainContainer = $("#main-container")
 
 
+
+  ### Routes ###
+
   user : (date) ->
 
     userModel = new UserViewModel(date : date)
     @showReport(userModel)
     @changeActiveNavbarItem("/")
+    @changeNavbarDate(date)
     @changeTitle("Me")
 
 
@@ -56,6 +60,7 @@ class Router extends Backbone.Router
     projectModel = new ProjectViewModel(date : date)
     @showReport(projectModel)
     @changeActiveNavbarItem("/project")
+    @changeNavbarDate(date)
     @changeTitle("Project")
 
 
@@ -64,6 +69,7 @@ class Router extends Backbone.Router
     teamModel = new TeamViewModel(date : date)
     @showReport(teamModel)
     @changeActiveNavbarItem("/team")
+    @changeNavbarDate(date)
     @changeTitle("Team")
 
 
@@ -72,6 +78,7 @@ class Router extends Backbone.Router
     logTimeModel = new LogTimeModel()
     @changeView(new LogTimeLocalView(model : logTimeModel))
     @changeActiveNavbarItem("/log")
+    @changeNavbarDate()
     @changeTitle("Log time")
 
 
@@ -80,6 +87,7 @@ class Router extends Backbone.Router
     logTimeModel = new LogTimeModel({repositoryId, issueNumber})
     @changeView(new LogTimeGithubView(model : logTimeModel))
     @changeActiveNavbarItem("/log")
+    @changeNavbarDate()
     @changeTitle("Log time")
 
 
@@ -87,6 +95,7 @@ class Router extends Backbone.Router
 
     @changeView(new AdminPanelView())
     @changeActiveNavbarItem("/admin")
+    @changeNavbarDate()
     @changeTitle("Admin")
 
 
@@ -98,9 +107,12 @@ class Router extends Backbone.Router
     @changeView(spinnerView, userSettingsView)
     userSettingsModel.fetch()
     @changeActiveNavbarItem()
+    @changeNavbarDate()
     @changeTitle("User Settings")
 
 
+
+  ### Helpers ###
 
   showReport : (model) ->
 
@@ -143,9 +155,29 @@ class Router extends Backbone.Router
 
     $navbar = $("#main-nav")
     $navbar.find(".active").removeClass("active")
-    if url
-      $navbar.find("a[href=\"#{url}\"]").closest("li").addClass("active")
+    
+    if url == "/"
+      url = "/me"
 
+    if url
+      $navbar.find("a[href^=\"#{url}\"]").closest("li").addClass("active")
+
+    return
+
+
+  changeNavbarDate : (date) ->
+
+    $navbarItems = $("#main-nav li").slice(0, 3)
+    $navbarItems.each(->
+      $a = $(this).find("a")
+      newHref = $a.attr("href").replace(/^(\/[a-z]+)(.*)$/, (full, match1, part2) ->
+        if date?
+          "#{match1}/#{date}"
+        else
+          match1
+      )
+      $a.attr("href", newHref)
+    )
     return
 
 
