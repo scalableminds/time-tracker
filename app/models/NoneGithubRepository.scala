@@ -30,7 +30,7 @@ object NoneGithubRepository {
     (__ \ "users").read[List[String]])(NoneGithubRepository(_,_,_))
 
   def publicRepoWrites(repoFox: Fox[NoneGithubRepository]): Future[JsObject] = {
-    val a = for {
+    val repo = for {
       repository <- repoFox
     } yield {
       Json.obj(
@@ -41,8 +41,7 @@ object NoneGithubRepository {
       )
     }
 
-    Fox.sequenceOfFulls(List(a)).map { _.head }
-
+    Fox.sequenceOfFulls(List(repo)).map { _.head }
   }
 
   def publicRepositoryWrites(repository: NoneGithubRepository): Future[JsObject] = {
@@ -76,8 +75,8 @@ object NoneGithubRepoDAO extends BasicReactiveDAO[NoneGithubRepo] {
     val repositories = repos map { repo =>
       for {
         usersRepo <- NoneGithubRepoUserDAO.findByRepoId(repo._id.stringify)
-        usersId <- Future.successful(usersRepo.map(_.userId))
         adminsRepo <- NoneGithubRepoUserDAO.findByRepoId(repo._id.stringify, isAdmin = true)
+        usersId <- Future.successful(usersRepo.map(_.userId))
         adminsId <- Future.successful(adminsRepo.map(_.userId))
         users <- Future.traverse(usersId)(UserService.find(_).futureBox)
         admins <- Future.traverse(adminsId)(UserService.find(_).futureBox)

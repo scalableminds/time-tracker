@@ -157,7 +157,6 @@ object RepositoryController extends Controller {
       }
   }
 
-  // todo
   def listNoneGithub = Authenticated.async {
     implicit request =>
       for {
