@@ -29,6 +29,22 @@ object NoneGithubRepository {
     (__ \ "admins").read[List[String]] and
     (__ \ "users").read[List[String]])(NoneGithubRepository(_,_,_))
 
+  def publicRepoWrites(repoFox: Fox[NoneGithubRepository]): Future[JsObject] = {
+    val a = for {
+      repository <- repoFox
+    } yield {
+      Json.obj(
+        "name" -> repository.name,
+        "admins" -> repository.admins,
+        "users" -> repository.users,
+        "id" -> repository.id
+      )
+    }
+
+    Fox.sequenceOfFulls(List(a)).map { _.head }
+
+  }
+
   def publicRepositoryWrites(repository: NoneGithubRepository): Future[JsObject] = {
     Future.successful(Json.obj(
       "name" -> repository.name,
@@ -51,10 +67,28 @@ object NoneGithubRepoDAO extends BasicReactiveDAO[NoneGithubRepo] {
   val collectionName = "repositories.none.github"
   implicit val formatter = NoneGithubRepo.formatter
 
-  // def findAll(user: User)(implicit ctx: DBAccessContext) = {
-  //   find(Json.obj("admins" -> user.profile.fullName)).cursor[NoneGithubRepository].collect[List]()
-  //   // find(Json.obj("name" -> user.profile.fullName)).cursor[NoneGithubRepository].collect[List]()
-  // }
+  def findOneByID(id: BSONObjectID)(implicit ctx: DBAccessContext) = {
+    find(Json.obj("_id" -> id))
+  }
+
+  // todo - remove get
+  def makeRepos(repos: List[NoneGithubRepo])(implicit ctx: DBAccessContext) = {
+    val repositories = repos map { repo =>
+      for {
+        usersRepo <- NoneGithubRepoUserDAO.findByRepoId(repo._id.stringify)
+        usersId <- Future.successful(usersRepo.map(_.userId))
+        adminsRepo <- NoneGithubRepoUserDAO.findByRepoId(repo._id.stringify, isAdmin = true)
+        adminsId <- Future.successful(adminsRepo.map(_.userId))
+        users <- Future.traverse(usersId)(UserService.find(_).futureBox)
+        admins <- Future.traverse(adminsId)(UserService.find(_).futureBox)
+        usersFullNames <- Future.successful(users.map(_.get.profile.fullName))
+        adminsFullNames <- Future.successful(users.map(_.get.profile.fullName))
+      } yield {
+        NoneGithubRepository(repo.name, adminsFullNames, usersFullNames, repo._id)
+      }
+    }
+    Future.successful(repositories)
+  }
 
 }
 
@@ -65,6 +99,14 @@ object NoneGithubRepoUser {
 object NoneGithubRepoUserDAO extends BasicReactiveDAO[NoneGithubRepoUser] {
   val collectionName = "repositories.none.github.users"
   implicit val formatter = NoneGithubRepoUser.formatter
+
+  def findByRepoId(repoId: String, isAdmin: Boolean = false)(implicit ctx: DBAccessContext) = {
+    find(Json.obj("repoId" -> repoId, "isAdmin" -> isAdmin)).cursor[NoneGithubRepoUser].collect[List]()
+  }
+
+  def findAll(user: User, isAdmin: Boolean = false)(implicit ctx: DBAccessContext) = {
+    find(Json.obj("userId" -> user.userId, "isAdmin" -> isAdmin)).cursor[NoneGithubRepoUser].collect[List]()
+  }
 
 }
 

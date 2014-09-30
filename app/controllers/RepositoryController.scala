@@ -135,6 +135,8 @@ object RepositoryController extends Controller {
       Ok("Thanks octocat :)")
   }
 
+  // todo - remove get
+  // todo - check constraints
   def addNoneGithub = Authenticated.async(parse.json) {
     implicit request =>
       request.body.validate(NoneGithubRepository.publicRepositoryReads) match {
@@ -156,9 +158,16 @@ object RepositoryController extends Controller {
   }
 
   // todo
-  def listNoneGithub = Action { implicit request =>
-
-    Ok("")
+  def listNoneGithub = Authenticated.async {
+    implicit request =>
+      for {
+        userRepos <- NoneGithubRepoUserDAO.findAll(request.user, isAdmin = true)
+        repos <- Future.traverse(userRepos.map(_.repoId))(NoneGithubRepoDAO.findOneById(_).futureBox)
+        repositories <- NoneGithubRepoDAO.makeRepos(repos.flatten)
+        js <- Future.traverse(repositories)(NoneGithubRepository.publicRepoWrites(_))
+      } yield {
+        Ok(JsArray(js))
+      }
   }
 
 }
