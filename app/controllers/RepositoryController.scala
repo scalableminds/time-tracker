@@ -140,9 +140,11 @@ object RepositoryController extends Controller {
       request.body.validate(NoneGithubRepository.publicRepositoryReads) match {
         case JsSuccess(repo, _) =>
           for {
-            // _ <- ensureAdminRights(request.user, repo.name).toFox
-            // _ <- ensureRepositoryDoesNotExist(repo.name) ?~> "Repository already exists"
-            _ <- NoneGithubRepositoryDAO.insert(repo)
+            _ <- NoneGithubRepoDAO.insert(NoneGithubRepo(repo.name, repo._id))
+            users <- Future.traverse(repo.users)(UserDAO.findByFullName(_).futureBox)
+            admins <- Future.traverse(repo.admins)(UserDAO.findByFullName(_).futureBox)
+            _ <- Future.traverse(users)(user => NoneGithubRepoUserDAO.insert(NoneGithubRepoUser(repo._id.stringify, user.get.userId, isAdmin = false)).futureBox)
+            _ <- Future.traverse(admins)(user => NoneGithubRepoUserDAO.insert(NoneGithubRepoUser(repo._id.stringify, user.get.userId, isAdmin = true)).futureBox)
             js <- NoneGithubRepository.publicRepositoryWrites(repo)
           } yield {
             println(js)
@@ -153,11 +155,10 @@ object RepositoryController extends Controller {
       }
   }
 
-  def listNoneGithub = Authenticated.async { implicit request =>
-    for {
-      repositories <- NoneGithubRepositoryDAO.findAll(request.user)
-      js <- Future.traverse(repositories)(NoneGithubRepository.publicRepositoryWrites)
-    } yield Ok(JsArray(js))
+  // todo
+  def listNoneGithub = Action { implicit request =>
+
+    Ok("")
   }
 
 }

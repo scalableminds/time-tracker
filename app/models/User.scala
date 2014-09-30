@@ -86,6 +86,10 @@ object UserDAO extends BasicReactiveDAO[User] {
     .collect[List]()
   }
 
+  def findByFullName(fullName: String)(implicit ctx: DBAccessContext) = withExceptionCatcher {
+    find(Json.obj("profile.fullName" -> fullName)).one[User]
+  }
+
   def updateRepositories(userId: Int, repositories: List[RepositoryAccess])(implicit ctx: DBAccessContext) = {
     findAndModify(findByUserIdQ(userId),
       Json.obj(

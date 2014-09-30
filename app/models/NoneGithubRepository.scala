@@ -42,25 +42,30 @@ object NoneGithubRepository {
     owner + "/" + repo
 }
 
-object NoneGithubRepositoryDAO extends BasicReactiveDAO[NoneGithubRepository] {
+case class NoneGithubRepo(name: String, _id: BSONObjectID)
+object NoneGithubRepo {
+  implicit val formatter = Json.format[NoneGithubRepo]
+}
+
+object NoneGithubRepoDAO extends BasicReactiveDAO[NoneGithubRepo] {
   val collectionName = "repositories.none.github"
+  implicit val formatter = NoneGithubRepo.formatter
 
-  implicit val formatter = NoneGithubRepository.repositoryFormat
-
-  override val AccessDefinitions = new DefaultAccessDefinitions {
-    override def findQueryFilter(implicit ctx: DBAccessContext) = {
-      ctx.data match {
-        case Some(user: User) =>
-          AllowIf(Json.obj("name" -> Json.obj("$in" -> user.namesOfPushRepositories)))
-        case _ =>
-          DenyEveryone()
-      }
-    }
-  }
-
-  def findAll(user: User)(implicit ctx: DBAccessContext) = {
-    find(Json.obj("admins" -> user.profile.fullName)).cursor[NoneGithubRepository].collect[List]()
-    // find(Json.obj("name" -> user.profile.fullName)).cursor[NoneGithubRepository].collect[List]()
-  }
+  // def findAll(user: User)(implicit ctx: DBAccessContext) = {
+  //   find(Json.obj("admins" -> user.profile.fullName)).cursor[NoneGithubRepository].collect[List]()
+  //   // find(Json.obj("name" -> user.profile.fullName)).cursor[NoneGithubRepository].collect[List]()
+  // }
 
 }
+
+case class NoneGithubRepoUser(repoId: String, userId: Int, isAdmin: Boolean)
+object NoneGithubRepoUser {
+  implicit val formatter = Json.format[NoneGithubRepoUser]
+}
+object NoneGithubRepoUserDAO extends BasicReactiveDAO[NoneGithubRepoUser] {
+  val collectionName = "repositories.none.github.users"
+  implicit val formatter = NoneGithubRepoUser.formatter
+
+}
+
+

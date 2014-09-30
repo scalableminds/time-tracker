@@ -13,12 +13,12 @@ class AddedRepositoriesItemView extends Backbone.Marionette.ItemView
     </td>
     <td>
       <% admins.forEach(function(admin){ %>
-        <span><%= admin.fullName %></span>
+        <span><%= admin %></span>
       <% }) %>
     </td>
     <td>
       <% users.forEach(function(user){ %>
-        <span><%= user.fullName %></span>
+        <span><%= user %></span>
       <% }) %>
     </td>
     <td>
