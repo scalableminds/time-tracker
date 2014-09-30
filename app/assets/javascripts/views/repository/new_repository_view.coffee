@@ -45,6 +45,7 @@ class NewRepositoryView extends Backbone.Marionette.CompositeView
             <button type="button" class="btn btn-block btn-default">Add</button>
           </div>
         </div>
+        <select data-placeholder="Choose a country..." style="width:350px;" multiple class="chosen-select">
       </form>
     </div>
   """)

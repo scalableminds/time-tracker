@@ -16,6 +16,7 @@ requirejs
     "backbone.marionette" : "../bower_components/backbone.marionette/lib/backbone.marionette"
     "bootstrap"           : "../bower_components/bootstrap/dist/js/bootstrap"
     "datepicker"          : "bootstrap-datepicker"
+    "chosen"              : "../bower_components/chosen/chosen.jquery"
 
   shim :
     "moment" :
@@ -27,3 +28,6 @@ requirejs
     "datepicker" :
       deps : ["jquery"]
       exports : "datepicker"
+    "chosen" :
+      deps : ["jquery"]
+      exports : "chosen"
