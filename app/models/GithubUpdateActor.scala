@@ -90,7 +90,7 @@ object GithubUpdateActor extends StartableActor[GithubUpdateActor] with FoxImpli
   }
 
   def updateUserRepositories(user: User, token: AccessToken) = {
-    GithubApi.listAllUserRepositories(token.accessToken).toFox.flatMap{ repositories =>
+    GithubApi.listUserRepositories(token.accessToken).toFox.flatMap{ repositories =>
       val rs = repositories.map(r => RepositoryAccess(r.full_name, r.permissions.admin, r.permissions.push))
       UserService.updateRepositories(user.userId, rs)(GlobalAccessContext)
     }
