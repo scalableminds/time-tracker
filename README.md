@@ -38,7 +38,29 @@ npm install -g scalableminds/coffee-script
 sbt run
 ```
 
+Or use with it Docker (see [next section](#Docker))
+
 Scala and Java dependencies will automatically be downloaded. The application will be running on [Port 9000](http://localhost:9000/).
+
+## Docker
+
+Some helpful commands, to be refined (TODO)
+
+```
+# the development image and bower dependencies
+docker build -t scalableminds/time-tracker-dev-env docker-helpers/time-tracker-dev-env
+docker-compose run time-tracker-bower install
+
+# using sbt run
+docker-compose run --service-ports time-tracker-sbt-run
+
+# make standalone image (compile with sbt)
+docker-compose run time-tracker-sbt clean compile stage
+docker build -t scalableminds/time-tracker .
+
+# run the standalone image
+docker-compose up time-tracker
+```
 
 ## Credits
 [scalable minds](http://scm.io/)
