@@ -3,7 +3,7 @@ version: '2'
 services:
 
   time-tracker:
-    image: scalableminds/time-tracker:latest
+    image: scalableminds/time-tracker:$DOCKER_TAG
     ports:
       - "12000:12000"
     links:
@@ -13,7 +13,7 @@ services:
       - MODE=dev
 
   time-tracker-dev:
-    image: scalableminds/time-tracker-dev-env
+    image: scalableminds/time-tracker-dev-env:$DOCKER_TAG_DEV
     volumes:
       - ".:/project"
       - "~/.m2:/root/.m2"

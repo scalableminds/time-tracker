@@ -49,17 +49,17 @@ Some helpful commands, to be refined (TODO)
 ```
 # the development image and bower dependencies
 docker build -t scalableminds/time-tracker-dev-env docker-helpers/time-tracker-dev-env
-docker-compose run time-tracker-bower install
+DOCKER_TAG_DEV=latest docker-compose run time-tracker-bower install
 
 # using sbt run
-docker-compose run --service-ports time-tracker-sbt-run
+DOCKER_TAG_DEV=latest docker-compose run --service-ports time-tracker-sbt-run
 
 # make standalone image (compile with sbt)
-docker-compose run time-tracker-sbt clean compile stage
+DOCKER_TAG_DEV=latest docker-compose run time-tracker-sbt clean compile stage
 docker build -t scalableminds/time-tracker .
 
 # run the standalone image
-docker-compose up time-tracker
+DOCKER_TAG=latest docker-compose up time-tracker
 ```
 
 ## Credits
