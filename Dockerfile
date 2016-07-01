@@ -25,4 +25,4 @@ RUN groupadd -r app-user \
 USER app-user
 
 
-CMD ./bin/time-tracker -Dconfig.file=$APPLICATION_CONFIG -Dhttp.port=$PORT -Dmongodb.url=mongo -Dmongodb.port=27017
+ENTRYPOINT ./bin/time-tracker -Dconfig.file=$APPLICATION_CONFIG -Dhttp.port=$PORT -Dmongodb.url=mongo -Dmongodb.port=27017
