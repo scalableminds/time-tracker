@@ -1,0 +1,38 @@
+machine:
+  environment:
+    DOCKER_TAG:     $CIRCLE_BUILD_NUM
+    DOCKER_TAG_DEV: $CIRCLE_BUILD_NUM
+
+dependencies:
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+    - curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - sudo mv docker-compose /usr/local/bin/docker-compose
+    - sudo chmod +x /usr/local/bin/docker-compose
+    - sudo service docker start
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  cache_directories:
+    - "~/.m2"
+    - "~/.ivy2"
+    - "~/.sbt"
+    - "node_modules"
+  override:
+    - docker build -t scalableminds/time-tracker-dev-env:$CIRCLE_BUILD_NUM docker-helpers/time-tracker-dev-env
+    - docker-compose run time-tracker-bower install
+    - docker-compose run time-tracker-sbt clean compile stage
+    - docker build -t scalableminds/time-tracker:$CIRCLE_BUILD_NUM .
+
+test:
+  override:
+    - docker-compose up -d time-tracker:
+        background: true
+    - sleep 10
+    - ./test/infrastructure/deployment.bash
+
+deployment:
+  hub:
+    branch: /.*/
+    commands:
+      - docker push scalableminds/time-tracker-dev-env:$CIRCLE_BUILD_NUM
+      - docker push scalableminds/time-tracker:$CIRCLE_BUILD_NUM
+      - docker logout
