@@ -10,7 +10,8 @@ services:
       - mongo
     environment:
       - PORT=12000
-      - MODE=dev
+      - MODE=prod
+      - FLAGS=$FLAGS
 
   time-tracker-dev:
     image: scalableminds/time-tracker-dev-env:$DOCKER_TAG_DEV
@@ -42,4 +43,3 @@ services:
 
   mongo:
     image: mongo
-    entrypoint: bash -c "/usr/bin/mongod"

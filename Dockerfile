@@ -8,12 +8,12 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
 
 ENV PROJECT "time-tracker"
 ENV INSTALL_DIR /srv/time-tracker
-ENV APPLICATION_CONFIG ${INSTALL_DIR}/conf/application_${MODE:-dev}.conf
 ENV PORT 12000
-ENV LOGGER_XML ${INSTALL_DIR}/conf/application-logger.xml
+ENV MODE dev
+ENV LOGGER_XML ${INSTALL_DIR}/conf/application-logger-prod.xml
 
-RUN mkdir -p /srv/time-tracker
-WORKDIR /srv/time-tracker
+RUN mkdir -p "$INSTALL_DIR"
+WORKDIR "$INSTALL_DIR"
 
 COPY target/universal/stage .
 
@@ -25,4 +25,4 @@ RUN groupadd -r app-user \
 USER app-user
 
 
-ENTRYPOINT ./bin/time-tracker -Dconfig.file=$APPLICATION_CONFIG -Dhttp.port=$PORT -Dmongodb.url=mongo -Dmongodb.port=27017
+ENTRYPOINT /bin/bash -c "./bin/time-tracker -Dconfig.file=${INSTALL_DIR}/conf/application_${MODE}.conf -Dhttp.port=$PORT -Dmongodb.url=mongo -Dmongodb.port=27017 -Dlogger.file=$LOGGER_XML $FLAGS"
