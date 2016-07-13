@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PORT=${PORT-12000}
+PORT=${PORT-9000}
 
 source "$(dirname "$0")/helper.bash"
 
