@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+
+  time-tracker:
+    image: scalableminds/time-tracker:$DOCKER_TAG
+    ports:
+      - "9000:9000"
+    links:
+      - mongo
+    environment:
+      - PORT=9000
+      - MODE=$MODE
+      - FLAGS=$FLAGS
+
+  time-tracker-dev:
+    image: scalableminds/time-tracker-dev-env:$DOCKER_TAG_DEV
+    volumes:
+      - ".:/project"
+      - "~/.m2:/root/.m2"
+      - "~/.ivy2:/root/.ivy2"
+      - "~/.sbt:/root/.sbt"
+
+  time-tracker-sbt:
+    extends:
+      service: time-tracker-dev
+    entrypoint: sbt
+
+  time-tracker-sbt-run:
+    extends:
+      service: time-tracker-sbt
+    entrypoint: >
+      sbt
+      -Dconfig.file=conf/application_dev.conf
+      -Dmongodb.db=time-tracker
+      -Dmongodb.url=mongo
+      -Dmongodb.port=27017
+      -Dmongodb.uri=mongodb://mongo:27017/time-tracker
+      $FLAGS
+    command: run
+    ports:
+      - "9000:9000"
+    environment:
+      - dev
+    links:
+      - mongo
+
+  time-tracker-bower:
+    extends:
+      service: time-tracker-dev
+    entrypoint: bower --allow-root
+
+  mongo:
+    image: mongo
