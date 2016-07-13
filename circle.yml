@@ -24,7 +24,7 @@ dependencies:
 
 test:
   override:
-    - docker-compose up -d time-tracker:
+    - MODE=dev docker-compose up -d time-tracker:
         background: true
     - sleep 10
     - ./test/infrastructure/deployment.bash

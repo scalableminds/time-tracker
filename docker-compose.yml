@@ -5,12 +5,12 @@ services:
   time-tracker:
     image: scalableminds/time-tracker:$DOCKER_TAG
     ports:
-      - "12000:12000"
+      - "9000:9000"
     links:
       - mongo
     environment:
-      - PORT=12000
-      - MODE=prod
+      - PORT=9000
+      - MODE=$MODE
       - FLAGS=$FLAGS
 
   time-tracker-dev:
@@ -29,10 +29,19 @@ services:
   time-tracker-sbt-run:
     extends:
       service: time-tracker-sbt
-    entrypoint: sbt -Dconfig.file=conf/application_dev.conf -Dmongodb.url=mongo -Dmongodb.port=27017
+    entrypoint: >
+      sbt
+      -Dconfig.file=conf/application_dev.conf
+      -Dmongodb.db=time-tracker
+      -Dmongodb.url=mongo
+      -Dmongodb.port=27017
+      -Dmongodb.uri=mongodb://mongo:27017/time-tracker
+      $FLAGS
     command: run
     ports:
       - "9000:9000"
+    environment:
+      - dev
     links:
       - mongo
 

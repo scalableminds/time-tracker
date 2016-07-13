@@ -52,14 +52,14 @@ docker build -t scalableminds/time-tracker-dev-env docker-helpers/time-tracker-d
 DOCKER_TAG_DEV=latest docker-compose run time-tracker-bower install
 
 # using sbt run
-DOCKER_TAG_DEV=latest docker-compose run --service-ports time-tracker-sbt-run
+DOCKER_TAG_DEV=latest FLAGS="-Dauthentication.github.clientId=<token_client_id> -Dauthentication.github.secret=<token_secret>" docker-compose run --service-ports time-tracker-sbt-run
 
 # make standalone image (compile with sbt)
 DOCKER_TAG_DEV=latest docker-compose run time-tracker-sbt clean compile stage
 docker build -t scalableminds/time-tracker .
 
 # run the standalone image
-DOCKER_TAG=latest docker-compose up time-tracker
+DOCKER_TAG=latest MODE=<dev/prod> FLAGS="-Dauthentication.github.clientId=<token_client_id> -Dauthentication.github.secret=<token_secret>" docker-compose up time-tracker
 ```
 
 ## Credits
