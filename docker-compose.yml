@@ -1,7 +1,6 @@
 version: '2'
 
 services:
-
   time-tracker:
     image: scalableminds/time-tracker:$DOCKER_TAG
     ports:
@@ -52,3 +51,12 @@ services:
 
   mongo:
     image: mongo
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+
+volumes:
+  mongo_data:
+    driver: local
+  mongo_config:
+    driver: local
