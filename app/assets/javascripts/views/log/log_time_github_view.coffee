@@ -18,7 +18,7 @@ class LogTimeLocalView extends LogTimeView
           <label class="control-label" for="duration">Duration</label>
           <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
-            <input id="duration" class="form-control" type="text" name="duration" autofocus="" required="" pattern="^\\s*\\-?\\s*(?:(\\d+)\\s*d)?\\s*(?:(\\d+)\\s*h)?\\s*(?:(\\d+)\\s*m)?\\s*$">
+            <input id="duration" class="form-control" type="text" name="duration" autofocus="" required="" pattern="^\\s*-?\\s*(?:(\\d+)\\s*d)?\\s*(?:(\\d+)\\s*h)?\\s*(?:(\\d+)\\s*m)?\\s*$">
           </div>
 
           <label class="control-label" for="comment">Comment</label>
@@ -30,7 +30,7 @@ class LogTimeLocalView extends LogTimeView
           <label class="control-label" for="date">Date</label>
           <div class="input-group" >
             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-            <input class="form-control" type="text" name="date" pattern="^\\d{4}\\-\\d{2}\\-\\d{2}">
+            <input class="form-control" type="text" name="date" pattern="^\\d{4}-\\d{2}-\\d{2}">
           </div>
         </div>
         <div class="form-group">
