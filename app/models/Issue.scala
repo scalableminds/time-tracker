@@ -3,12 +3,13 @@
 */
 package models
 
+import com.scalableminds.util.github.models.GithubMilestone
 import play.api.libs.json.Json
 import com.scalableminds.util.reactivemongo.DBAccessContext
 import play.api.libs.concurrent.Execution.Implicits._
 import com.scalableminds.util.tools.Fox
 
-case class Issue(reference: IssueReference, title: String)
+case class Issue(reference: IssueReference, title: String, milestone: Option[GithubMilestone])
 
 object Issue{
   implicit val issueFormat = Json.format[Issue]

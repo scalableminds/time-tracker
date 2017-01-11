@@ -3,11 +3,14 @@
  */
 package controllers
 
+import javax.inject.Inject
+
 import models.IssueDAO
-import play.api.libs.json.{Writes, Json}
+import play.api.i18n.MessagesApi
+import play.api.libs.json.{Json, Writes}
 import play.api.libs.concurrent.Execution.Implicits._
 
-object IssueController extends Controller{
+class IssueController @Inject()(val messagesApi: MessagesApi) extends Controller{
 
   def list(owner: String, repo: String) = Authenticated.async {
     implicit request =>

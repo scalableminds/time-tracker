@@ -4,11 +4,12 @@
 package controllers
 
 import play.api.mvc.Action
-import play.api.Logger
+import play.api.{Configuration, Logger}
 import models._
 import com.scalableminds.util.reactivemongo.{DBAccessContext, GlobalAccessContext}
 import play.api.libs.concurrent.Execution.Implicits._
 import net.liftweb.common._
+
 import scala.concurrent.Future
 import play.api.libs.json._
 import play.api.libs.concurrent.Akka
@@ -17,13 +18,22 @@ import net.liftweb.common.Full
 import com.scalableminds.util.github.GithubApi
 import com.scalableminds.util.github.models.GithubIssue
 import com.scalableminds.util.tools.Fox
+import javax.inject.Inject
 
-object RepositoryController extends Controller {
+import akka.actor.ActorSystem
+import play.api.i18n.MessagesApi
 
-  lazy val issueActor = Akka.system.actorFor("/user/" + GithubUpdateActor.name)
+class RepositoryController @Inject()(
+  system: ActorSystem,
+  config: Configuration,
+  val messagesApi: MessagesApi) extends Controller {
+
+  lazy val issueActor = system.actorSelection("/user/" + GithubUpdateActor.name)
+
+  lazy val hostUrl = config.getString("host.url").get
 
   def hookUrl(repositoryId: String) =
-    s"${Application.hostUrl}/api/repos/$repositoryId/hook"
+    s"$hostUrl/api/repos/$repositoryId/hook"
 
   def tryWithAnyAccessToken[T](tokens: List[String], body: String => Future[Boolean]) = {
     def tryNext(tokens: List[String]): Future[Boolean] = {

@@ -8,7 +8,6 @@ import com.scalableminds.util.auth.AccessToken
 import controllers.Application
 import com.scalableminds.util.reactivemongo.{GlobalAccessContext, DBAccessContext}
 import com.scalableminds.util.tools.{FoxImplicits, StartableActor}
-import models.GithubUpdateActor
 import models.auth.UserService
 import play.api.{Play, Logger}
 import scala.concurrent.Future
@@ -60,9 +59,11 @@ object GithubUpdateActor extends StartableActor[GithubUpdateActor] with FoxImpli
 
   val linkRx = "<a[^>]*>Log Time</a>"
 
+  val hostUrl = Play.current.configuration.getString("host.url").get
+
   def timeTrackingLinkFor(repo: Repository, issue: GithubIssue) = {
     val link =
-      Application.hostUrl + s"/repos/${repo.id}/issues/${issue.number}/create?referer=github"
+      hostUrl + s"/repos/${repo.id}/issues/${issue.number}/create?referer=github"
     s"""<a href="$link" target="_blank">Log Time</a>"""
   }
 
@@ -97,6 +98,6 @@ object GithubUpdateActor extends StartableActor[GithubUpdateActor] with FoxImpli
   }
 
   def ensureIssueIsArchived(repo: Repository, issue: GithubIssue) = {
-    IssueDAO.archiveIssue(Issue(IssueReference(repo.name, issue.number), issue.title))(GlobalAccessContext)
+    IssueDAO.archiveIssue(Issue(IssueReference(repo.name, issue.number), issue.title, issue.milestone))(GlobalAccessContext)
   }
 }

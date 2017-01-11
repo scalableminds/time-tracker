@@ -3,14 +3,17 @@
 */
 package controllers
 
+import javax.inject.Inject
+
 import scala.None
-import models.{RepositoryDAO, RepositoryAccess, UserDAO, User}
+import models.{RepositoryAccess, RepositoryDAO, User, UserDAO}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Writes
-import models.auth.{UserService, UserCache}
+import models.auth.{UserCache, UserService}
 import play.api.libs.json.Json
 import com.scalableminds.util.mvc.Filter
 import com.scalableminds.util.tools.DefaultConverters._
+import play.api.i18n.MessagesApi
 
 /**
  * Company: scalableminds
@@ -18,7 +21,7 @@ import com.scalableminds.util.tools.DefaultConverters._
  * Date: 18.08.13
  * Time: 16:43
  */
-object UserController extends Controller {
+class UserController @Inject()(val messagesApi: MessagesApi) extends Controller {
   val DefaultAccessRole = None
 
   def list = Authenticated.async {

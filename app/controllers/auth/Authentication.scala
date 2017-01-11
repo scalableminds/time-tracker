@@ -3,8 +3,10 @@
  */
 package controllers.auth
 
+import javax.inject.Inject
+
 import play.api.mvc.Action
-import play.api.{Logger, Play}
+import play.api.{Configuration, Logger, Play}
 import models.auth._
 import play.api.libs.concurrent.Execution.Implicits._
 import models.{GithubUpdateActor, RepositoryAccess, UserProfile}
@@ -13,10 +15,9 @@ import net.liftweb.common.Full
 import com.scalableminds.util.reactivemongo.GlobalAccessContext
 import com.scalableminds.util.auth.GithubOauth
 import com.scalableminds.util.github.GithubApi
+import play.api.i18n.MessagesApi
 
-object Authentication extends GithubOauth with Controller {
-
-  val config = Play.current.configuration
+class Authentication @Inject()(config: Configuration, val messagesApi: MessagesApi) extends GithubOauth with Controller {
 
   val defaultRedirectUri = host + controllers.routes.Application.index().url
 

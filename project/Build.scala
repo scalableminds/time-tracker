@@ -1,12 +1,16 @@
 import sbt._
 import Keys._
-import play.Project._
+import play.sbt.Play.autoImport._
+import play.sbt.PlayImport
+import play.sbt.routes.RoutesKeys._
+import com.typesafe.sbt.web._
+import play.twirl.sbt.SbtTwirl
 
 trait Dependencies{
-  val akkaVersion = "2.2.0"
-  val reactiveVersion = "0.10.0"
-  val reactivePlayVersion = "0.10.2"
-  val scmUtilVersion= "6.5.0"
+  val akkaVersion = "2.4.1"
+  val reactiveVersion = "0.11.13"
+  val reactivePlayVersion = "0.11.13-play24"
+  val scmUtilVersion= "8.21.0-SNAPSHOT"
 
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val commonsEmail = "org.apache.commons" % "commons-email" % "1.3.1"
@@ -15,9 +19,7 @@ trait Dependencies{
   val scmUtil = "com.scalableminds" %% "util" % scmUtilVersion
   val joda = "joda-time" % "joda-time" % "2.2"
   val akkaAgent = "com.typesafe.akka" %% "akka-agent" % akkaVersion
-  val typesafeMailer = "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
-
-  val liftBox = "net.liftweb" % "lift-common_2.10" % "2.6-M3"
+  val akkaLogging = "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
 }
 
 trait Resolvers {
@@ -28,9 +30,8 @@ trait Resolvers {
   val sgSnaps = "sgodbillon" at "https://bitbucket.org/sgodbillon/repository/raw/master/snapshots/"
   val manSnaps = "mandubian" at "https://github.com/mandubian/mandubian-mvn/raw/master/snapshots/"
   val typesafeRel = "typesafe" at "http://repo.typesafe.com/typesafe/releases"
-  val scmRel = Resolver.url("Scalableminds REL Repo", url("http://scalableminds.github.com/releases/"))(Resolver.ivyStylePatterns)
-  val scmIntRel = "scm.io intern releases repo" at "http://maven.scm.io/releases/"
-  val scmIntSnaps = "scm.io intern snapshots repo" at "http://maven.scm.io/snapshots/"
+  val scmRel = "scm.io releases S3 bucket" at "https://s3-eu-central-1.amazonaws.com/maven.scm.io/releases/"
+  val scmSnaps = "scm.io snapshots S3 bucket" at "https://s3-eu-central-1.amazonaws.com/maven.scm.io/snapshots/"
   val sbPlugins = Resolver.url("sbt-plugin-releases", new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns)
 }
 
@@ -38,12 +39,6 @@ object ApplicationBuild extends Build with Dependencies with Resolvers{
 
   val appName         = "time-tracker"
   val appVersion      = "1.0-SNAPSHOT"
-
-  val coffeeCmd =
-    if(System.getProperty("os.name").startsWith("Windows"))
-      "cmd /C coffee -p"
-    else
-      "coffee -p"
 
   val appDependencies = Seq(
     cache,
@@ -55,8 +50,7 @@ object ApplicationBuild extends Build with Dependencies with Resolvers{
     akkaAgent,
     joda,
     scmUtil,
-    typesafeMailer,
-    liftBox)
+    akkaLogging)
 
   val dependencyResolvers = Seq(
     novusRel,
@@ -67,14 +61,21 @@ object ApplicationBuild extends Build with Dependencies with Resolvers{
     manSnaps,
     typesafeRel,
     scmRel,
-    scmIntRel,
-    scmIntSnaps,
+    scmSnaps,
     sbPlugins
   )
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here
-    resolvers ++= dependencyResolvers,
-    coffeescriptOptions := Seq("native", coffeeCmd)
+  lazy val appSettings = Seq(
+    scalaVersion := "2.11.7",
+    scalacOptions += "-target:jvm-1.8",
+    version := appVersion,
+    routesGenerator := InjectedRoutesGenerator,
+    libraryDependencies ++= appDependencies,
+    resolvers ++= dependencyResolvers
   )
+
+  val main = Project(appName, file("."))
+             .enablePlugins(play.sbt.PlayScala)
+             .enablePlugins(SbtWeb)
+             .settings(appSettings:_*)
 }

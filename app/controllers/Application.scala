@@ -3,12 +3,19 @@
 */
 package controllers
 
+import javax.inject.Inject
+
 import play.api._
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import views.html
+import play.api.routing.JavaScriptReverseRouter
 
-object Application extends Controller {
-  val hostUrl = Play.current.configuration.getString("host.url").get
+class Application @Inject()(
+  config: Configuration,
+  val messagesApi: MessagesApi) extends Controller {
+
+  val hostUrl = config.getString("host.url").get
 
   def index = UserAwareAction { implicit request =>
     if (request.userOpt.isDefined)
@@ -39,7 +46,7 @@ object Application extends Controller {
 
   def javascriptRoutes = Action { implicit request =>
     Ok(
-      Routes.javascriptRouter("jsRoutes")(
+      JavaScriptReverseRouter("jsRoutes")(
         // fill in stuff which should be able to be called from js
         controllers.routes.javascript.TimeEntryController.showTimesForInterval,
         controllers.routes.javascript.TimeEntryController.showTimeForUser

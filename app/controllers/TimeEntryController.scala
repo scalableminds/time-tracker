@@ -3,8 +3,10 @@
 */
 package controllers
 
+import javax.inject.Inject
+
 import models._
-import com.scalableminds.util.reactivemongo.{GlobalAccessContext, DBAccessContext}
+import com.scalableminds.util.reactivemongo.{DBAccessContext, GlobalAccessContext}
 import views.html
 import play.api.libs.concurrent.Execution.Implicits._
 import com.scalableminds.util.tools.ExtendedTypes._
@@ -13,12 +15,13 @@ import com.scalableminds.util.tools.Fox
 import play.api.Logger
 import controllers.auth.UserAwareRequest
 import net.liftweb.common.Failure
-import org.joda.time.{LocalDateTime, DateTime}
+import org.joda.time.{DateTime, LocalDateTime}
 import play.api.libs.json._
 import net.liftweb.common.Full
 import org.joda.time.format.ISODateTimeFormat
+import play.api.i18n.MessagesApi
 
-object TimeEntryController extends Controller {
+class TimeEntryController @Inject()(val messagesApi: MessagesApi) extends Controller {
   val DefaultAccessRole = None
 
   case class TimeEntryPost(duration: String, comment: Option[String], dateTime: DateTime)

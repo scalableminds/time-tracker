@@ -79,7 +79,7 @@ trait Secured extends FoxImplicits {
    */
 
   object Authenticated extends ActionBuilder[AuthenticatedRequest]{
-    def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[SimpleResult]) = {
+    def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]) = {
       userFromSession(request).flatMap { user =>
         block(new AuthenticatedRequest(user, request))
       }.getOrElse(onUnauthorized(request))
@@ -87,7 +87,7 @@ trait Secured extends FoxImplicits {
   }
 
   object UserAwareAction extends ActionBuilder[UserAwareRequest] {
-    def invokeBlock[A](request: Request[A], block: (UserAwareRequest[A]) => Future[SimpleResult]) = {
+    def invokeBlock[A](request: Request[A], block: (UserAwareRequest[A]) => Future[Result]) = {
       userFromSession(request).futureBox.flatMap {
         case Full(user) =>
           block(new AuthenticatedRequest(user, request))
