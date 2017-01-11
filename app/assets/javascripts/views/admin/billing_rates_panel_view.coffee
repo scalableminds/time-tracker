@@ -1,11 +1,8 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-./billing_rates_item_view : BillingRatesItemView
-models/admin/billing_rates_collection : BillingRatesCollection
-###
+BillingRatesCollection = require("models/admin/billing_rates_collection")
+Marionette = require("marionette")
+_ = require("underscore")
 
-class BillingRatesPanelView extends Backbone.Marionette.CompositeView
+class BillingRatesPanelView extends Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
@@ -81,3 +78,5 @@ class BillingRatesPanelView extends Backbone.Marionette.CompositeView
       @ui.$inputProjectName.val("")
       @ui.$inputRate.val("")
       @ui.$inputProjectName.val("")
+
+module.exports = BillingRatesPanelView

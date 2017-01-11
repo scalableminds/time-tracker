@@ -1,11 +1,9 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-./available_repositories_item_view : AvailableRepositoriesItemView
-models/admin/available_repositories_collection : AvailableRepositoriesCollection
-###
+AvailableRepositoriesCollection = require("models/admin/available_repositories_collection")
+AvailableRepositoriesItemView = require("./available_repositories_item_view")
+Marionette = require("marionette")
+_ = require("underscore")
 
-class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
+class AvailableRepositoriesView extends Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
@@ -87,3 +85,5 @@ class AvailableRepositoriesView extends Backbone.Marionette.CompositeView
       usesIssueLinks : enableIssueLink
       accessToken: accessToken
     )
+
+module.exports = AvailableRepositoriesView

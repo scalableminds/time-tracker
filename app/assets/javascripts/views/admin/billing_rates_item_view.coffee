@@ -1,9 +1,7 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-###
+Marionette = require("marionette")
+_ = require("underscore")
 
-class BillingRatesItemView extends Backbone.Marionette.ItemView
+class BillingRatesItemView extends Marionette.ItemView
 
   tagName: "tr",
   template: _.template("""
@@ -23,3 +21,5 @@ class BillingRatesItemView extends Backbone.Marionette.ItemView
   removeItem: ->
 
     @model.destroy()
+
+module.exports = BillingRatesItemView

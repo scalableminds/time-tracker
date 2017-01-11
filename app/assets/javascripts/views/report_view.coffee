@@ -1,11 +1,11 @@
-### define
-backbone.marionette : Marionette
-underscore: _
-utils: Utils
-./report_item_view: ReportItemView
-###
+Marionette = require("marionette")
+_ = require("underscore")
+Utils = require("utils") 
+ReportItemView = require("./report_item_view")
+app = require("app")
 
-class ReportView extends Backbone.Marionette.CompositeView
+
+class ReportView extends Marionette.CompositeView
 
   className : "time-report"
   template : _.template("""
@@ -50,4 +50,6 @@ class ReportView extends Backbone.Marionette.CompositeView
     @model.fetch(
       reset : true
     )
+
+module.exports = ReportView
 

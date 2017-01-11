@@ -1,15 +1,8 @@
-### define
-underscore : _
-backbone : backbone
-backbone.marionette : Marionette
-app : app
-views/admin/available_repositories_item_view : AvailableRepositoriesItem
-models/admin/active_repositories_collection : ActiveRepositoriesCollection
-datepicker : Datepicker
-libs/toast : Toast
-###
+Toast = require("libs/toast")
+Marionette = require("marionette")
+app = require("app")
 
-class LogTimeView extends Backbone.Marionette.CompositeView
+class LogTimeView extends Marionette.CompositeView
 
   className : "log-time row"
   title : "Log Time"
@@ -51,3 +44,4 @@ class LogTimeView extends Backbone.Marionette.CompositeView
       =>
         Toast.error("Ups. We couldn't save your time log.")
     )
+module.exports = LogTimeView

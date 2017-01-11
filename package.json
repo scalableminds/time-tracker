@@ -1,0 +1,33 @@
+{
+  "name": "time-tracker",
+  "version": "1.0.0",
+  "description": "Time tracking for Github issues.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalableminds/time-tracker.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scalableminds/time-tracker/issues"
+  },
+  "scripts": {
+    "postinstall": "bower install"
+  },
+  "homepage": "https://github.com/scalableminds/time-tracker#readme",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "coffee-loader": "^0.7.2",
+    "coffee-script": "^1.12.2",
+    "css-loader": "^0.26.1",
+    "exports-loader": "^0.6.3",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "imports-loader": "^0.7.0",
+    "less": "^2.7.2",
+    "less-loader": "^2.2.3",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.14.0"
+  }
+}

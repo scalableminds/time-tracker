@@ -1,8 +1,6 @@
-### define
-underscore : _
-###
+_ = require("underscore")
 
-Utils =
+module.exports = Utils =
 
   zeroPad : (number, digits = 2) ->
 

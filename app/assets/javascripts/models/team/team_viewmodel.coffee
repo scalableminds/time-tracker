@@ -1,11 +1,9 @@
-### define
-underscore : _
-backbone : Backbone
-moment : moment
-utils: Utils
-models/team_time_collection : TeamTimeCollection
-models/viewmodel : ViewModel
-###
+_ = require("underscore")
+Backbone = require("backbone")
+moment = require("moment")
+Utils = require("utils")
+TeamTimeCollection = require("models/team_time_collection")
+ViewModel = require("models/viewmodel")
 
 # #############
 # Team ViewModel
@@ -81,5 +79,5 @@ class TeamViewModel extends ViewModel
       )
     )
 
-
+module.exports = TeamViewModel
 

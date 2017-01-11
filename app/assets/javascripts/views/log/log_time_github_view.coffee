@@ -1,12 +1,10 @@
-### define
-underscore : _
-backbone : backbone
-backbone.marionette : Marionette
-views/log/log_time_view : LogTimeView
-models/log/repository_model : RepositoryModel
-###
+RepositoryModel = require("models/log/repository_model")
+LogTimeView = require("./log_time_view")
+_ = require("underscore")
+moment = require("moment")
 
-class LogTimeLocalView extends LogTimeView
+
+class LogTimeGithubView extends LogTimeView
 
   template : _.template("""
     <div class="col-sm-6 col-sm-offset-3">
@@ -66,3 +64,5 @@ class LogTimeLocalView extends LogTimeView
       dateTime : moment.utc(@ui.inputDate.val()).toISOString()
     , method : "POST"
     )
+
+module.exports = LogTimeGithubView

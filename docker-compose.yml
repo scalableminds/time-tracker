@@ -13,17 +13,13 @@ services:
       - MODE=$MODE
       - FLAGS=$FLAGS
 
-  time-tracker-dev:
-    image: scalableminds/time-tracker-dev-env:$DOCKER_TAG_DEV
+  time-tracker-sbt:
+    image: scalableminds/sbt:$DOCKER_TAG_DEV
     volumes:
       - ".:/project"
       - "~/.m2:/root/.m2"
       - "~/.ivy2:/root/.ivy2"
       - "~/.sbt:/root/.sbt"
-
-  time-tracker-sbt:
-    extends:
-      service: time-tracker-dev
     entrypoint: sbt
 
   time-tracker-sbt-run:
@@ -45,10 +41,11 @@ services:
     links:
       - mongo
 
-  time-tracker-bower:
+  time-tracker-webpack:
     extends:
-      service: time-tracker-dev
-    entrypoint: bower --allow-root
+      service: time-tracker-sbt
+    entrypoint: bash
+    command: -c "cd /project ; npm install && node_modules/.bin/webpack"
 
   mongo:
     image: mongo

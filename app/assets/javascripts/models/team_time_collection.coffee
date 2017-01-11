@@ -1,8 +1,6 @@
-### define
-backbone : backbone
-moment : moment
-utils : Utils
-###
+Utils = require("utils")
+Backbone = require("backbone")
+moment = require("moment")
 
 class TeamTimeCollection extends Backbone.Collection
 
@@ -33,3 +31,5 @@ class TeamTimeCollection extends Backbone.Collection
               return sumTotal
         , 0)
     )
+
+module.exports = TeamTimeCollection

@@ -1,11 +1,10 @@
-### define
-jquery : $
-backbone.marionette : Marionette
-app : app
-router : Router
-bootstrap : bootstrap
-models/settings/user_settings_model : UserSettingsModel
-###
+UserSettingsModel = require("models/settings/user_settings_model")
+Router = require("./router")
+Backbone = require("backbone")
+$ = require("jquery")
+app = require("app")
+require("./vendor/alert")
+require("./vendor/bootstrap-datepicker")
 
 $ ->
 

@@ -1,10 +1,6 @@
-### define
-underscore : _
-jquery : $
-backbone : Backbone
-moment : moment
-models/users_collection : UsersCollection
-###
+Backbone = require("backbone")
+UsersCollection = require("models/users_collection")
+moment = require("moment")
 
 class ViewModel extends Backbone.Model
 
@@ -32,3 +28,5 @@ class ViewModel extends Backbone.Model
         @transformData()
         @trigger("sync", @)
     )
+
+module.exports = ViewModel

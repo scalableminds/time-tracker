@@ -1,11 +1,9 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-./available_repositories_view : AvailableRepositoriesView
-./active_repositories_view : ActiveRepositoriesView
-###
+ActiveRepositoriesView = require("./active_repositories_view")
+AvailableRepositoriesView = require("./available_repositories_view")
+Marionette = require("marionette")
+_ = require("underscore")
 
-class RepositoryPanelView extends Backbone.Marionette.Layout
+class RepositoryPanelView extends Marionette.Layout
 
   template: _.template("""
     <section id="available-repositories" class="well">
@@ -38,3 +36,4 @@ class RepositoryPanelView extends Backbone.Marionette.Layout
 
     @activeRepositoriesView.collection.create(newRepository, wait : true)
 
+module.exports = RepositoryPanelView

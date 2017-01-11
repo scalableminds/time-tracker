@@ -1,10 +1,9 @@
-### define
-backbone : backbone
-moment : moment
-utils : Utils
-models/user_time_collection : UserTimeCollection
-models/viewmodel : ViewModel
-###
+ViewModel = require("models/viewmodel")
+UserTimeCollection = require("models/user_time_collection")
+Backbone = require("backbone")
+moment = require("moment")
+Utils = require("utils")
+_ = require("underscore")
 
 # #############
 # User ViewModel
@@ -87,4 +86,4 @@ class UserViewModel extends ViewModel
       )
     )
 
-
+module.exports = UserViewModel

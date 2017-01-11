@@ -1,7 +1,5 @@
-### define
-jquery : $
-bootstrap : Bootstrap
-###
+Bootstrap = require("bootstrap")
+_ = require("underscore")
 
 $.fn.alertWithTimeout = (timeout = 3000) ->
 
@@ -22,7 +20,7 @@ $.fn.alertWithTimeout = (timeout = 3000) ->
     )
     $(window).one "mousemove", -> $this.mouseout()
 
-Toast =
+module.exports = Toast =
 
   message : (type, message, sticky = false) ->
 

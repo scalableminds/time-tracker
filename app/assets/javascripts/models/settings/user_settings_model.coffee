@@ -1,7 +1,5 @@
-### define
-backbone : Backbone
-utils : Utils
-###
+Utils = require("utils")
+Backbone = require("backbone")
 
 class UserSettingsModel extends Backbone.Model
 
@@ -11,3 +9,4 @@ class UserSettingsModel extends Backbone.Model
 
   url : "/api/user/settings"
 
+module.exports = UserSettingsModel

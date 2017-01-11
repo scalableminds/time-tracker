@@ -1,10 +1,9 @@
-### define
-backbone : Backbone
-moment : moment
-utils: Utils
-models/team_time_collection : TeamTimeCollection
-models/viewmodel : ViewModel
-###
+Backbone = require("backbone")
+moment = require("moment")
+Utils = require("utils")
+TeamTimeCollection = require("models/team_time_collection")
+ViewModel = require("models/viewmodel")
+_ = require("underscore")
 
 # #############
 # Project ViewModel
@@ -85,4 +84,4 @@ class ProjectViewModel extends ViewModel
       )
     )
 
-
+module.exports = ProjectViewModel

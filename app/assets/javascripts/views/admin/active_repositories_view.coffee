@@ -1,11 +1,9 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-./active_repositories_item_view : ActiveRepositoriesItemView
-models/admin/active_repositories_collection : ActiveRepositoriesCollection
-###
+ActiveRepositoriesCollection = require("models/admin/active_repositories_collection")
+ActiveRepositoriesItemView = require("./active_repositories_item_view")
+Marionette = require("marionette")
+_ = require("underscore")
 
-class ActiveRepositoriesView extends Backbone.Marionette.CompositeView
+class ActiveRepositoriesView extends Marionette.CompositeView
 
   template: _.template("""
     <header class="row">
@@ -34,3 +32,4 @@ class ActiveRepositoriesView extends Backbone.Marionette.CompositeView
     @collection = new ActiveRepositoriesCollection()
     @collection.fetch()
 
+module.exports = ActiveRepositoriesView

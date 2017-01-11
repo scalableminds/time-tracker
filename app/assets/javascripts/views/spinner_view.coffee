@@ -1,8 +1,7 @@
-### define
-backbone.marionette : marionette
-###
+Marionette = require("marionette")
+_ = require("underscore")
 
-class SpinnerView extends Backbone.Marionette.ItemView
+class SpinnerView extends Marionette.ItemView
 
   className : "spinner-overlay"
 
@@ -34,3 +33,4 @@ class SpinnerView extends Backbone.Marionette.ItemView
 
     @$el.hide()
 
+module.exports = SpinnerView

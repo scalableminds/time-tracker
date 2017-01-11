@@ -1,11 +1,9 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-views/components/selection_view : SelectionView
-models/admin/active_repositories_collection : ActiveRepositoriesCollection
-###
+ActiveRepositoriesCollection = require("models/admin/active_repositories_collection")
+SelectionView = require("views/components/selection_view")
+Marionette = require("marionette")
+_ = require("underscore")
 
-class UserSettingsView extends Backbone.Marionette.Layout
+class UserSettingsView extends Marionette.Layout
 
   className : "col-sm-6 col-sm-offset-3"
 
@@ -111,3 +109,5 @@ class UserSettingsView extends Backbone.Marionette.Layout
       @ui.accessKeyInput.val(userObj.accessKey)
       return
     )
+
+module.exports = UserSettingsView

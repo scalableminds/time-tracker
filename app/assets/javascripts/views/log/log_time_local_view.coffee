@@ -1,10 +1,9 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-views/log/log_time_view : LogTimeView
-views/admin/available_repositories_item_view : AvailableRepositoriesItem
-models/admin/active_repositories_collection : ActiveRepositoriesCollection
-###
+ActiveRepositoriesCollection = require("models/admin/active_repositories_collection")
+AvailableRepositoriesItemView = require("views/admin/available_repositories_item_view")
+LogTimeView = require("views/log/log_time_view")
+app = require("app")
+moment = require("moment")
+_ = require("underscore")
 
 class LogTimeLocalView extends LogTimeView
 
@@ -47,7 +46,7 @@ class LogTimeLocalView extends LogTimeView
     </div>
   """)
 
-  itemView : AvailableRepositoriesItem
+  itemView : AvailableRepositoriesItemView
   itemViewContainer : "select"
 
   ui :
@@ -86,3 +85,5 @@ class LogTimeLocalView extends LogTimeView
       id : @ui.repository.find(":selected").prop("id")
     , method : "POST"
     )
+
+module.exports = LogTimeLocalView

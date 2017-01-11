@@ -1,10 +1,7 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-./selection_item_view : SelectionItemView
-###
+SelectionItemView = require("./selection_item_view")
+Marionette = require("marionette")
 
-class SelectionView extends Backbone.Marionette.CollectionView
+class SelectionView extends Marionette.CollectionView
 
   tagName : "select"
   className: "form-control"
@@ -32,3 +29,5 @@ class SelectionView extends Backbone.Marionette.CollectionView
 
     @el.value = value
     return
+
+module.exports = SelectionView

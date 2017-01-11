@@ -7,4 +7,7 @@ target/
 RUNNING_PID
 *.deb
 root_env/
-public/bower_components
+public
+!public/images
+bower_components
+node_modules

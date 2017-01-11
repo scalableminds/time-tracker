@@ -1,10 +1,8 @@
-###  define
-backbone.marionette : Marionette
-underscore: _
-utils: Utils
-###
+Marionette = require("marionette")
+_ = require("underscore")
+Utils = require("utils")
 
-class ReportItemView extends Backbone.Marionette.ItemView
+class ReportItemView extends Marionette.ItemView
 
   tagName : "tr"
 
@@ -29,3 +27,4 @@ class ReportItemView extends Backbone.Marionette.ItemView
 
     if @model.get("isHeader") then "project-row" else ""
 
+module.exports = ReportItemView

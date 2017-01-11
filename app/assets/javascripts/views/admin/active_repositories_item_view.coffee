@@ -1,10 +1,8 @@
-### define
-underscore : _
-backbone.marionette: Marionette
-libs/toast : Toast
-###
+_ = require("underscore")
+Marionette = require("marionette")
+Toast = require("libs/toast")
 
-class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
+class ActiveRepositoriesItemView extends Marionette.ItemView
 
   tagName: "tr"
   template: _.template("""
@@ -49,3 +47,6 @@ class ActiveRepositoriesItemView extends Backbone.Marionette.ItemView
       (res) => Toast.message(res.messages)
       (res) => Toast.message(res.responseJSON.messages)
     ).always(=> @ui.spinner.removeClass("fa-spin"))
+
+
+module.exports = ActiveRepositoriesItemView

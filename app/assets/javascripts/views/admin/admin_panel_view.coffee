@@ -1,13 +1,8 @@
-### define
-jquery : $
-underscore : _
-backbone.marionette : Marionette
-./billing_rates_panel_view : BillingRatesPanelView
-./repository_panel_view : RepositoryPanelView
-./info_panel_view : InfoPanelView
-###
+InfoPanelView = require("./info_panel_view")
+RepositoryPanelView = require("./repository_panel_view")
+Marionette = require("marionette")
 
-class AdminPanelView extends Backbone.Marionette.Layout
+class AdminPanelView extends Marionette.Layout
 
   className : "admin"
   template: _.template("""
@@ -37,3 +32,4 @@ class AdminPanelView extends Backbone.Marionette.Layout
     @repositoryPanel.show(@repositoryPanelView)
 
 
+module.exports = AdminPanelView

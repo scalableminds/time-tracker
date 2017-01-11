@@ -3,7 +3,6 @@ import Keys._
 import play.sbt.Play.autoImport._
 import play.sbt.PlayImport
 import play.sbt.routes.RoutesKeys._
-import com.typesafe.sbt.web._
 import play.twirl.sbt.SbtTwirl
 
 trait Dependencies{
@@ -76,6 +75,5 @@ object ApplicationBuild extends Build with Dependencies with Resolvers{
 
   val main = Project(appName, file("."))
              .enablePlugins(play.sbt.PlayScala)
-             .enablePlugins(SbtWeb)
              .settings(appSettings:_*)
 }

@@ -1,9 +1,7 @@
-### define
-underscore : _
-backbone.marionette : Marionette
-###
+Marionette = require("marionette")
+_ = require("underscore")
 
-class AvailableRepositoriesItemView extends Backbone.Marionette.ItemView
+class AvailableRepositoriesItemView extends Marionette.ItemView
 
   tagName: "option"
   template: _.template("""
@@ -14,3 +12,5 @@ class AvailableRepositoriesItemView extends Backbone.Marionette.ItemView
 
     value : @model.get("name")
     id : @model.get("id")
+
+module.exports = AvailableRepositoriesItemView

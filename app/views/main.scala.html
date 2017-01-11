@@ -7,9 +7,7 @@
     <title>@title</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.min.css")">
-    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bower_components/font-awesome/css/font-awesome.min.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("main.css")">
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     @additionalHeader
   </head>
@@ -98,12 +96,8 @@
     </footer>
 
     @session.userOpt.map { user =>
-      <script src="@routes.Assets.at("javascripts/config.js")" type="text/javascript"></script>
-      <script src="@routes.Assets.at("bower_components/requirejs/require.js")" data-main="main" type="text/javascript"></script>
       <script src="@controllers.routes.Application.javascriptRoutes()" type="text/javascript"></script>
-    }.getOrElse {
-      <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")" type="text/javascript"></script>
-      <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")" type="text/javascript"></script>
+      <script src="/assets/main.js" type="text/javascript"></script>
     }
     </div>
   </body>

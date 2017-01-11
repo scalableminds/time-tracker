@@ -1,8 +1,6 @@
-### define
-underscore : _
-backbone: backbone
-moment: moment
-###
+_ = require("underscore")
+Backbone = require("backbone")
+moment = require("moment")
 
 class LogTimeModel extends Backbone.Model
 
@@ -23,3 +21,4 @@ class LogTimeModel extends Backbone.Model
         issueNumber : issueNumber
       )
 
+module.exports = LogTimeModel

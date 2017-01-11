@@ -1,19 +1,17 @@
-### define
-underscore : _
-backbone : Backbone
-views/report_view  : ReportView
-views/spinner_view  : SpinnerView
-views/admin/admin_panel_view  : AdminPanelView
-views/month_picker_view : MonthPickerView
-views/log/log_time_local_view  : LogTimeLocalView
-views/log/log_time_github_view  : LogTimeGithubView
-views/settings/user_settings_view  : UserSettingsView
-models/team/team_viewmodel : TeamViewModel
-models/project/project_viewmodel : ProjectViewModel
-models/user/user_viewmodel : UserViewModel
-models/settings/user_settings_model : UserSettingsModel
-models/log/log_time_model : LogTimeModel
-###
+LogTimeModel = require("models/log/log_time_model")
+ProjectViewModel = require("models/project/project_viewmodel")
+UserViewModel = require("models/user/user_viewmodel")
+TeamViewModel = require("models/team/team_viewmodel")
+LogTimeLocalView = require("views/log/log_time_local_view")
+LogTimeGithubView = require("views/log/log_time_github_view")
+AdminPanelView = require("views/admin/admin_panel_view")
+UserSettingsView = require("views/settings/user_settings_view")
+SpinnerView = require("views/spinner_view")
+MonthPickerView = require("views/month_picker_view")
+ReportView = require("views/report_view")
+Backbone = require("backbone")
+app = require("app")
+_ = require("underscore")
 
 class Router extends Backbone.Router
 
@@ -206,3 +204,5 @@ class Router extends Backbone.Router
 
     super(callback, args.map( (a) -> a or undefined ))
     return
+
+module.exports = Router

@@ -1,12 +1,10 @@
-### define
-jquery : $
-underscore : _
-backbone.marionette: Marionette
-moment : moment
-app : app
-###
+$ = require("jquery")
+_ = require("underscore")
+Marionette = require("marionette")
+moment = require("moment")
+app = require("app")
 
-class MonthPickerView extends Backbone.Marionette.ItemView
+class MonthPickerView extends Marionette.ItemView
 
   className : "month-picker"
 
@@ -55,4 +53,5 @@ class MonthPickerView extends Backbone.Marionette.ItemView
     @changeDate(moment())
     return
 
+module.exports = MonthPickerView
 

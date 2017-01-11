@@ -1,7 +1,4 @@
-### define
-underscore : _
-backbone : backbone
-###
+Backbone = require("backbone")
 
 class UsersCollection extends Backbone.Collection
 
@@ -21,3 +18,5 @@ class UsersCollection extends Backbone.Collection
     else
       #in rare cases user could be delete from the server
       "<Deleted User>"
+
+module.exports = UsersCollection

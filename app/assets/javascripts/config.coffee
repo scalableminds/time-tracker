@@ -13,7 +13,7 @@ requirejs
     "moment"              : "../bower_components/momentjs/moment"
     "underscore"          : "../bower_components/lodash/dist/lodash"
     "backbone"            : "../bower_components/backbone/backbone"
-    "backbone.marionette" : "../bower_components/backbone.marionette/lib/backbone.marionette"
+    "marionette" : "../bower_components/marionette/lib/marionette"
     "bootstrap"           : "../bower_components/bootstrap/dist/js/bootstrap"
     "datepicker"          : "bootstrap-datepicker"
 
@@ -21,7 +21,7 @@ requirejs
     "moment" :
       exports : "moment"
     "bootstrap" : ["jquery"]
-    "backbone.marionette" :
+    "marionette" :
       deps : ["backbone"]
       exports : "Marionette"
     "datepicker" :
