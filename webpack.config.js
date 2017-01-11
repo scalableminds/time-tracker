@@ -14,6 +14,7 @@ module.exports = {
     filename: "main.js",
     publicPath: "/assets/",
   },
+  bail: true,
   resolve: {
     alias: {
       "app"                 : appRoot + "/app",
