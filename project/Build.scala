@@ -9,7 +9,7 @@ trait Dependencies{
   val akkaVersion = "2.4.1"
   val reactiveVersion = "0.11.13"
   val reactivePlayVersion = "0.11.13-play24"
-  val scmUtilVersion= "8.21.0"
+  val scmUtilVersion= "8.22.0"
 
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val commonsEmail = "org.apache.commons" % "commons-email" % "1.3.1"
