@@ -1,7 +1,6 @@
 machine:
   environment:
-    DOCKER_TAG: $CIRCLE_BUILD_NUM
-    DOCKER_TAG_DEV: sbt-0.13.9_mongo-3.2.1_node-7.x_jdk-8
+    SBT_VERSION_TAG: sbt-0.13.9_mongo-3.2.1_node-7.x_jdk-8
 
 dependencies:
   pre:
@@ -11,7 +10,7 @@ dependencies:
     - sudo chmod +x /usr/local/bin/docker-compose
     - sudo service docker start
     - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-    - docker pull scalableminds/sbt:$DOCKER_TAG_DEV
+    - docker pull scalableminds/sbt:$SBT_VERSION_TAG
   cache_directories:
     - "~/.m2"
     - "~/.ivy2"
@@ -20,11 +19,11 @@ dependencies:
   override:
     - docker-compose run time-tracker-webpack
     - docker-compose run time-tracker-sbt clean compile stage
-    - docker build -t scalableminds/time-tracker:$CIRCLE_BUILD_NUM .
+    - docker build -t scalableminds/time-tracker:${CIRCLE_BRANCH}__${CIRCLE_BUILD_NUM} .
 
 test:
   override:
-    - MODE=dev docker-compose up -d time-tracker:
+    - DOCKER_TAG=${CIRCLE_BRANCH}__${CIRCLE_BUILD_NUM} docker-compose up -d time-tracker:
         background: true
     - sleep 10
     - ./test/infrastructure/deployment.bash
@@ -33,5 +32,7 @@ deployment:
   hub:
     branch: /.*/
     commands:
-      - docker push scalableminds/time-tracker:$CIRCLE_BUILD_NUM
+      - docker tag scalableminds/time-tracker:${CIRCLE_BRANCH}__${CIRCLE_BUILD_NUM} scalableminds/time-tracker:${CIRCLE_BRANCH}
+      - docker push scalableminds/time-tracker:${CIRCLE_BRANCH}__${CIRCLE_BUILD_NUM}
+      - docker push scalableminds/time-tracker:${CIRCLE_BRANCH}
       - docker logout

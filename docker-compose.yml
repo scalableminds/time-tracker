@@ -8,13 +8,17 @@ services:
       - "9000:9000"
     links:
       - mongo
-    environment:
-      - PORT=9000
-      - MODE=$MODE
-      - FLAGS=$FLAGS
+    command:
+      - -Dconfig.file=conf/application.conf
+      - -Dmongodb.db=time-tracker
+      - -Dmongodb.url=mongo
+      - -Dmongodb.port=27017
+      - -Dmongodb.uri=mongodb://mongo:27017/time-tracker
+      - -Dhttp.port=9000
+      - -Dlogger.file=conf/application-logger-prod.xml
 
   time-tracker-sbt:
-    image: scalableminds/sbt:$DOCKER_TAG_DEV
+    image: scalableminds/sbt:$SBT_VERSION_TAG
     volumes:
       - ".:/project"
       - "~/.m2:/root/.m2"
