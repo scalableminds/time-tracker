@@ -1,5 +1,6 @@
 LogTimeModel = require("models/log/log_time_model")
 ProjectViewModel = require("models/project/project_viewmodel")
+MilestoneViewModel = require("models/milestone/milestone_viewmodel")
 UserViewModel = require("models/user/user_viewmodel")
 TeamViewModel = require("models/team/team_viewmodel")
 LogTimeLocalView = require("views/log/log_time_local_view")
@@ -21,6 +22,8 @@ class Router extends Backbone.Router
     "me/:date"                                  : "user"
     "project"                                   : "project"
     "project/:date"                             : "project"
+    "milestone"                                 : "milestone"
+    "milestone/:date"                           : "milestone"
     "admin"                                     : "admin"
     "team"                                      : "team"
     "team/:date"                                : "team"
@@ -60,6 +63,15 @@ class Router extends Backbone.Router
     @changeActiveNavbarItem("/project")
     @changeNavbarDate(date)
     @changeTitle("Project")
+
+
+  milestone : (date) ->
+
+    milestoneModel = new MilestoneViewModel(date : date)
+    @showReport(milestoneModel)
+    @changeActiveNavbarItem("/milestone")
+    @changeNavbarDate(date)
+    @changeTitle("Milestone")
 
 
   team : (date) ->
