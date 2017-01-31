@@ -41,52 +41,61 @@ class MilestoneViewModel extends ViewModel
     )
 
     # Iterate over all issues ...
-    _.each(projects, (entries, repositoryName) =>
+    for repositoryName in Object.keys(projects)
+      projectEntries = projects[repositoryName]
 
-      # ... and group by their users
-      projectMilestones = _.groupBy(entries, (entry) ->
+      # ... group by their milestones ...
+      projectMilestones = _.groupBy(projectEntries, (entry) ->
         return entry.get("milestone")?.title ? "(none)"
       )
 
-      # Finally add the days of the month to every project...
-      projectMilestones = _.transform(projectMilestones,
-        (result, project, key) =>
-          result[key] = Utils.range(1, @get("date").daysInMonth()).map(
-            (day) -> return Utils.sum(
-              _.filter(project,
-                (project) -> return moment(project.get("dateTime")).date() == day
-              ).map(
-                (projectFilterdByDay) -> return projectFilterdByDay.get("duration")
+      for milestoneTitle in Object.keys(projectMilestones)
+        projectMilestoneEntries = projectMilestones[milestoneTitle]
+        milestoneId = projectMilestoneEntries[0]?.get("milestone")?.number
+
+        # ... group by their milestones ...
+        userProjectMilestones = _.groupBy(projectMilestoneEntries, (entry) -> entry.get("userId"))
+
+        # Finally add the days of the month to every project...
+        userProjectMilestones = _.transform(userProjectMilestones,
+          (result, entries, key) =>
+            result[key] = Utils.range(1, @get("date").daysInMonth()).map(
+              (day) -> return Utils.sum(
+                entries
+                  .filter((entry) -> return moment(entry.get("dateTime")).date() == day)
+                  .map((projectFilterdByDay) -> return projectFilterdByDay.get("duration"))
               )
             )
-          )
-      )
-
-      # Sum up the total amount of hours per day for every issue
-      sumDaily = Utils.range(1, @get("date").daysInMonth()).map((i) -> return Utils.sum(_.values(projectMilestones), i - 1)) #-1 because days start with 1 and arrays with 0
-      sumTotal = Utils.sum(sumDaily)
-
-      #Add that shit to the collection as a table 'header' for every user
-      @get("rows").add(
-        isHeader : true
-        name : repositoryName
-        sum : sumTotal
-        dailyTimeEntries : sumDaily
-        githubUrl : null
-      )
-
-      # Add the daily individual time logs to the collection
-      _.each(projectMilestones, (dailyEntries, milestoneTitle) =>
-        milestoneId = entries.find((entry) => entry.get("milestone")?.title == milestoneTitle)?.get("milestone").number
-        @get("rows").add(
-          isHeader : false
-          name : milestoneTitle
-          sum : Utils.sum(dailyEntries)
-          dailyTimeEntries : dailyEntries
-          githubUrl : if milestoneId? then "https://github.com/#{repositoryName}/milestone/#{milestoneId}" else ""
         )
-      )
-    )
+
+        # Sum up the total amount of hours per day for every issue
+        sumDaily = Utils.range(1, @get("date").daysInMonth())
+          #-1 because days start with 1 and arrays with 0
+          .map((i) -> return Utils.sum(_.values(userProjectMilestones), i - 1))
+        sumTotal = Utils.sum(sumDaily)
+
+        # Add that shit to the collection as a table 'header' for every user
+        @get("rows").add(
+          isHeader : true
+          name : "#{repositoryName}<br />&rsaquo; #{milestoneTitle}"
+          sum : sumTotal
+          dailyTimeEntries : sumDaily
+          githubUrl : if milestoneId?
+            "https://github.com/#{repositoryName}/milestone/#{milestoneId}"
+          else 
+            "https://github.com/#{repositoryName}/"
+        )
+
+        # Add the daily individual time logs to the collection
+        for userId in Object.keys(userProjectMilestones)
+          dailyEntries = userProjectMilestones[userId]
+          @get("rows").add(
+            isHeader : false
+            name : @usersCollection.getNameById(userId)
+            sum : Utils.sum(dailyEntries)
+            dailyTimeEntries : dailyEntries
+            githubUrl : "https://github.com/#{@usersCollection.getGithubNameById(userId)}"
+          )
 
 module.exports = MilestoneViewModel
 
