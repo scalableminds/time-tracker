@@ -36,10 +36,13 @@ class LogTimeView extends Marionette.CompositeView
 
     @save().then(
       =>
+        Toast.success("Your time entry was successfully logged.")
         if /\?.*referer=github/.test(window.location.href) and app.settings.get("closeAfterGithub")
-          window.close()
+          setTimeout(
+            -> window.history.back()
+            500
+          )
         else
-          Toast.success("Your time entry was successfully logged.")
           @$(".reset").each(-> $(this).val(""))
       =>
         Toast.error("Ups. We couldn't save your time log.")
