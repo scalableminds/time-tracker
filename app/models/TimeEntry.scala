@@ -77,7 +77,7 @@ object TimeEntryDAO extends BasicReactiveDAO[TimeEntry] {
     Json.obj(
       "dateTime" -> Json.obj(
         "$gte" -> interval.getStart.getMillis,
-        "$lte" -> interval.getEnd.getMillis
+        "$lt" -> interval.getEnd.getMillis
       )
     )
   }
