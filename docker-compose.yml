@@ -51,8 +51,8 @@ services:
 
   mongo:
     image: mongo
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     volumes:
       - "./dev-db/configdb:/data/configdb"
       - "./dev-db/db:/data/db"
