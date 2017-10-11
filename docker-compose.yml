@@ -51,12 +51,8 @@ services:
 
   mongo:
     image: mongo
+    ports:
+      - "27017:27017"
     volumes:
-      - mongo_data:/data/db
-      - mongo_config:/data/configdb
-
-volumes:
-  mongo_data:
-    driver: local
-  mongo_config:
-    driver: local
+      - "./dev-db/configdb:/data/configdb"
+      - "./dev-db/db:/data/db"
