@@ -12,7 +12,7 @@
     "url": "https://github.com/scalableminds/time-tracker/issues"
   },
   "scripts": {
-    "postinstall": "bower --allow-root install"
+    "postinstall": "bower install"
   },
   "homepage": "https://github.com/scalableminds/time-tracker#readme",
   "devDependencies": {
