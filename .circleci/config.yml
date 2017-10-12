@@ -11,12 +11,23 @@ jobs:
           command: |
             docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
             docker pull scalableminds/sbt:$SBT_VERSION_TAG
+      - restore_cache:
+          keys:
+            - cache-{{ .Branch }}
+            - cache
       - run:
           name: build webpack
           command: docker-compose run time-tracker-webpack
       - run:
           name: build sbt
           command: docker-compose run time-tracker-sbt clean compile stage
+      - save_cache:
+          key: cache-{{ .Branch }}
+          paths:
+            - "~/.m2"
+            - "~/.ivy2"
+            - "~/.sbt"
+            - "node_modules"
       - run:
           name: build docker image
           command: |
