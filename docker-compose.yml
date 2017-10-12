@@ -48,7 +48,7 @@ services:
     extends:
       service: time-tracker-sbt
     entrypoint: bash
-    command: -c "cd /project && npm install && node_modules/.bin/webpack"
+    command: -c "cd /project && npm install --unsafe-perm && node_modules/.bin/webpack"
 
   mongo:
     image: mongo
