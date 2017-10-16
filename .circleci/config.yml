@@ -3,7 +3,7 @@ jobs:
   build_run_deploy:
     machine: true
     environment:
-      SBT_VERSION_TAG: sbt-0.13.15_mongo-3.2.1_node-8.x_jdk-8
+      SBT_VERSION_TAG: sbt-0.13.15_mongo-3.2.17_node-8.x_jdk-8
     steps:
       - checkout
       - run:
